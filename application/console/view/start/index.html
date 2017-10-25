@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- Tell the browser to be responsive to screen width -->
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<title>后台管理 | 登录</title>
+<meta name="author" content="ceroot">
+<meta name="keywords" content="后台管理">
+<meta name="description" content="后台管理">
+<!-- LayUi -->
+<link rel="stylesheet" type="text/css" href="__LIBS__/{$Think.config.static.layui_version}/css/layui.css" media="all">
+<!-- Theme pace -->
+<link rel="stylesheet" type="text/css" href="__LIBS__/pace/1.0.2/themes/orange/pace-theme-flash.css">
+<!-- Ionicons -->
+<link rel="stylesheet" type="text/css" href="__LIBS__/ionicons/2.0.1/css/ionicons.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" type="text/css" href="__CSS__/bw.base.css">
+<!-- login -->
+<link rel="stylesheet" type="text/css" href="__CONSOLE__/css/bw.login.css">
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+<script src="__LIBS__/html5shiv/3.7.3/html5shiv.min.js"></script>
+<script src="__LIBS__/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
+</head>
+<body class="hold-transition login-page">
+<div id="particles-js"></div>
+<div class="wrapper">
+    <div class="color-line"></div>
+    <div class="login-box">
+        <div class="login-logo">
+          <b>ACMS</b>
+        </div>
+        <!-- /.login-logo -->
+        <div class="login-box-body">
+            <div class="box_img_back_grey">
+                <img src="__IMAGES__/po.jpg">
+            </div>
+            <div class="login-box-content">
+                <p class="login-box-msg">后面管理登录</p>
+                <form class="layui-form" action="" method="post">
+                    <div class="layui-form-item">
+                        <div class="layui-input-block" style="margin-left: 0">
+                            <input type="text" name="username" lay-verify="username" placeholder="用户名/邮箱" class="layui-input">
+                            <span class="ion-person bw-feedback"></span>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block" style="margin-left: 0;">
+                            <input type="password" name="password" lay-verify="required" placeholder="密码" class="layui-input">
+                            <span class="ion-locked bw-feedback"></span>
+                        </div>
+                    </div>
+                    {if condition="session('error_num') gt 3"}
+                        {$verifyhtml}
+                    {/if}
+                    <div class="btn-area">
+                        <span style="float: left;">
+                            <input type="checkbox" name="" id="remember" title="记住用户名" lay-skin="primary">
+                            <br><small>为了安全，公共电脑请去掉记住</small>
+                        </span>
+                        <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1" style="float: right; padding:0 40px;">登录</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- /.login-box-body -->
+    </div>
+</div>
+<div class="bw-text-center copyright">Copyright ©2017 <a href="http://www.benweng.com" target="_blank" title="笨翁造型">BENWENG.COM</a></div>
+<!-- /.login-box -->
+<!-- jQuery -->
+<script type="text/javascript" src="__LIBS__/{$Think.config.static.jquery_version}"></script>
+<!-- LayUi -->
+<script type="text/javascript" src="__LIBS__/{$Think.config.static.layui_version}/layui.js"></script>
+<!-- Theme pace -->
+<script type="text/javascript" src="__LIBS__/pace/1.0.2/pace.min.js"></script>
+<!-- particles -->
+<script type="text/javascript" src="__LIBS__/particles.js/2.0.0/particles.min.js"></script>
+<script type="text/javascript" src="__CONSOLE__/js/bw.login.js"></script>
+
+</body>
+</html>
