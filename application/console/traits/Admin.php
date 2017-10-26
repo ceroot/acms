@@ -20,13 +20,16 @@ trait Admin
      */
     public function __construct()
     {
-        // $this->error('dd', 'Start/index');
-        // $this->redirect('Start/index');
-        // UserInfo::userId() || $this->redirect('Login/index');
+
         $this->app = Container::getInstance()->make('think\App');
 
         //绑定其他类到容器
-        // $this->bindContainer();
+        $this->bindContainer();
+    }
+
+    public function bindContainer()
+    {
+
     }
 
     /**

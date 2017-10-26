@@ -19,6 +19,7 @@ namespace app\console\controller;
 use app\facade\User;
 use think\Controller;
 use think\facade\App;
+use think\facade\Config;
 use think\facade\Request;
 use think\facade\Session;
 
@@ -86,7 +87,7 @@ class Start extends Controller
             User::autoLogin($user); // 用户自动登录
             $this->model->autoLogin($manager); // 管理用户自动登录
             App::model('ActionLog')->actionLogRun($user, 'login', 'manager', $user); // 记录登录日志
-            Session::pull('error_num'); // 登录成功，清除登录错误次数记录
+            Session::pull('error_num'); // 登录成功，清除登录错误次数记录，释放 sesseion
 
             $time     = date('YmdHis');
             $authcode = authcode($time);
@@ -101,6 +102,9 @@ class Start extends Controller
 
     public function test($id = null)
     {
+        $test = null;
+        $dd   = Config::get('checklogin.not_login_action') ?: [];
+        dump($dd);
         $backurl = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         dump(getbackurl(false));
         Session::pull('manager_id');

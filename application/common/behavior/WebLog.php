@@ -52,28 +52,38 @@ class WebLog
     {
 
         // 网站日志记录开关判断
-        if (!Config::get('app.web_log.status')) {
+        if (!Config::get('weblog.status')) {
             return true;
         }
 
         // 不需要记录的请求方式 string
-        $not_log_method = Config::get('app.web_log.not_log_method') ?: [];
+        $not_log_method_default = [];
+        $not_log_method_config  = Config::get('weblog.not_log_method') ?: [];
+        $not_log_method         = array_merge($not_log_method_default, $not_log_method_config);
 
         // 不需要记录的模块 'module'
-        $not_log_module = Config::get('app.web_log.not_log_module') ?: [];
+        $not_log_module_default = [];
+        $not_log_module_config  = Config::get('weblog.not_log_module') ?: [];
+        $not_log_module         = array_merge($not_log_module_default, $not_log_module_config);
 
         // 不需要记录的控制器 'module/controller'
-        $not_log_controller = Config::get('app.web_log.not_log_controller') ?: [];
+        $not_log_controller_default = [];
+        $not_log_controller_config  = Config::get('weblog.not_log_controller') ?: [];
+        $not_log_controller         = array_merge($not_log_controller_default, $not_log_controller_config);
 
         // 不需要记录的方法 'module/controller/action'
-        $not_log_action = Config::get('app.web_log.not_log_action') ?: [];
+        $not_log_action_default = [];
+        $not_log_action_config  = Config::get('weblog.not_log_action') ?: [];
+        $not_log_action         = array_merge($not_log_action_default, $not_log_action_config);
 
         // 不需要记录的方法（特殊情况） 'action'
-        $not_log_action_exc = [
+        $not_log_action_exc_default = [
             'test', // 测试方法
             'showverify', // 验证码
             'setcollapsed', // 侧边栏
         ];
+        $not_log_action_exc_config = Config::get('weblog.not_log_action_exc') ?: []; // 取得配置
+        $not_log_action_exc        = array_merge($not_log_action_exc_default, $not_log_action_exc_config);
 
         if (
             (Config::get('app_debug') && Request::param('notlog') == 1) || // 当开发模式开启并且 param 参数 notlog 为 1 时不记录
@@ -88,7 +98,7 @@ class WebLog
         }
 
         // 不需要记录数据的方法 'module/controller/action'
-        $not_log_data = Config::get('app.web_log.not_log_data') ?: [];
+        $not_log_data = Config::get('weblog.not_log_data') ?: [];
 
         // 数据处理
         if (in_array(strtolower(Request::module() . '/' . Request::controller() . '/' . Request::action()), $not_log_data)) {

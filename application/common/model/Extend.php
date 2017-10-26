@@ -88,4 +88,10 @@ class Extend extends Model
         return long2ip($value);
     }
 
+    public function getStatusAttr($value)
+    {
+        $data = ['0' => '禁用', '1' => '正常'];
+        return $data[$value];
+    }
+
 }

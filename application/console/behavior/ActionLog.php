@@ -22,38 +22,51 @@ use think\facade\App;
 use think\facade\Cache;
 use think\facade\Config;
 use think\facade\Request;
+use think\facade\Session;
 
 class ActionLog
 {
 
     public function run($param)
     {
+        $this->initialization();
         $this->actionLog();
     }
 
     /**
+     * [ initialization 初始化 ]
+     * @Author   SpringYang <ceroot@163.com>
+     * @DateTime 2017-10-26T11:00:31+0800
+     * @return   [type]                   [description]
+     */
+    private function initialization()
+    {
+
+    }
+
+    /**
      * { actionLog 行为记录方法}
-     * @Author   SpringYang
+     * @Author   SpringYang <ceroot@163.com>
      * @DateTime 2017-10-24T11:47:42+0800
-     * @param    [numb]                   $id [description]
-     * @return   [type]                       [description]
+     * @param    integer                   $id [description]
+     * @return   [type]                        [description]
      */
     private function actionLog($id = null)
     {
 
-        // if (!Config::get('action_log') && !session('mid')) {
-        //     return true;
-        // }
+        if (!Config::get('action_log') && !Session::get('manager_id')) {
+            return true;
+        }
 
         // 特殊情况处理
         if (strtolower(Request::module()) == 'start1') {
             return true;
         }
 
-        $instantiationController = Cache::get('instantiation_controller');
+        $instantiationController = Cache::get('instantiation_controller'); // 取得需要实例化的控制器
 
         if (!in_array(strtolower(toUnderline(Request::controller())), $instantiationController)) {
-            return false;
+            return true;
         }
 
         $controller = Request::controller(); // 取得控制器名称
@@ -115,6 +128,8 @@ class ActionLog
      */
     public function actionLogRun($record_id = null, $action = null)
     {
-        model('ActionLog')->actionLogRun($record_id, $action);
+        if (model('ActionLog')->actionLogRun($record_id, $action)) {
+            Log::record('[ 行为日志 ]：行为记录执行成功');
+        };
     }
 }

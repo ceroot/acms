@@ -18,7 +18,7 @@ return [
     // 应用调试模式
     'app_debug'              => true,
     // 应用Trace
-    'app_trace'              => false,
+    'app_trace'              => true,
     // 应用模式状态
     'app_status'             => '',
     // 是否支持多模块
@@ -109,6 +109,8 @@ return [
     // 默认跳转页面对应的模板文件
     'dispatch_success_tmpl'  => Env::get('think_path') . 'tpl/dispatch_jump.tpl',
     'dispatch_error_tmpl'    => Env::get('think_path') . 'tpl/dispatch_jump.tpl',
+    // 'dispatch_success_tmpl'  => '/public/tpl/dispatch_jump.tpl',
+    // 'dispatch_error_tmpl'    => '/public/tpl/dispatch_jump.tpl',
 
     // 异常页面的模板文件
     'exception_tmpl'         => Env::get('think_path') . 'tpl/think_exception.tpl',
@@ -119,10 +121,5 @@ return [
     'show_error_msg'         => true,
     // 异常处理handle类 留空使用 \think\exception\Handle
     'exception_handle'       => '',
-
-    // 网站日志记录开关
-    'web_log'                => [
-        'status' => true,
-    ],
 
 ];

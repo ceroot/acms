@@ -1,10 +1,13 @@
 <?php
 namespace app\console\controller;
 
+use app\console\controller\Base;
+use app\console\traits\Admin;
 use think\facade\App;
 
-class Index
+class Index extends Base
 {
+    use Admin;
 
     /**
      * @Author    Hybrid
@@ -18,7 +21,12 @@ class Index
     {
         $data = App::model('manager')->select();
         dump($data);
-        // return $this->setView('fds');
+        return $this->setView('index', 'index');
 
+    }
+
+    public function hello()
+    {
+        dump('hello');
     }
 }

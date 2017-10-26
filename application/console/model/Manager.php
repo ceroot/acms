@@ -65,6 +65,7 @@ class Manager extends Extend
         }
 
         $manager = self::getByUid($uid); // 查询管理用户
+        $manager = $manager->getData(); // 取得原数据
 
         if (!$manager) {
             $this->error = '管理用户不存在';

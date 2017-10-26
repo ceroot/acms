@@ -35,12 +35,12 @@ class ActionLog extends Extend
      */
     public function actionLogRun($record_id = null, $action = null, $model = null, $user_id = null)
     {
-
         $data = App::model('ActionLog', 'logic')->actionLogRun($record_id, $action, $model, $user_id);
-        // return $data;
         // session('datalist', $data);
         if (is_array($data)) {
-            $this->data($data)->save();
+            if ($this->data($data)->save()) {
+                return true;
+            }
         }
     }
 }

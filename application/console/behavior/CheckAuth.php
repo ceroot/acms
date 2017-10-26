@@ -19,7 +19,11 @@
 
 namespace app\console\behavior;
 
+use think\facade\App;
+use think\facade\Cache;
+use think\facade\Config;
 use think\facade\Request;
+use think\facade\Session;
 use traits\controller\Jump;
 
 class CheckAuth
@@ -28,7 +32,48 @@ class CheckAuth
 
     public function run($params)
     {
-        $controller = Request::controller();
-        dump('CheckAuth');
+        // dump(DIRECTORY_SEPARATOR);die;
+        $this->check();
+    }
+
+    private function check()
+    {
+        // 判断 not_auth 是否存在
+        if (!Cache::has('not_auth')) {
+            App::model('AuthRule', 'logic')->updateCache();
+        }
+
+        $not_auth = Cache::get('not_auth'); // 从缓存里取得不需要进行权限认证的方法
+
+        $controller = Request::controller(); // 取得控制器
+        $action     = strtolower($controller . '/' . Request::action()); // 取得控制器
+
+        // 验证权限
+        // 满足条件
+        // 1 不是超级管理员
+        // 2 是必须验证的
+        if (!in_array(Session::get('manager_id'), Config::get('auth_superadmin')) && !in_array($action, $not_auth)) {
+            // 处理会员和管理员规则
+            if ($controller == 'user' && input('role') == 1) {
+                $controller = 'manager';
+            }
+
+            // 权限验证
+            // 执行验证
+            if (!$this->authCheck($action, Session::get('manager_id'))) {
+                return $this->error('您没有相关权限，请联系管理员', url('index/index'));
+            }
+        }
+
+    }
+
+    private function authCheck($authName, $uid)
+    {
+        $auth = new \auth\Auth();
+        if ($auth->check(strtolower($authName), $uid)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
