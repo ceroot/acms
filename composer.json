@@ -1,24 +1,23 @@
 {
-    "name": "topthink/think",
-    "description": "the new thinkphp framework",
+    "name": "ceroot/acms",
+    "description": "the new thinkphp CMS",
     "type": "project",
     "keywords": [
-        "framework",
-        "thinkphp",
-        "ORM"
+        "ceroot",
+        "acms",
+        "cms"
     ],
-    "homepage": "http://thinkphp.cn/",
+    "homepage": "http://www.benweng.com/",
     "license": "Apache-2.0",
     "authors": [
         {
-            "name": "liu21st",
-            "email": "liu21st@gmail.com"
+            "name": "ceroot",
+            "email": "ceroot@163.com"
         }
     ],
     "require": {
         "php": ">=5.6.0",
-        "topthink/framework": "~5.1.0@dev",
-        "topthink/think-captcha": "^2.0"
+        "ceroot/acms": "0.01",
     },
     "autoload": {
         "psr-4": {
