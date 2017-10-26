@@ -2,12 +2,10 @@
 namespace app\console\controller;
 
 use app\console\controller\Base;
-use app\console\traits\Admin;
 use think\facade\App;
 
 class Index extends Base
 {
-    use Admin;
 
     /**
      * @Author    Hybrid
@@ -19,9 +17,8 @@ class Index extends Base
      */
     public function index()
     {
-        $data = App::model('manager')->select();
-        dump($data);
-        return $this->setView('index', 'index');
+        // $this->app->view->assign('dd', 'dd');
+        return $this->setView();
 
     }
 

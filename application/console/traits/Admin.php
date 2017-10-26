@@ -14,6 +14,8 @@ trait Admin
     protected $app;
     //视图
     protected $view;
+    // 菜单
+    protected $menus;
 
     /**
      * 初始化容器
@@ -49,11 +51,25 @@ trait Admin
         //模板初始化
         $this->view = $this->view ?: Facade::make('view')->init(
             $this->app->config->pull('template'), //模板引擎
-            $this->app->config->get('config.view_replace') //替换参数
+            $this->app->config->get('view_replace_str') //替换参数
         );
+
         //开启系统菜单
-        // $menus && $this->view->assign('systemMenus', $this->getMenus());
+        //$menus && $this->view->assign('systemMenus', $this->getMenus());
+
+        $this->$menus = $this->getMenus();
+        $this->view->assign('menus', $this->$menus);
+        $this->view->assign('second', $this->$menus['second']); // 二级菜单输出
+        $this->view->assign('title', $this->$menus['showtitle']); // 标题输出
+        $this->view->assign('bread', $this->$menus['bread']); // 面包输出
+
         return $this->view->fetch($template ?: '', $value ?: []);
+    }
+
+    protected function getMenus()
+    {
+        $menus = $this->app->model('AuthRule', 'logic')->consoleMenu();
+        return $menus;
     }
 
 }

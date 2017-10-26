@@ -18,5 +18,5 @@
  */
 
 return [
-    'auth_superadmin' => [3, 2],
+    'auth_superadmin' => [1, 2],
 ];

@@ -466,3 +466,78 @@ function getrandom($length = 6, $numeric = 0)
     }
     return $hash;
 }
+
+/**
+ * 生成树形结构数组
+ * @param  array   $cate  传入数组
+ * @param  string  $pid   传入父id
+ * @return array   $arr   返回数组
+ */
+function getCateTreeArr($cate, $pid)
+{
+    $arr = array();
+    foreach ($cate as $k => $v) {
+        if ($v['pid'] == $pid) {
+            $child = getCateTreeArr($cate, $v['id']);
+            if ($child) {
+                $v['items'] = $child;
+            }
+            $arr[] = $v;
+        }
+    }
+    return $arr;
+}
+
+/**
+ * 传递一个子级返回父级id 例如:首页>>服装>>女装>>裙子
+ * @param array   $cate  传入数组
+ * @param string  $pid   传入id
+ * @return array  $arr   返回数组
+ */
+function getParents($cate, $id)
+{
+    $arr = array();
+    foreach ($cate as $v) {
+        if ($v['id'] == $id) {
+            $arr[] = $v;
+            $arr   = array_merge(getParents($cate, $v['pid']), $arr);
+        }
+    }
+    return $arr;
+}
+/**
+ * 传递一个父级ID返回所有子级分类
+ * @param array     $cate   传入数组
+ * @param string    $pid    传入id
+ * @return array    $arr    返回数组
+ */
+function getChiIds($cate, $pid, $str = 0)
+{
+    $arr           = array();
+    static $strarr = array();
+    foreach ($cate as $v) {
+        if ($v['pid'] == $pid) {
+            $arr[]    = $v;
+            $strarr[] = $v['id'];
+            $arr      = array_merge($arr, getChiIds($cate, $v['id']));
+        }
+    }
+    return $str == 1 ? $strarr : $arr;
+}
+/**
+ * 传递一个子级返回父级id 例如:首页>>服装>>女装>>裙子
+ * @param array     $cate   传入数组
+ * @param string    $pid    传入id
+ * @return array    $arr    返回数组
+ */
+function getCateByPid($cate, $pid = 0)
+{
+    $arr = array();
+    foreach ($cate as $v) {
+        if ($v['pid'] == $pid) {
+            // $arr[] = array('id'=>$v['id'],'name'=>$v['name']);
+            $arr[] = $v;
+        }
+    }
+    return $arr;
+}

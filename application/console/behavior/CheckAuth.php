@@ -38,6 +38,9 @@ class CheckAuth
 
     private function check()
     {
+        if (strtolower(Request::controller()) == 'start') {
+            return true;
+        }
         // 判断 not_auth 是否存在
         if (!Cache::has('not_auth')) {
             App::model('AuthRule', 'logic')->updateCache();

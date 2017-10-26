@@ -19,6 +19,8 @@
 namespace app\console\logic;
 
 use think\facade\Cache;
+use think\facade\Config;
+use think\facade\Session;
 use think\Model;
 
 class AuthRule extends Model
@@ -75,5 +77,134 @@ class AuthRule extends Model
         }
         Cache::set('not_auth', $notAuth); // 缓存不需要进行权限验证
         Cache::set('instantiation_controller', $instantiationController); // 缓存需要实列化的控制器
+    }
+
+    /**
+     * [admin_menu 生成后台菜单并缓存]
+     * @return [type] [description]
+     */
+    public function consoleMenu()
+    {
+        $cache = cache('authrule');
+        // dump($cache);die;
+        // 判断是不是超级管理员
+        if (in_array(Session::get('manager_id'), Config::get('auth_superadmin'))) {
+            $data = $cache;
+        } else {
+            // 根据用户id来选择id所对应的用户拥有的显示数据
+            // 满足条件
+            // 1 权限管理所拥有的
+            // 2 不需要进行权限验证的
+            $authModel = cache('authModel'); // 从缓存取得不需要进行权限验证的数据
+            //dump($authModel);die;
+            $data = array();
+            foreach ($cache as $value) {
+                if (authCheck($value['name'], UID) || in_array(strtolower($value['name']), $authModel['not_auth'])) {
+                    $data[] = $value;
+                }
+            }
+        }
+
+        $navdata = array();
+        foreach ($data as $value) {
+            if ($value['status']) {
+                // 激活当前处理
+                $value['active'] = 0;
+                $controller      = toCamel(request()->controller());
+                $action          = toCamel(request()->action());
+
+                // 取得当前控制器id与方法id
+                if (strtolower($value['name']) == strtolower($controller . '/' . $action)) {
+                    $currentData = [
+                        'action_id'     => $value['id'],
+                        'controller_id' => $value['pid'],
+                    ];
+                }
+
+                switch ($value['name']) {
+                    case 'index/index':
+                        $time = date('YmdHis') . getrandom(128);
+                        $url  = url('console/index/index?time=' . $time);
+                        # code...
+                        break;
+                    case 'manager/log': // 管理员管理
+                        // $name = url($name, array('role' => 1));
+                        $url = url('actionLog/list', array('role' => 1));
+                        break;
+                    case 'UserComment/index': // 评论管理
+                        $url = url($name, array('verifystate' => 1));
+                        break;
+                    case '':
+                        $url = '';
+                        break;
+                    default:
+                        $url = url($value['name']);
+                        if ($value['url'] != null) {
+                            $url = url($value['url']);
+                        }
+                }
+                $value['url'] = $url;
+                $navdata[]    = $value;
+            }
+        }
+
+        // 处理当前高亮标记
+        if (isset($currentData['action_id'])) {
+            // 子级返回父级数组
+            $bread = getParents($navdata, $currentData['action_id']);
+
+            // 只取id组成数组
+            $activeidarr = array();
+            foreach ($bread as $value) {
+                $activeidarr[] = $value['id'];
+            }
+            // 高亮标识
+            $activedata = array();
+            foreach ($navdata as $value) {
+                if (in_array($value['id'], $activeidarr)) {
+                    $value['active'] = 1;
+                }
+                $activedata[] = $value;
+            }
+            // 子菜单
+            $second = null;
+            if (count($activeidarr) > 2) {
+                foreach ($activedata as $value) {
+                    if ($currentData['controller_id'] == $value['id']) {
+                        $producttitle = $value['title'];
+                        break;
+                    }
+                }
+                $second['title'] = $producttitle;
+                $second['data']  = getCateByPid($activedata, $currentData['controller_id']);
+            } else {
+                foreach ($activedata as $value) {
+                    if ($currentData['action_id'] == $value['id']) {
+                        $producttitle = $value['title'];
+                        break;
+                    }
+                }
+                $second['title'] = $producttitle;
+                $second['data']  = getChiIds($navdata, $currentData['action_id']);
+            }
+            $treeArray['second']    = $second; // 二级菜单数据
+            $treeArray['bread']     = $bread; // 面包萱
+            $treeArray['showtitle'] = end($bread)['title']; // 当前标题
+        } else {
+            $this->getError('规则表里不存在此名称，请先进行规则添加');
+            return false;
+        }
+
+        // 去掉不需要显示的
+        $showData = array();
+        foreach ($activedata as $key => $value) {
+            if ($value['isnavshow'] == 1) {
+                $showData[] = $value;
+            }
+        }
+        // dump($showData);
+        $treeArray['menu'] = getCateTreeArr($showData, 0); // 生成树形结构$showData
+
+        return $treeArray;
     }
 }

@@ -30,4 +30,6 @@ return [
     'taglib_begin' => '{',
     // 标签库标签结束标记
     'taglib_end'   => '}',
+    //全局的视图根目录
+    // 'view_base'    => Env::get('root_path') . './template/',
 ];
