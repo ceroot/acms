@@ -18,13 +18,14 @@
  */
 namespace app\console\logic;
 
+use app\common\model\Extend;
 use think\facade\Cache;
 use think\facade\Config;
 use think\facade\Session;
-use think\Model;
 
-class AuthRule extends Model
+class AuthRule extends Extend
 {
+
     /**
      * { updateCache 更新缓存数据}
      * @Author   SpringYang
@@ -105,7 +106,7 @@ class AuthRule extends Model
             }
         }
 
-        $navdata = array();
+        $navdata = [];
         foreach ($data as $value) {
             if ($value['status']) {
                 // 激活当前处理
@@ -148,52 +149,53 @@ class AuthRule extends Model
             }
         }
 
-        // 处理当前高亮标记
-        if (isset($currentData['action_id'])) {
-            // 子级返回父级数组
-            $bread = getParents($navdata, $currentData['action_id']);
-
-            // 只取id组成数组
-            $activeidarr = array();
-            foreach ($bread as $value) {
-                $activeidarr[] = $value['id'];
-            }
-            // 高亮标识
-            $activedata = array();
-            foreach ($navdata as $value) {
-                if (in_array($value['id'], $activeidarr)) {
-                    $value['active'] = 1;
-                }
-                $activedata[] = $value;
-            }
-            // 子菜单
-            $second = null;
-            if (count($activeidarr) > 2) {
-                foreach ($activedata as $value) {
-                    if ($currentData['controller_id'] == $value['id']) {
-                        $producttitle = $value['title'];
-                        break;
-                    }
-                }
-                $second['title'] = $producttitle;
-                $second['data']  = getCateByPid($activedata, $currentData['controller_id']);
-            } else {
-                foreach ($activedata as $value) {
-                    if ($currentData['action_id'] == $value['id']) {
-                        $producttitle = $value['title'];
-                        break;
-                    }
-                }
-                $second['title'] = $producttitle;
-                $second['data']  = getChiIds($navdata, $currentData['action_id']);
-            }
-            $treeArray['second']    = $second; // 二级菜单数据
-            $treeArray['bread']     = $bread; // 面包萱
-            $treeArray['showtitle'] = end($bread)['title']; // 当前标题
-        } else {
-            $this->getError('规则表里不存在此名称，请先进行规则添加');
+        // 判断处理
+        if (!isset($currentData)) {
+            $this->error = '规则表里不存在此名称，请先进行规则添加';
             return false;
         }
+
+        // 处理当前高亮标记
+        // 子级返回父级数组
+        $bread = getParents($navdata, $currentData['action_id']);
+
+        // 只取id组成数组
+        $activeidarr = array();
+        foreach ($bread as $value) {
+            $activeidarr[] = $value['id'];
+        }
+        // 高亮标识
+        $activedata = array();
+        foreach ($navdata as $value) {
+            if (in_array($value['id'], $activeidarr)) {
+                $value['active'] = 1;
+            }
+            $activedata[] = $value;
+        }
+        // 子菜单
+        $second = null;
+        if (count($activeidarr) > 2) {
+            foreach ($activedata as $value) {
+                if ($currentData['controller_id'] == $value['id']) {
+                    $producttitle = $value['title'];
+                    break;
+                }
+            }
+            $second['title'] = $producttitle;
+            $second['data']  = getCateByPid($activedata, $currentData['controller_id']);
+        } else {
+            foreach ($activedata as $value) {
+                if ($currentData['action_id'] == $value['id']) {
+                    $producttitle = $value['title'];
+                    break;
+                }
+            }
+            $second['title'] = $producttitle;
+            $second['data']  = getChiIds($navdata, $currentData['action_id']);
+        }
+        $treeArray['second']    = $second; // 二级菜单数据
+        $treeArray['bread']     = $bread; // 面包萱
+        $treeArray['showtitle'] = end($bread)['title']; // 当前标题
 
         // 去掉不需要显示的
         $showData = array();

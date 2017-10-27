@@ -2,10 +2,15 @@
 namespace app\console\controller;
 
 use app\console\controller\Base;
+use think\Db;
 use think\facade\App;
 
 class Index extends Base
 {
+    public function initialize()
+    {
+        parent::initialize();
+    }
 
     /**
      * @Author    Hybrid
@@ -17,13 +22,87 @@ class Index extends Base
      */
     public function index()
     {
-        // $this->app->view->assign('dd', 'dd');
-        return $this->setView();
+        return $this->menusView();
 
     }
 
     public function hello()
     {
-        dump('hello');
+        $value = '<a href="#">assign</a>';
+        $this->assign('name', $value);
+
+        return $this->menusView();
+    }
+
+    public function copyright()
+    {
+        $request = request();
+        //$common       = Common::getSingleton();
+        $mysqlVersion = Db::query('select version() as version');
+        $serverInfo   = [
+            'ThinkPHP版本'           => 'ThinkPHP ' . App::version(),
+            'CMS信息'                => '作者 : <a class="text-primary" target="new" href="https://www.benweng.com">笨翁</a> , GIT : <a class="text-primary" target="new" href="https://github.com/ceroot/ccms">CCMS</a>。',
+            '操作系统'                 => PHP_OS,
+            '主机名信息'                => $request->server('SERVER_NAME') . ' (' . $request->server('SERVER_ADDR') . ':' . $request->server('SERVER_PORT') . ')',
+            '运行环境'                 => $request->server('SERVER_SOFTWARE'),
+            'PHP版本'                => PHP_VERSION,
+            'PHP运行方式'              => php_sapi_name(),
+            //'程序目录'                 => WEB_PATH,
+            'MYSQL版本'              => 'MYSQL ' . $mysqlVersion[0]['version'],
+            '上传限制'                 => ini_get('upload_max_filesize'),
+            'POST限制'               => ini_get('post_max_size'),
+            '最大内存'                 => ini_get('memory_limit'),
+            '执行时间限制'               => ini_get('max_execution_time') . "秒",
+            '内存使用'                 => $this->formatBytes(@memory_get_usage()),
+            '磁盘使用'                 => $this->formatBytes(@disk_free_space(".")) . '/' . $this->formatBytes(@disk_total_space(".")),
+            'display_errors'       => ini_get("display_errors") == "1" ? '√' : '×',
+            'register_globals'     => get_cfg_var("register_globals") == "1" ? '√' : '×',
+            'magic_quotes_gpc'     => (1 === get_magic_quotes_gpc()) ? '√' : '×',
+            'magic_quotes_runtime' => (1 === get_magic_quotes_runtime()) ? '√' : '×',
+        ];
+
+        $extensionsList = get_loaded_extensions();
+        // dump(request()->server('HTTP_USER_AGENT'));die;
+        $this->assign('info', $serverInfo);
+        $this->assign('extensionsList', implode(' , ', $extensionsList));
+        return $this->menusView();
+    }
+
+    /**
+     * [get_mysql_version 数据库版本]
+     * @return [type] [description]
+     */
+    private function get_mysql_version()
+    {
+        // $user      = db();
+        // $pdo       = new PDO("mysql:host=127.0.0.1;dbname=think5", "root", "root");
+        $con       = mysql_connect('127.0.0.1', 'root', 'root');
+        $mysqlinfo = mysql_get_server_info($con);
+        // $res = mysql_query("select VERSION()");
+        // $row = mysql_fetch_row($res);
+        return $mysqlinfo;
+    }
+
+    /**
+     * 文件大小格式化
+     *
+     * @param number $size
+     * @param string $delimiter
+     * @return string
+     */
+    private function formatBytes($size, $delimiter = '')
+    {
+        $units = [
+            'B',
+            'KB',
+            'MB',
+            'GB',
+            'TB',
+            'PB',
+        ];
+        for ($i = 0; $size >= 1024 && $i < 5; $i++) {
+            $size /= 1024;
+        }
+        return round($size, 2) . $delimiter . $units[$i];
     }
 }

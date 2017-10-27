@@ -61,6 +61,10 @@ class ActionLog extends Model
 
         // 查询行为,判断是否执行
         $action_info = db('action')->getByName($action);
+
+        if (!$action_info) {
+            return false;
+        }
         //return $action;
         if ($action_info['status'] != 1) {
             return '该行为被禁用或删除';

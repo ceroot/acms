@@ -18,6 +18,7 @@
  */
 namespace app\console\behavior;
 
+use think\Db;
 use think\facade\App;
 use think\facade\Cache;
 use think\facade\Config;
@@ -29,8 +30,10 @@ class ActionLog
 
     public function run($param)
     {
-        $this->initialization();
-        $this->actionLog();
+        if ($this->logSwitch()) {
+            $this->initialization();
+            $this->actionLog();
+        }
     }
 
     /**
@@ -75,14 +78,19 @@ class ActionLog
         $pk         = $model->getPk(); // 取得主键字段名
 
         // 有 id 键是更新，没有是新增
-        // if (input('?param.' . $pk)) {
         if (Request::has($pk)) {
             $id = deauthcode(Request::param($pk)); // id解密
             if ($action == 'update') {
                 $action = 'edit';
             }
         } else {
-            $id = db($controller)->getLastInsID();
+            try {
+                // $id = Db::name($controller)->insertGetId();
+                $id = Db::name($controller)->getLastInsID();
+            } catch (\Exception $e) {
+
+            }
+
             if ($action == 'update') {
                 $action = 'add';
             }
@@ -107,7 +115,7 @@ class ActionLog
         // get 的特殊情况
         if (Request::isGet()) {
             $getRunLog        = ['actionlog_del']; // 特殊情况列表
-            $getRunLog        = Config::get('actionlog_list');
+            $getRunLog        = Config::get('actionlog_list') ?: [];
             $controllerAction = strtolower($controller . '_' . $action); // 组合控制器和方法
 
             if (in_array($controllerAction, $getRunLog)) {
@@ -115,6 +123,20 @@ class ActionLog
             }
         }
 
+    }
+
+    /**
+     * [ logSwitch 判断是否要执行行为记录 ]
+     * @Author   SpringYang
+     * @Email    ceroot@163.com
+     * @DateTime 2017-10-27T13:08:30+0800
+     * @return   [type]                   [description]
+     */
+    private function logSwitch()
+    {
+        $action = strtolower(Request::controller() . '_' . Request::action());
+        $data   = Db::name('Action')->getByName($action);
+        return $data ? true : false;
     }
 
     /**
@@ -126,7 +148,7 @@ class ActionLog
      * @param    [type]                   $action    [description]
      * @return   [type]                              [description]
      */
-    public function actionLogRun($record_id = null, $action = null)
+    private function actionLogRun($record_id = null, $action = null)
     {
         if (model('ActionLog')->actionLogRun($record_id, $action)) {
             Log::record('[ 行为日志 ]：行为记录执行成功');
