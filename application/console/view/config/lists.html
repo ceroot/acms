@@ -1,0 +1,113 @@
+{extend name="mould:base" /}
+{block name="title"}{/block}
+{block name="css"}
+<style type="text/css">
+	  .layui-tab-title li{ padding: 0 }
+	  .edit-content{}
+	  .edit-content .fixed-bottom{ position: static;  }
+</style>
+{/block}
+{block name="content"}
+
+<!-- <div class="demoTable"> -->
+<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+    <ul class="layui-tab-title">
+        <li class="{if condition="!input('?param.group')"}layui-this{/if}"><a href="{:url('list')}">全部</a></li>
+        {volist name="Think.config.config_group_list" id="group"}
+      	    <li class="{if condition="input('?param.group')"}{eq name=":input('param.group')" value="$key"}layui-this{/eq}{/if}"><a href="{:url('list?group='.$key)}">{$group}</a></li>
+        {/volist}
+    </ul>
+    <div class="layui-tab-content"></div>
+</div>
+<div class="layui-btn-group">
+    <a href="{:url('add')}" class="layui-btn" data-event="add">新增</a>
+    <a class="layui-btn layui-btn-normal">启用</a>
+    <a class="layui-btn layui-btn-warm">禁用</a>
+    <a class="layui-btn layui-btn-danger">删除</a>
+    <a href="{:url('update')}" class="layui-btn" data-event="edit">编辑</a>
+</div>
+<div class="layui-form">
+  <table class="layui-table" lay-size="sm">
+    <colgroup>
+      <col width="60">
+      <col width="70">
+      <col width="80">
+      <col width="200">
+      <col width="200">
+      {if condition="!input('?param.group')"}
+      	<col width="80">
+      {/if}
+      <col width="80">
+      <col width="80">
+      <col>
+    </colgroup>
+    <thead>
+      <tr>
+        <th lay-data="{checkbox: true, fixed: true}"></th>
+        <th lay-data="{field:'id', width:100}">ID</th>
+        <th lay-data="{field:'sort', width:100}">排序</th>
+        <th lay-data="{field:'name', width:100}">名称</th>
+        <th lay-data="{field:'title', width:100}">标题</th>
+        {if condition="!input('?param.group')"}
+        	<th lay-data="{field:'group', width:100}">分组</th>
+        {/if}
+        <th lay-data="{field:'type', width:100}">类型</th>
+        <th lay-data="{field:'status', width:100}">状态</th>
+        <th lay-data="{title:'操作', width:160, align:'center', toolbar: '#toolbar'}">操作</th>
+      </tr> 
+    </thead>
+    <tbody>
+    	{volist name="list" id="list"}
+      		<tr>
+      			<td></td>
+      		  	<td>{$list.id}</td>
+      		  	<td>{$list.sort}</td>
+      		  	<td>{$list.name}</td>
+      		  	<td>{$list.title}</td>
+      		  	{if condition="!input('?param.group')"}
+      		  		<td>{$list.group}</td>
+      		  	{/if}
+      		  	<td>{$list.type}</td>
+      		  	<td><a href="{:url('updatestatus')}?id={$list.id|authcode}" class="layui-table-link layui-btn layui-btn-primary layui-btn-mini" target="_blank" onclick="return false" data-event="updatestatus" title="状态操作">{$list.status}</a></td>
+      		  	<td>{:widget('Widgets/operationbar',['v'=>1,'e'=>1,'d'=>1,'id'=>authcode($list.id)])}</td>
+      		</tr>
+      	{/volist}
+    </tbody>
+  </table>
+  {:widget('Widgets/page',['page'=>$page])}
+</div>
+<table class="layui-hide" id="table_list11" lay-filter="#table_list" data-url="{:url('list?group='.input('param.group'))}">
+  <thead>
+    <tr>
+    	<th lay-data="{checkbox: true, fixed: true}"></th>
+        <th lay-data="{field:'id',title:'ID', width:70, sort: true}">ID</th>
+        <th lay-data="{field:'sort',title:'排序', width:80, sort: true}">排序</th>
+        <th lay-data="{field:'name',title:'名称', width:200, sort: true}">名称</th>
+        <th lay-data="{field:'title',title:'标题', width:200}">标题</th>
+        <th lay-data="{field:'group',title:'分组', width:80, sort: true}">分组</th>
+        <th lay-data="{field:'type',title:'类型', width:80, sort: true}">类型</th>
+        <th lay-data="{field:'status',title:'状态', width:120, sort: true, toolbar: '#updatestatus'}"}">状态</th>
+        <th lay-data="{title:'操作', width:160, align:'center', toolbar: '#toolbar'}">操作</th>
+    </tr>
+  </thead>
+</table>
+{:widget('Widgets/updatestatus')}
+{:widget('Widgets/tabletoolbar')}
+
+
+
+{/block}
+{block name="script"}
+<script type="text/javascript">
+layui.use(['layer'], function(){
+    var layer = layui.layer;
+
+
+
+
+
+
+
+});
+</script>
+{/block}

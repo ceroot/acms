@@ -1,0 +1,20 @@
+{extend name="mould:base" /}
+{block name="title"}{/block}
+{block name="content"}
+<table class="layui-hide" id="table_list" lay-filter="#table_list" data-url="{:url('lists')}">
+  <thead>
+    <tr>
+      <th lay-data="{checkbox: true, fixed: true}"></th>
+      <th lay-data="{field:'id',title:'ID', width:70, sort: true}">ID</th>
+      <th lay-data="{field:'name',title:'行为唯一标识', width:200}">行为唯一标识</th>
+      <th lay-data="{field:'title',title:'行为说明', width:80, sort: true}">行为说明</th>
+      <th lay-data="{field:'remark',title:'行为描述', width:80}">行为描述</th>
+      <th lay-data="{field:'log',title:'行为规则', width:300}">行为规则</th>
+      <th lay-data="{field:'type',title:'类型', width:80}">类型</th>
+      <th lay-data="{field:'status',title:'状态', width:120, sort: true, toolbar: '#updatestatus'}"}">状态</th>
+      <th lay-data="{title:'操作', width:160, align:'center', toolbar: '#toolbar'}">操作</th>
+    </tr>
+  </thead>
+</table>
+
+{/block}

@@ -451,7 +451,7 @@ function _init(){
                     tmp = eval('(' + tmp + ')');
                     cols.push(tmp);
                 });
-
+                console.log(cols);
                 table.init('demo', {
                     height: 315 //设置高度
                     //支持所有基础参数
@@ -462,7 +462,13 @@ function _init(){
                     ,url: url
                     //,method: 'post' //如果无需自定义HTTP类型，可不加该参数
                     //,request: {} //如果无需自定义请求参数，可不加该参数
-                    //,response: {} //如果无需自定义数据响应名称，可不加该参数
+                    ,response: {
+                        // statusName: 'status' //数据状态的字段名称，默认：code
+                        statusCode: 1 //成功的状态码，默认：0
+                        // ,msgName: 'hint' //状态信息的字段名称，默认：msg
+                        ,countName: 'wait' //数据总数的字段名称，默认：count
+                        // ,dataName: 'rows' //数据列表的字段名称，默认：data
+                    } //如果无需自定义数据响应名称，可不加该参数
                     //,limits: [30,60,90,150,300]
                     //,limit: 60 //默认采用60
                     //,loading: true

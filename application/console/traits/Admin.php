@@ -2,32 +2,12 @@
 
 namespace app\console\traits;
 
-use think\Container;
-use think\Facade;
+use think\facade\Request;
 use traits\controller\Jump;
 
 trait Admin
 {
     use Jump;
-
-    //容器实例
-    protected $app;
-    //视图
-    protected $view;
-    // 菜单
-    protected $menus;
-
-    /**
-     * 初始化容器
-     */
-    public function __construct()
-    {
-
-        $this->app = Container::getInstance()->make('think\App');
-
-        //绑定其他类到容器
-        $this->bindContainer();
-    }
 
     public function bindContainer()
     {
@@ -35,41 +15,155 @@ trait Admin
     }
 
     /**
-     * 设置视图并输出
-     * @author staitc7 <static7@qq.com>
-     * @param array  $value 赋值
-     * @param string $template 模板名称
-     * @param bool   $menus 菜单
-     * @return mixed
+     * [ listsData 列表数据处理 ]
+     * @author SpringYang <ceroot@163.com>
+     * @dateTime 2017-10-27T16:26:28+0800
+     * @return   [type]                   [description]
      */
-    // protected function setView(?array $value = [], ?string $template = '',$menus=true)
-    protected function setView($value = [], $template = '', $menus = true)
+    protected function listsData()
     {
-        $value    = is_array($value) ? $value : (array) $value;
-        $template = is_string($template) ? $template : '';
+        $data      = Request::param(); // 获得 post 数据
+        $pageLimit = Request::param('limit'); // 取得每页数量
+        $search    = Request::param('search'); // 搜索标记
+        $page      = Request::param('page');
+        $like      = Request::param('like'); // 字段模糊查询标记
+        //
+        //$data      = input('param.'); // 获得 post 数据
+        //$pageLimit = input('param.limit'); // 取得每页数量
+        //$search    = input('param.search'); // 搜索标记
+        //$page      = input('param.page');
+        //$like      = input('param.like'); // 字段模糊查询标记
+        $map = [];
+        // return $data;
+        // $search = 1; // 搜索标记
+        //
 
-        //模板初始化
-        $this->view = $this->view ?: Facade::make('view')->init(
-            $this->app->config->pull('template'), //模板引擎
-            $this->app->config->get('view_replace_str') //替换参数
-        );
+        $pageLimit = isset($pageLimit) ? $pageLimit : config('paginate.list_rows'); //15; // 每页显示数目
+        // $pageLimit = 2;
+        if (!$this->model) {
+            return $this->error('请增加控制规则', url('authRule/add'));
+        }
 
-        //开启系统菜单
-        //$menus && $this->view->assign('systemMenus', $this->getMenus());
+        // 默认排序
+        $order = [
+            $this->pk => 'desc',
+        ];
 
-        $this->$menus = $this->getMenus();
-        $this->view->assign('menus', $this->$menus);
-        $this->view->assign('second', $this->$menus['second']); // 二级菜单输出
-        $this->view->assign('title', $this->$menus['showtitle']); // 标题输出
-        $this->view->assign('bread', $this->$menus['bread']); // 面包输出
+        // 查询条件
 
-        return $this->view->fetch($template ?: '', $value ?: []);
-    }
+        if ($search) {
 
-    protected function getMenus()
-    {
-        $menus = $this->app->model('AuthRule', 'logic')->consoleMenu();
-        return $menus;
+            $tableFields = $this->model->getTableFields(); // 取得表字段
+
+            // 重组 post 字段，只取键名
+            $mapFields = [];
+            foreach ($data as $key => $value) {
+                $mapFields[] = $key;
+            }
+
+            $intersect = array_intersect($mapFields, $tableFields); // 取得 post 字段与表字段差集，去掉多余的查询字段
+
+            // 重组 post 数据
+            foreach ($intersect as $value) {
+                if ($data[$value]) {
+                    $map[$value] = $data[$value];
+                }
+
+                if ($value == $like) {
+                    $map[$value] = array('like', '%' . $data[$value] . '%');
+                }
+
+            }
+
+            // 不同模型的处理
+            switch (request()->controller()) {
+                case 'Manager':
+                    break;
+                case 'Config11':
+                    # code...
+                    $map['group'] = input('param.group');
+                    if (!input('?param.group')) {
+                        unset($map['group']);
+                    }
+                    break;
+                case '2':
+                    # code...
+                    break;
+                case '3':
+                    # code...
+                    break;
+
+                default:
+                    # code...
+                    break;
+            }
+
+        }
+
+        // 各种条件
+        switch (request()->controller()) {
+            case 'Manager':
+                $order = [
+                    $this->pk => 'asc',
+                ];
+                break;
+            case 'Config111':
+                $order = [
+                    'group' => 'desc',
+                ];
+                $map['group'] = input('param.group');
+                if (!input('?param.group')) {
+                    unset($map['group']);
+                }
+                break;
+            case 'attribute':
+                $model_id        = input('param.model_id');
+                $map['model_id'] = $model_id;
+                break;
+            default:
+                # code...
+                break;
+        }
+
+        $list = '';
+        //$list = $this->model->where($map)->order($order)->paginate($pageLimit, false, ['query' => get_query()]);
+        $list  = $this->model->where($map)->order($order)->paginate($pageLimit, false, ['page' => $page, 'list_rows' => $pageLimit]); // 数据查询
+        $count = $this->model->where($map)->count(); // 总计数
+
+        // 给数组添加编辑 editid 并加密，本来是想在里自动实现的，可是模型里自动实现的在layui里无法输出，所以在这里再做一次操作
+        $newList     = [];
+        $relationTag = false; // 模型关联标记，用以是否使用关联查询处理
+        if ($list) {
+            foreach ($list as $value) {
+                switch (strtolower(request()->controller())) {
+                    case 'manager': // 管理员模型关联
+                        $relationTag  = true;
+                        $relationId   = $value['id']; // 关联 id
+                        $relationName = 'UcenterMember'; // 关联定义方法名
+                        break;
+                    default:
+                        # code...
+                        break;
+                }
+
+                // 模型关联处理
+                if ($relationTag) {
+                    $value = $this->model::get($relationId, $relationName); // 关联预载入查询
+                    unset($value[toUnderline($relationName)]); // 去掉关联数据
+                }
+
+                $value->editid = authcode($value['id']); // 增加编辑 editid 并加密
+
+                // 开发模式判断
+                if (!config('app_debug')) {
+                    unset($value['id']);
+                }
+                $newList[] = $value;
+            }
+        }
+        $redata['count'] = $count;
+        $redata['data']  = $newList;
+        return $redata;
     }
 
 }
