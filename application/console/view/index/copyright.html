@@ -1,0 +1,41 @@
+{extend name="mould:base" /}
+{block name="title"}后台首页{/block}
+{block name="css"}
+<style type="text/css">
+    .layui-table td,
+    .layui-table th {
+        font-size: 12px;
+    }
+</style>
+{/block}
+{block name="content"}
+    <h5><b>系统信息</b></h5>
+    <table class="layui-table bw-table-hover">
+        <tr>
+            {volist name="info" id="value" mod="2"}
+            <td width="20%" align="right">{$key}</td>
+            <td width="30%" class="text-success">{$value|raw}</td>
+            {eq name="mod" value="1"}
+        </tr>
+        <tr>
+            {/eq} {/volist}
+            <td align="right">扩展列表</td>
+            <td colspan="3" class="text-success">{$extensionsList}</td>
+        </tr>
+    </table>
+    <h5><b>开发团队</b></h5>
+    <table class="layui-table">
+        <tr>
+            <td width="20%" align="right">负责人</td>
+            <td>SpringYang</td>
+        </tr>
+        <tr>
+            <td width="20%" align="right">版权所有</td>
+            <td><a href="http://www.benweng.com" target="_blank" title="笨翁">http://www.benweng.com</a></td>
+        </tr>
+    </table>
+    <div>
+        <div>d</div>
+        <div></div>
+    </div>
+{/block}
