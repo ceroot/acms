@@ -1,0 +1,22 @@
+{extend name="mould:base" /}
+{block name="title"}{/block}
+{block name="content"}
+<div class="details-content">
+    <form action="{:url('renew')}" method="post" class="form-horizontal cy-ajaxForm cy-form layui-form" role="form">
+        {:widget('Widgets/form', ['type'=>'text','title'=>'行为标识','name'=>'name','value'=>$one.name,'elementid'=>'name','placeholder'=>'行为标识'])}
+        {:widget('Widgets/form', ['type'=>'text','title'=>'行为名称','name'=>'title','value'=>$one.title,'elementid'=>'title','placeholder'=>'行为名称'])}
+        {:widget('Widgets/form', ['type'=>'radio','title'=>'行为类型','name'=>'type','value'=>$one.type,'elementid'=>'type','datalist'=>[['value' => '1', 'title' => '系统'],['value' => '2', 'title' => '用户']],'aux'=>'行为类型'])}
+        {:widget('Widgets/form', ['type'=>'textarea','title'=>'行为描述','name'=>'remark','value'=>$one.remark,'elementid'=>'remark'])}
+        {:widget('Widgets/form', ['type'=>'textarea','title'=>'行为规则','name'=>'rule','value'=>$one.rule,'elementid'=>'rule'])}
+        {:widget('Widgets/form', ['type'=>'textarea','title'=>'日志规则','name'=>'log','value'=>$one.log,'elementid'=>'log','explain'=>'[user|get_realname]在[time|time_format]设置了控制台菜单显示状态'])}
+        {:widget('Widgets/form', ['type'=>'radio','title'=>'状态','name'=>'status','value'=>$one.status,'elementid'=>'status','datalist'=>[['value' => '1', 'title' => '启用'],['value' => '0', 'title' => '禁用']],'aux'=>'（启用|禁用开关）'])}
+
+        {:widget('Widgets/button', ['name'=>'id','value'=>$one.editid,'buttontext'=>'保存'])}
+
+
+    </form>
+</div>
+{/block}
+<block name="script">
+
+</block>

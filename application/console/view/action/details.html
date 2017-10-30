@@ -1,0 +1,43 @@
+{extend name="mould:base" /}
+{block name="title"}查看详情{/block}
+{block name="content"}
+	<div class="details-content">
+	    <table class="layui-table">
+	        <colgroup>
+		        <col width="90">
+		        <col width="200">
+		        <col width="80">
+		        <col>
+	        </colgroup>
+	        <tbody>
+	          	<tr>
+		          	<td align="right">id</td>
+		          	<td>{$one.id}</td>
+		          	<td align="right">标识</td>
+		            <td>{$one.name}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">标题</td>
+		            <td>{$one.title}</td>
+	          		<td align="right">状态</td>
+		          	<td>{$one.status ? '正常':'禁用'}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">描述</td>
+		            <td colspan="3">{$one.remark}</td>
+	          	</tr>
+	          	<tr>
+	          		<td align="right">日志规则</td>
+		          	<td colspan="3">{$one.log}</td>
+	          	</tr>
+	        </tbody>
+		</table>
+	</div>
+	<div class="fixed-bottom pager-wrapper">
+		<div class="bottom-area">
+			<div class="pager">
+			    <button class="btn btn-sm btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+			</div>
+	</div>
+	</div>
+{/block}

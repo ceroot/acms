@@ -18,7 +18,9 @@
  */
 namespace app\console\logic;
 
+use think\facade\Log;
 use think\facade\Request;
+use think\facade\Session;
 use think\Model;
 
 class ActionLog extends Model
@@ -51,8 +53,8 @@ class ActionLog extends Model
         }
 
         if (empty($user_id)) {
-            if (defined('UID')) {
-                $user_id = UID;
+            if (Session::has('manager_id')) {
+                $user_id = Session::get('manager_id');
             }
         }
 

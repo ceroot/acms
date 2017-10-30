@@ -107,12 +107,35 @@ class Base extends Extend
     }
 
     /**
+     * [ details 通用查看详情方法 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-10-30T17:33:00+0800
+     * @return   [type]                   [description]
+     */
+    public function details()
+    {
+        if (!$this->id) {
+            return $this->error('参数错误');
+        }
+
+        $one = $this->model::get($this->id);
+        $this->assign('one', $one);
+
+        if (request()->isAjax()) {
+
+        }
+        return $this->menusView();
+    }
+
+    /**
      * [ add 通用添加 ]
      * @author   SpringYang <ceroot@163.com>
      * @dateTime 2017-10-27T15:38:46+0800
      */
     public function add()
     {
+        $this->assign('one', null);
         return $this->menusView();
     }
 
@@ -125,8 +148,32 @@ class Base extends Extend
      */
     public function edit($id = null)
     {
-        dump('edit');
-        return $this->menusView();
+        if (!$this->id) {
+            return $this->error('参数错误');
+        } else {
+            switch (strtolower($this->app->request->controller())) {
+                case 'manager': // 管理员编辑数据处理
+                    # code...
+                    $relationName    = 'UcenterMember'; // 关联方法名称
+                    $one             = $this->model::get($this->id, $relationName); // 关联预载入查询
+                    $one             = $one->getData(); // 取得原始数据
+                    $gdata           = model('AuthGroupAccess')->where('uid', $this->id)->find(); // 查找管理员所属角色
+                    $one['group_id'] = $gdata['group_id'];
+                    unset($one[toUnderline($relationName)]); // 去掉关联数据
+                    break;
+                default:
+                    $one = $this->model::get($this->id); // 取得数据
+                    $one = $one->getData();
+                    break;
+            }
+
+            $one['editid'] = authcode($one['id']); // 加密编辑 editid
+            // dump($one);die;
+            $this->assign('one', $one);
+
+            return $this->menusView('add');
+
+        }
     }
 
     /**
@@ -137,7 +184,124 @@ class Base extends Extend
      */
     public function renew()
     {
+        if ($this->app->request->isPost()) {
+            $data = $this->app->request->param();
 
+            return $data;
+            //
+            //$has_id = array_key_exists($this->pk, $data); // 判断是否存在 ID 键
+
+            // 判断是新增还是更新，如果有键值就是更新，如果没有键值就是新增
+            // if ($has_id) {
+            // if (input('?param.' . $this->pk)) {
+            if ($this->app->request->has($this->pk)) {
+                $data[$this->pk] = $this->id;
+                if (!$this->id) {
+                    return $this->error('参数错误');
+                }
+
+                // 各种模式下对数据的处理
+                switch ($this->app->request->controller()) {
+                    case 'AuthGroup':
+                        $rulesdata = input('param.rules/a');
+                        if ($rulesdata) {
+                            $data['rules'] = implode(',', $rulesdata);
+                            session('log_text', '修改了权限');
+                        } else {
+                            session('log_text', '编辑了角色');
+                        }
+                        break;
+                    case 'Model':
+                        if (input('param.field_sort/a')) {
+                            $data['field_sort'] = json_encode($data['field_sort']);
+                        }
+                        if (input('param.attribute_list/a')) {
+                            $data['attribute_list'] = arr2str($data['attribute_list']);
+                        } else {
+                            $data['attribute_list'] = '';
+                        }
+                        break;
+                    case '':
+                        # code...
+                        break;
+                    default:
+                        # code...
+                        break;
+                }
+                // return $data;
+
+                $scene = 'edit'; // 编辑操作场景
+                // $scene = 'edit'; // 编辑操作场景
+
+                // 验证状态设置
+                $validate = $this->app->controller() . '.' . $scene;
+
+                if ($this->app->request->param('rule')) {
+                    if (input('param.rule') == 1) {
+                        $validate = false;
+                    }
+                }
+                // return $data;
+                // 数据验证并保存
+                $status = $this->model->validate($validate)->save($data, [$this->pk => $this->id]);
+                // return $status;
+
+            } else {
+                // 数据验证并保存
+                $status = $this->model->validate(true)->save($data);
+                // return $status;
+
+                $scene = 'add'; // 新增操作场景
+            }
+            // return 132;
+            // 数据验证不通过返回提示
+            if ($status === false) {
+                return $this->error($this->model->getError());
+            }
+            // return $status;
+            //die;
+            // 是否成功返回
+            if ($status) {
+
+                $pk        = $this->pk; // 取得数据库主键名称
+                $record_id = $this->model->$pk; // 数据 id 值
+
+                switch ($this->app->request->controller()) {
+                    case 'AuthRule': // 更新规则缓存
+                        // return 132;
+                        $this->model->updateCache();
+                        // 新增时是否添加日志记录标记
+                        if (!$has_id) {
+                            model('action')->add_for_rule();
+                        }
+                        break;
+                    case 'Manager': // 管理员操作时的操作
+                        // return $data;
+                        model('AuthGroupAccess')->saveData($record_id);
+                        break;
+                    case 'Config': // 清空配置数据缓存
+                        cache('db_config_data', null);
+                        break;
+                    case 'Model': // 清除模型缓存数据
+                        cache('document_model_list', null);
+                        break;
+                    case 'Article': // 内容管理时的数据处理
+
+                        break;
+                    default:
+                        # code...
+                        break;
+                }
+
+                // return $this->success($has_id ? '修改成功' : '新增成功', cookie('__forward__'));
+                return $this->success(input('?param.' . $this->pk) ? '修改成功' : '新增成功', cookie('__forward__'));
+            } else {
+                return $this->error('操作失败');
+                // return $this->model->getError();
+            }
+        } else {
+            return $this->error('数据有误');
+        }
     }
 
     /**

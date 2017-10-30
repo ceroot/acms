@@ -22,6 +22,7 @@ use think\Db;
 use think\facade\App;
 use think\facade\Cache;
 use think\facade\Config;
+use think\facade\Log;
 use think\facade\Request;
 use think\facade\Session;
 
