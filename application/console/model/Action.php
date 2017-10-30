@@ -1,9 +1,9 @@
 <?php
 namespace app\console\model;
 
-use think\Model;
+use app\common\model\Extend;
 
-class Action extends Model
+class Action extends Extend
 {
 
 }

@@ -654,3 +654,11 @@ label.layui-form-label{ width: 110px; }
 .layui-tab-brief > .layui-tab-title .layui-this a{color:#009688}
 
 .layui-form-switch{ box-sizing: content-box; }
+
+/* 小表格里的开关 20171018*/
+.layui-table-view .layui-table[lay-size="sm"] .layui-table-cell{}
+.layui-table-view .layui-table[lay-size="sm"] .layui-table-cell .layui-form-switch{ width: 38px; height: 16px; line-height: 16px; margin-top: 0; border-radius: 16px; }
+.layui-table-view .layui-table[lay-size="sm"] .layui-table-cell .layui-form-switch i{ top: 2px; height: 12px; width: 12px; }
+
+/* 小表格里的小按钮 20171018*/
+.layui-table-view .layui-table[lay-size="sm"] .layui-table-cell .layui-btn-mini{ height: 18px; line-height: 18px; }

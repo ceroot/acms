@@ -1,0 +1,11 @@
+<div>
+    {if condition="$type.v"}
+      	<a href="{:url('details').'?id='.$type.id}" class="layui-btn layui-btn-primary layui-btn-mini" data-event="detail">查看</a>
+    {/if}
+    {if condition="$type.e"}
+      	<a href="{:url('edit').'?id='.$type.id}" class="layui-btn layui-btn-mini" data-event="edit">编辑</a>
+    {/if}
+    {if condition="$type.d"}
+      	<a href="{:url('del').'?id='.$type.id}" class="layui-btn layui-btn-danger layui-btn-mini" data-event="del">删除</a>
+    {/if}
+</div>

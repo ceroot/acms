@@ -1,0 +1,8 @@
+    <div class="fixed-bottom">
+        <div class="bottom-area">
+            {present name="value"}
+                <input type="hidden" name="{$field}" value="{$value|default=''}">
+            {/present}
+            <button class="layui-btn layui-btn-small btn btn-post" lay-submit="" lay-filter="bw-submit"><i class="fa fa-check"></i>&nbsp;&nbsp;<span>{$buttontext}</span></button>
+        </div>
+    </div>

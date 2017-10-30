@@ -1,0 +1,26 @@
+
+    <div class="layui-form-item">
+        {present name="wdata.title"}
+            <label class="layui-form-label">{$wdata.title}</label>
+        {/present}
+        <div class="layui-input-inline">
+            <select name="{$wdata.name}" lay-search="">
+                <option value="">直接选择或搜索选择</option>
+                {volist name='wdata.datalist' id='selectlist'}
+                    <option value="{$selectlist.id}" 
+                        {present name="wdata.value"}
+                            {neq name="wdata.value" value="0"}
+                                {eq name="$selectlist.id" value="$wdata.value" } selected="selected"{/eq}
+                            {/neq}
+                        {else /}
+                            {eq name="key" value="$Request.param.id"} selected="selected"{/eq}
+                        {/present}
+                    >{$selectlist.title}
+                    </option>
+                    {/volist}
+            </select>
+        </div>
+        {if condition="$wdata.aux"}
+            <div class="layui-form-mid layui-word-aux">{$wdata.aux}</div>
+        {/if}
+    </div>

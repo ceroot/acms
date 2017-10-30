@@ -1,0 +1,22 @@
+    <div class="layui-form-item">
+        {present name="wdata.title"}
+            <label class="layui-form-label">{$wdata.title}</label>
+        {/present}
+        <div class="{eq name="wdata.inline" value="1"}layui-input-inline{else /}layui-input-block{/eq}">
+            {volist name="wdata.datalist" id="vo"}
+                <input type="radio" name="{$wdata.name}" value="{$vo.value}" title="{$vo.title}"
+                    {if condition="$wdata.value eq ''"}
+                        {eq name="key" value="0"}
+                            checked=""
+                        {/eq}
+                    {/if}
+                    {eq name="vo.value" value="$wdata.value" }
+                        checked=""
+                    {/eq}
+                />
+            {/volist}
+        </div>
+        {if condition="$wdata.aux"}
+            <div class="layui-form-mid layui-word-aux">{$wdata.aux}</div>
+        {/if}
+    </div>

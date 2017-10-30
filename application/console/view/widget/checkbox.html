@@ -1,0 +1,13 @@
+    <div class="layui-form-item" pane="">
+        {present name="wdata.title"}
+            <label class="layui-form-label">{$wdata.title}</label>
+        {/present}
+        <div class="layui-input-block">
+            {volist name="wdata.datalist" id="datalistvo"}
+                <input name="{$wdata.name}[]" lay-skin="primary" title="{$datalistvo}" checked="" value="{$key}" type="checkbox">
+            {/volist}
+        </div>
+        {if condition="$wdata.aux"}
+            <div class="layui-form-mid layui-word-aux">{$wdata.aux}</div>
+        {/if}
+    </div>

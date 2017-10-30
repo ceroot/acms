@@ -44,6 +44,16 @@ class Extend extends Model
 
     }
 
+    public function setCreateUidAttr()
+    {
+        return 1;
+    }
+
+    public function setUpdateUidAttr()
+    {
+        return 1;
+    }
+
     /**
      * [ setCreateIpAttr 设置创建 ip 为整型 ]
      * @Author   SpringYang <ceroot@163.com>

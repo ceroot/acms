@@ -1,0 +1,15 @@
+    <div class="layui-form-item">
+        {present name="wdata.title"}
+            <label class="layui-form-label">
+                {$wdata.title}
+            </label>
+        {/present}
+        <div class="{eq name="wdata.inline" value="1"}layui-input-inline{else /}layui-input-block{/eq}">
+            <input name="{$wdata.name}" class="layui-input" id="{$wdata.elementid}" type="{$wdata.type}" value="{$wdata.value}" placeholder="{$wdata.placeholder}" autocomplete="off" lay-verify="{$wdata.layverify}">
+        </div>
+        {eq name="wdata.inline" value="1"}
+            {present name="wdata.aux"}
+                <div class="layui-form-mid layui-word-aux">{$wdata.aux}</div>
+            {/present}
+        {/eq}
+    </div>

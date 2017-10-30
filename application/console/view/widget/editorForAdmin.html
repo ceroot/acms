@@ -1,0 +1,26 @@
+{present name="$data.title"}
+<div>{$data.title}</div>
+{/present}
+{switch name="$data.type"}
+	{case value="1"}
+		<script id="{$data.eleid}" name="content" type="text/plain">
+		    {$data.value|default="请在这里输入内容"}
+		</script>
+		<!-- 配置文件 -->
+		<script type="text/javascript" src="__STATIC__/ueditor/1.4.3.2/ueditor.config.js"></script>
+		<!-- 编辑器源码文件 -->
+		<script type="text/javascript" src="__STATIC__/ueditor/1.4.3.2/ueditor.all.js"></script>
+		<!-- 实例化编辑器 -->
+		<script type="text/javascript">
+		    var ue = UE.getEditor('container',{
+		    	//zIndex:898,
+			    //topOffset:48,
+			    // initialFrameHeight:'200',
+			    // toolbarTopOffset:50,
+			    maximumWords:50000
+		    });
+		</script>
+	{/case}
+	{default /}
+		<textarea>{$data.value|default="请在这里输入内容"}</textarea>
+{/switch}

@@ -1,0 +1,21 @@
+  	<div class="layui-form-item">
+  		  {present name="wdata.title"}
+              <label class="layui-form-label">{$wdata.title}</label>
+        {/present}
+	      <div class="{eq name="wdata.inline" value="1"}layui-input-inline{else /}layui-input-block{/eq}">
+	          <input type="checkbox" lay-skin="switch" lay-filter="switch" lay-text="{$wdata.switch}" 
+                {present name="wdata.value"}
+                    {eq name="wdata.value" value="1"} checked=""{/eq} 
+                {else /}
+                    {neq name="wdata.default" value="0" }
+                        checked=""
+                    {/neq}
+                {/present}
+            />
+            <input type="hidden" name="{$wdata.name}" value="{$wdata.value|default=$wdata.default}" />
+            <!-- 之所以加入一个隐藏input，是因为本身是checkbox，当没有选择的时候就无法取得value数据 -->
+	      </div>
+	      {if condition="$wdata.aux"}
+            <div class="layui-form-mid layui-word-aux">{$wdata.aux}</div>
+        {/if}
+  	</div>

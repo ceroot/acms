@@ -1,0 +1,3 @@
+<script type="text/html" id="updatestatus">
+	<input type="checkbox" {{# if(d.status=='正常'){ }} checked="" {{# } }} lay-skin="switch" lay-filter="updatestatus" lay-text="正常|禁用" lay-event="updatestatus" data-href="{:url('updatestatus')}?id={{d.editid}}"/>
+</script>

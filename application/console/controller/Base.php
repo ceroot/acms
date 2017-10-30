@@ -1,18 +1,16 @@
 <?php
 namespace app\console\controller;
 
+use app\common\controller\Extend;
 use app\console\traits\Admin;
-use think\Controller;
 
-class Base extends Controller
+class Base extends Extend
 {
     use Admin;
 
-    protected $app; //容器实例
     protected $model; // 模型
     protected $pk; // 主键键名
     protected $id; // 主键
-
     /**
      * @name   initialize          [初始化]
      * @author SpringYang <ceroot@163.com>
@@ -20,17 +18,27 @@ class Base extends Controller
      */
     public function initialize()
     {
+        parent::initialize();
 
-        //$this->app = Container::getInstance()->make('think\App');
+        $this->app->cache->has('instantiation_controller') || $this->error('出错');
 
-        // parent::initialize();
         $instantiation_controller = cache('instantiation_controller');
+
         // 判断是否需要实例化的控制器
         if (in_array(strtolower(toUnderline($this->app->request->controller())), $instantiation_controller)) {
             $this->model = $this->app->model($this->app->request->controller()); // 实例化控制器
             $this->pk    = $this->model->getPk(); // 取得主键字段名
             $this->id    = deauthcode($this->app->request->param($this->pk)); // id解密
         }
+    }
+
+    public function test()
+    {
+        $user         = $this->model->get(61);
+        $user->status = 0;
+        $status       = $user->save();
+        dump($status);
+
     }
 
     /**
@@ -44,12 +52,10 @@ class Base extends Controller
     protected function menusView($template = '', $value = [])
     {
         $menus = $this->getMenus();
-
         $this->assign('menus', $menus); // 一级菜单输出
         $this->assign('second', $menus['second']); // 二级菜单输出
         $this->assign('title', $menus['showtitle']); // 标题输出
         $this->assign('bread', $menus['bread']); // 面包输出
-
         return $this->fetch($template, $value);
     }
 
@@ -98,7 +104,6 @@ class Base extends Controller
             cookie('__forward__', $_SERVER['REQUEST_URI']);
             return $this->menusView();
         }
-
     }
 
     /**
@@ -132,6 +137,49 @@ class Base extends Controller
      */
     public function renew()
     {
+
+    }
+
+    /**
+     * [ updatestatus 通用更新 status 字段状态 ]
+     * @author SpringYang <ceroot@163.com>
+     * @dateTime 2017-10-30T16:45:39+0800
+     * @return   [type]                   [description]
+     */
+    public function updatestatus()
+    {
+
+        // 参数判断
+        if (!$this->id) {
+            return $this->error('参数错误');
+        }
+
+        $controller = $this->app->request->controller(); // 取得控制器名称
+
+        // 管理员时的特殊处理
+        if (strtolower($controller) == 'manager') {
+            if ($this->id == 1) {
+                return $this->error('超级管理员不能禁用');
+            }
+        }
+
+        $data         = $this->model->get($this->id);
+        $value        = $data->getData('status'); // 取得 status 原始数据
+        $data->status = $value ? 0 : 1; // status 数据
+
+        $status = $data->save();
+
+        // 各种模式下的处理
+        if ($status) {
+            if ($controller == 'AuthRule') {
+                $this->model->updateCache();
+            }
+
+            return $this->success('操作成功');
+        } else {
+            return $this->error('操作失败');
+            // return $this->model->getError();
+        }
 
     }
 }

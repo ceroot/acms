@@ -9,7 +9,6 @@ if (typeof jQuery === "undefined") {
   throw new Error("需要引入 jQuery");
 }
 
-
 $.Cy = {};
 
 /* --------------------
@@ -17,18 +16,16 @@ $.Cy = {};
  * --------------------
  * Modify these options to suit your implementation
  */
-$.Cy.options = {
-  
-};
+$.Cy.options = {};
 
 var doc      = document;
 var storage  = window.localStorage;  // html5 本地存储对象
 
 $(function(){
     'use strict';
-	_init();
+    _init();
 
-	$.Cy.layout.activate();
+    $.Cy.layout.activate();
 
     // document.onkeydown = function(){  
     //     var oEvent = window.event;
@@ -46,48 +43,44 @@ $(function(){
     // 关于服务端url没有#!的处理
     putHash();
 
-
     $("#file0").change(function(){
-		var objUrl = getObjectURL(this.files[0]) ;
-		
-		//console.log("objUrl = "+objUrl) ;
-		if (objUrl) {
-			$("#img0").attr("src", objUrl) ;
-		}
+        var objUrl = getObjectURL(this.files[0]) ;
+        
+        if (objUrl) {
+            $("#img0").attr("src", objUrl) ;
+        }
 
         $('.cover-show').show();
-		
-	});
+    });
 
     $('body').on('click', '.fileinput-remove-button', function(event) {
         event.preventDefault();
-        /* Act on the event */
         $('.cover-show').hide();
     });
-	
-	function getObjectURL(file) {
-		var url = null ;
-		if (window.createObjectURL!=undefined) { // basic
-			//$("#oldcheckpic").val("nopic");
-			url = window.createObjectURL(file) ;
-		} else if (window.URL!=undefined) { // mozilla(firefox)
-			//$("#oldcheckpic").val("nopic");
-			url = window.URL.createObjectURL(file) ;
-		} else if (window.webkitURL!=undefined) { // webkit or chrome
-			//$("#oldcheckpic").val("nopic");
-			url = window.webkitURL.createObjectURL(file) ;
-		}
-		return url ;
-	}
+    
+    function getObjectURL(file) {
+        var url = null ;
+        if (window.createObjectURL!=undefined) { // basic
+            //$("#oldcheckpic").val("nopic");
+            url = window.createObjectURL(file) ;
+        } else if (window.URL!=undefined) { // mozilla(firefox)
+            //$("#oldcheckpic").val("nopic");
+            url = window.URL.createObjectURL(file) ;
+        } else if (window.webkitURL!=undefined) { // webkit or chrome
+            //$("#oldcheckpic").val("nopic");
+            url = window.webkitURL.createObjectURL(file) ;
+        }
+        return url ;
+    }
 });
 
 function _init(){
-	'use strict';
+    'use strict';
 
-	$.Cy.layout  = {
+    $.Cy.layout  = {
         activate:function(){
-        	var _this  = this;
-        	_this.main();
+            var _this  = this;
+            _this.main();
             _this.slimScroll();
             _this.productSidebar();
 
@@ -96,27 +89,13 @@ function _init(){
             $.Cy.layui.init();
             $.Cy.ajax.init();
 
-        	$(window,'.bw-wrapper').resize(function(event) {
-        		/* Act on the event */
-        		_this.slimScroll();
-        		// console.log(0);
-                
-        	});
+            $(window,'.bw-wrapper').resize(function(event) {
+                _this.slimScroll();
+            });
             
         },
         main:function(){
-            // iCheck
-            var checkbox = $('body').find('input[type="checkbox"]');
-            // if(checkbox.length>0){
-            //     Wind.use('iCheck',function(){
-            //         checkbox.iCheck({
-            //             checkboxClass: 'icheckbox_square-blue',
-            //             radioClass: 'iradio_square-blue',
-            //             increaseArea: '20%' // optional
-            //         });
-            //     });
-            // }
-        	
+            
         },
 
         // 滚动条
@@ -227,9 +206,9 @@ function _init(){
         },
 
         fix:function(){
-        	console.log(0);
+            console.log(0);
         }
-	};
+    };
 
     $.Cy.sidebar  = {
         init:function(){
@@ -260,16 +239,7 @@ function _init(){
                         }
                     }
                 });
-                // $.post('/console/index/setcollapsed',{collapsed:1});
 
-                // $.get('/console/index/getcollapsed',{},function(data){
-                //     if(data!='1'){
-                //         $.post('/console/index/setcollapsed',{collapsed:1});
-                //         if($('body').hasClass('sidebar-expanded')){
-                //             $('body').removeClass('sidebar-expanded').addClass('sidebar-collapsed');
-                //         }
-                //     }
-                // },'json');
             };
 
             $('body').on('mouseenter', '.sidebar-tooltip', function(event) {
@@ -433,10 +403,11 @@ function _init(){
             });
         },
         table:function(){  // 统一表格加载
-            layui.use(['table','laypage', 'layer'], function(){
+            layui.use(['table','laypage', 'layer', 'form'], function(){
                 var table = layui.table
                     ,laypage = layui.laypage
-                    ,layer = layui.layer;
+                    ,layer = layui.layer
+                    ,form = layui.form;
                 //方法级渲染
                 // var cols = new Array();
                 // var cols = $('#cols').text();
@@ -451,7 +422,7 @@ function _init(){
                     tmp = eval('(' + tmp + ')');
                     cols.push(tmp);
                 });
-                console.log(cols);
+
                 table.init('demo', {
                     height: 315 //设置高度
                     //支持所有基础参数
@@ -462,13 +433,7 @@ function _init(){
                     ,url: url
                     //,method: 'post' //如果无需自定义HTTP类型，可不加该参数
                     //,request: {} //如果无需自定义请求参数，可不加该参数
-                    ,response: {
-                        // statusName: 'status' //数据状态的字段名称，默认：code
-                        statusCode: 1 //成功的状态码，默认：0
-                        // ,msgName: 'hint' //状态信息的字段名称，默认：msg
-                        ,countName: 'wait' //数据总数的字段名称，默认：count
-                        // ,dataName: 'rows' //数据列表的字段名称，默认：data
-                    } //如果无需自定义数据响应名称，可不加该参数
+                    //,response: {} //如果无需自定义数据响应名称，可不加该参数
                     //,limits: [30,60,90,150,300]
                     //,limit: 60 //默认采用60
                     //,loading: true
@@ -484,6 +449,10 @@ function _init(){
                         //field: 'id' //排序字段，对应 cols 设定的各字段名
                         //,type: 'desc' //排序方式  asc: 升序、desc: 降序、null: 默认排序
                     //}
+                    ,response: {
+                        statusCode:1 // 成功代码，layui 默认为 0
+                        ,countName:'wait' // 使用等待时间作为总条数
+                    }
                     ,done: function(res, curr, count){
                         //如果是异步请求数据方式，res即为你接口返回的信息。
                         //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、curr为当前页码、count为数据总长度
@@ -499,6 +468,22 @@ function _init(){
                 });
 
                 var active = {
+                    selectAll: function(){ // 全选
+                        
+                        var checkStatus = table.checkStatus(elem_id);
+                        console.log(table);
+                        // var data = checkStatus.data;
+                        // var data = $('input[lay-filter="layTableAllChoose"]');
+                        // 
+                    },
+                    selectSancel: function(){ // 取消选择
+                        var _this = $(this);
+
+                        $('input[name="layTableCheckbox"]').prop('checked','');
+                        $('input[name="layTableCheckbox"]').siblings('.layui-form-checkbox').removeClass('layui-form-checked');
+                        //$('body').find('th[data-type="checkbox"]').find('.layui-form-checkbox').click();
+                        _this.attr('data-type','selectAll').text('全选');
+                    },
                     getCheckData: function(){
                         var checkStatus = table.checkStatus(elem_id)
                             ,data = checkStatus.data;
@@ -520,7 +505,7 @@ function _init(){
                     ,search: function(){  // 查询
                         var search_area = $('.search-area')
                             ,where = new Object();
-                        where['search'] = 'search';
+                        where['search'] = true;
                         search_area.find('input').each(function(index, el) {
                             var _self = $(this)
                                 ,_name = _self.attr('name')
@@ -532,6 +517,8 @@ function _init(){
                               where['like'] = _name;
                             }
                         });
+
+                        console.log(where);
                       
                         var loading = layer.load();
                         table.reload(elem_id, {
@@ -554,10 +541,12 @@ function _init(){
               
                 $('.search-area .layui-btn').on('click', function(){
                     var type = $(this).data('type');
+
                     active[type] ? active[type].call(this) : '';
                 });
                 $('.demoTable .layui-btn').on('click', function(){
-                    var type = $(this).data('type');
+                    var type = $(this).attr('data-type');
+                    console.log(type);
                     active[type] ? active[type].call(this) : '';
                 });
                 
@@ -572,7 +561,73 @@ function _init(){
                         tableOperation[_event] ? tableOperation[_event].call(this) : '';
                     }
 
-                    
+                });
+
+                // 监听复选框选择
+                table.on('checkbox('+ elem_id +')', function(obj){
+                    var checkStatus = table.checkStatus(elem_id);
+                    var select_all = $('body').find('button.select-all');
+
+                    if(obj.type == 'one' || obj.type == 'all'){
+                        if(checkStatus.data.length>0){
+                            select_all.data('type','selectSancel').text('取消');
+                            //select_all.attr('data-type','selectSancel').text('取消');
+                        }else{
+                            select_all.data('type','selectAll').text('取消');
+                            //select_all.attr('data-type','selectAll').text('全选');
+                        }
+                    }
+
+                  //console.log(obj.checked); //当前是否选中状态
+                  //console.log(obj.data); //选中行的相关数据
+                  //console.log(obj.type); //如果触发的是全选，则为：all，如果触发的是单选，则为：one
+                });
+
+
+                //监听正常禁用开关
+                form.on('switch(updatestatus)', function(data){
+                    var _this = $(this);
+                    var _href = _this.data('href');
+                    var loading = layer.load();
+
+                    if(!_href){
+                        layer.msg('请设置URL参数');
+                    }
+
+                    $.post(_href, {}, function(result, textStatus, xhr) {
+                        layer.msg(result.msg);
+                        console.log(result);
+                        if(result.code==0){
+                            // _this.trigger('click');
+                            // form.render('checkbox');
+
+                            var _switch = _this.siblings('.layui-form-switch');
+                            if(data.elem.checked){
+                                _this.prop('checked',false);
+                                _switch.removeClass('layui-form-onswitch');
+                                _switch.find('em').text('禁用');
+                            }else{
+                                _this.prop('checked',true);
+                                _switch.addClass('layui-form-onswitch');
+                                _switch.find('em').text('正常');
+                            }
+                        }
+                        layer.close(loading);
+                    });
+
+                  //console.log(data.elem); //得到checkbox原始DOM对象
+                  //console.log(data.elem.checked); //开关是否开启，true或者false
+                  //console.log(data.value); //开关value值，也可以通过data.elem.value得到
+                  //console.log(data.othis); //得到美化后的DOM对象
+                }); 
+
+                form.on('checkbox(layTableAllChooseTest)', function(data){
+                    console.log(data);
+                    var child = $(data.elem).parents('.layui-table-view').find('.layui-table-body table.layui-table tbody input[type="checkbox"]');
+                    console.log(child);
+                    child.each(function(index, item){
+                        item.checked = data.elem.checked;
+                    });
                 });
             });
         }
@@ -658,209 +713,66 @@ function _init(){
         },
         form_ajax:function(){
             layui.use(['form'], function(){
-              var form = layui.form
-              ,layer = layui.layer;
-
-              
-              //监听提交
-              form.on('submit(bw-submit)', function(data){
-                console.log(data.field);
-                // layer.alert(JSON.stringify(data.field), {
-                //   title: '最终的提交信息'
-                // });
+                var form = layui.form
+                ,layer = layui.layer;
                 
-                var _self = $(this)
-                ,_btn_text;
-
-                $.ajax({
-                    url:_self.closest('form').attr('action') ? _self.closest('form').attr('action') : window.location,
-                    type: 'POST',
-                    dataType: 'json',
-                    data: data.field,
-                    beforeSend:function(){
-                        layer.load();
-                        _btn_text = _self.find('span').text();
-                        _self.find('i').hide();
-                        _self.prop('disabled', true).addClass('disabled').find('span').text(_btn_text + '中...');
-                    }
-                })
-                .done(function(result) {
-                    console.log(result);
-                    // return false;
-                    // layer.alert(JSON.stringify(result), {
-                    //   title: '返回信息'
+                //监听提交
+                form.on('submit(bw-submit)', function(data){
+                    console.log(data.field);
+                    // layer.alert(JSON.stringify(data.field), {
+                    //   title: '最终的提交信息'
                     // });
-                    if(result.code){
-                        //layer.msg(result.msg, {time: 5000, icon:6});
-                        layer.msg(result.msg,{time:500,shift:0, icon:6},function(){
-                           if(result.url){
-                                window.location.href = result.url;
-                            } 
-                        });
-                    }else{
-                        layer.msg(result.msg,{icon:6});
-                    }
-                    console.log("success");
-                })
-                .fail(function(result) {
-                    console.log("error");
-                })
-                .always(function(result) {
-                    console.log("complete");
-                    layer.closeAll('loading');
-                    _btn_text = _self.find('span').text();
-                    _self.find('i').show();
-                    _self.prop('disabled',false).removeClass('disabled').find('span').text(_btn_text.replace('中...', ''));
+                    
+                    var _self = $(this)
+                    ,_btn_text;
+    
+                    $.ajax({
+                        url:_self.closest('form').attr('action') ? _self.closest('form').attr('action') : window.location,
+                        type: 'POST',
+                        dataType: 'json',
+                        data: data.field,
+                        beforeSend:function(){
+                            layer.load();
+                            _btn_text = _self.find('span').text();
+                            _self.find('i').hide();
+                            _self.prop('disabled', true).addClass('disabled').find('span').text(_btn_text + '中...');
+                        }
+                    })
+                    .done(function(result) {
+                        console.log(result);
+                        // return false;
+                        // layer.alert(JSON.stringify(result), {
+                        //   title: '返回信息'
+                        // });
+                        if(result.code){
+                            //layer.msg(result.msg, {time: 5000, icon:6});
+                            layer.msg(result.msg,{time:500,shift:0, icon:6},function(){
+                               if(result.url){
+                                    //window.location.href = result.url;
+                                } 
+                            });
+                        }else{
+                            layer.msg(result.msg,{icon:6});
+                        }
+                        console.log("success");
+                    })
+                    .fail(function(result) {
+                        console.log("error");
+                    })
+                    .always(function(result) {
+                        console.log("complete");
+                        layer.closeAll('loading');
+                        _btn_text = _self.find('span').text();
+                        _self.find('i').show();
+                        _self.prop('disabled',false).removeClass('disabled').find('span').text(_btn_text.replace('中...', ''));
+                    });
+                    
+                    return false;
                 });
-                
-                return false;
-              });
 
             });
         },
-        form_ajax1:function(){
-            var ajaxForm = $('form.cy-ajaxForm');
-            if(ajaxForm.length){
-                var validateStatus  = ajaxForm.attr('data-validate') ? ajaxForm.attr('data-validate') : false;
-                var args = ['ajaxForm'];
-                console.log(10);
-                console.log(validateStatus);
-                if(validateStatus==true){
-                    console.log(20);
-                    args = ['validate', 'ajaxForm'];
-                }
-                console.log(21);
-                Wind.use(args, function () {
-                    var btn = ajaxForm.find('button.btn-post');
-                    // window.UEDITOR_HOME_URL = "/statics/";
-                    // var ue  = UE.getEditor('content');
-                    console.log(30);
-                    if(validateStatus==true){
-                        console.log(40);
-                        //表单验证开始
-                        var baseValidate = {
-                            //是否在获取焦点时验证
-                            onfocusout:false,
-                            //是否在敲击键盘时验证
-                            onkeyup:false,
-                            //当鼠标掉级时验证
-                            onclick: false,
-                            //验证错误
-                            showErrors: function (errorMap, errorArr) {
-                                //errorMap {'name':'错误信息'}
-                                //errorArr [{'message':'错误信息',element:({})}]
-                                try{
-                                    $(errorArr[0].element).focus();
-                                    layer.msg(errorArr[0].message);
-                                }catch(err){
-                                }
-                            },
-                            //验证规则
-                           
-                            //给未通过验证的元素加效果,闪烁等
-                            highlight: true,
-                            //验证通过，提交表单
-                            submitHandler: function (forms) {
-                                ajaxForm.ajaxSubmit({
-                                    url: ajaxForm.attr('action'), //按钮上是否自定义提交地址(多按钮情况)
-                                    dataType: 'json',
-                                    beforeSubmit: function (arr, $form, options) {
-                                        var text = btn.text();
-
-                                        // 按钮文案、状态修改
-                                        btn.text(text + '中...').prop('disabled', true).addClass('disabled');
-                                        layer.load();
-                                    },
-                                    success: function (data, statusText, xhr, $form) {
-                                        console.log(data);
-                                        var text = btn.text();
-                                        //按钮文案、状态修改
-                                        btn.prop('disabled',false).removeClass('disabled').text(text.replace('中...', '')).parent().find('span').remove();
-                                        if(data.code){
-                                            layer.msg(data.msg,{time:500,shift:0},function(){
-                                               if(data.url){
-                                                    window.location.href = data.url;
-                                                } 
-                                            });
-                                        }else{
-                                            layer.msg(data.msg);
-                                        }
-                                        layer.closeAll('loading');
-                                    }
-                                });
-                            }
-                        };
-                        var validate = $.extend({},baseValidate,userValidate);
-                        
-                        ajaxForm.validate(validate);
-                    }else{
-                        console.log(41);
-                        btn.on('click', function (e) {
-                            e.preventDefault();
-                            var form = ajaxForm;
-
-                            //批量操作 判断选项
-                            if (btn.data('subcheck')) {
-                                btn.parent().find('span').remove();
-                                if (form.find('input.J_check:checked').length) {
-                                    var msg = btn.data('msg');
-                                    if (msg) {
-                                        art.dialog({
-                                            id: 'warning',
-                                            icon: 'warning',
-                                            content: btn.data('msg'),
-                                            cancelVal: '关闭',
-                                            cancel: function () {
-                                                btn.data('subcheck', false);
-                                                btn.click();
-                                            }
-                                        });
-                                    } else {
-                                        btn.data('subcheck', false);
-                                        btn.click();
-                                    }
-
-                                } else {
-                                    resultTip({error:1,msg:'请至少选择一项'});
-                                   // $('<span class="tips_error">请至少选择一项</span>').appendTo(btn.parent()).fadeIn('fast');
-                                }
-                                return false;
-                            }
-
-                            form.ajaxSubmit({
-                                url: btn.data('action') ? btn.data('action') : form.attr('action'), //按钮上是否自定义提交地址(多按钮情况)
-                                dataType: 'json',
-                                beforeSubmit: function (arr, $form, options) {
-                                    var text = btn.text();
-
-                                    // 按钮文案、状态修改
-                                    btn.text(text + '中...').prop('disabled', true).addClass('disabled');
-                                    layer.load();
-                                },
-                                success: function (data, statusText, xhr, $form) {
-                                    var text = btn.text();
-                                    console.log(data);
-                                    //按钮文案、状态修改
-                                    btn.removeClass('disabled').text(text.replace('中...', '')).parent().find('span').remove();
-
-                                    if (data.code) {
-                                        layer.msg(data.msg,{time:500,shift:0},function(){
-                                            if(data.url){
-                                                window.location.href = data.url;
-                                            } 
-                                        });
-                                    } else {
-                                        layer.msg(data.msg);
-                                    }
-                                    btn.prop('disabled',false);
-                                    layer.closeAll('loading');
-                                }
-                            });
-                        });
-                    }
-                });
-            }
-        }
+        
     };
 
 }
@@ -1046,8 +958,6 @@ function putHash(obj=null)
 
             console.log(html);
             layer.closeAll();
-            //console.log(data.data);
-            //console.log("success");
         })
         .fail(function() {
             //console.log("error");
@@ -1064,14 +974,13 @@ var tableOperation = {
         var _href = this.href;
         var loading = layer.load();
         console.log(obj);
-        $.ajax({
-            url: _href,
-            type: 'POST',
-            dataType: 'json',
-            data: {},
-        })
-        .done(function(result) {
-            // console.log(result);
+
+        if(!_href){
+            layer.msg('请设置URL参数'); return false;
+        }
+
+        $.post(_href, {}, function(result, textStatus, xhr) {
+            /*optional stuff to do after success */
             var _reg = /<div class="details-content[^>]*>([\s\S]*?)<\/div>/;
             var _content = result.match(_reg);
 
@@ -1089,31 +998,23 @@ var tableOperation = {
                 content: _content
             });
             layer.close(loading);
-        })
-        .fail(function() {
-            console.log("error");
-        })
-        .always(function() {
-            console.log("complete");
         });
     },
-    add:function(){
-        
+
+    add:function(){    
         var _event = 'edit';
         tableOperation[_event] ? tableOperation[_event].call(this) : '';
     },
+
     edit:function(){
         var _href = this.href;
         var loading = layer.load();
 
-        $.ajax({
-            url: _href,
-            type: 'get',
-            dataType: 'json',
-            data: {},
-        })
-        .done(function(result) {
-            // var _reg = /<div class="details-content">([\s\S]*?)<\/div>/;
+        if(!_href){
+            layer.msg('请设置URL参数'); return false;
+        }
+
+        $.get(_href, {}, function(result, textStatus, xhr) {
             var _reg = /<form action="[^>]*>([\s\S]*?)<\/form>/;
             var _content = result.match(_reg);
             // alert(_content[0]);
@@ -1139,18 +1040,16 @@ var tableOperation = {
             });
             layer.full(index);  // 全屏
             layer.close(loading);
-        })
-        .fail(function() {
-            console.log("error");
-        })
-        .always(function() {
-            console.log("complete");
         });
 
     },
     del:function(){
         var _this = $(this);
         var _href = _this[0].href;
+
+        if(!_href){
+            layer.msg('请设置URL参数'); return false;
+        }
 
         layer.confirm('真的删除行么', function(index){
             var loading = layer.load();
@@ -1161,15 +1060,16 @@ var tableOperation = {
                 data: {},
             })
             .done(function(result) {
+                console.log(result);
                 if(result.code){
                     // 删除行
                     _this.closest('tr').slideUp(function(){
                        _this.closest('tr').remove(); 
                     });
                     
-                    layer.msg('删除成功',{icon:6});
+                    layer.msg(result.msg,{icon:6});
                 }else{
-                    layer.msg('删除失败');
+                    layer.msg(result.msg);
                 }
                 layer.close(loading);
                 layer.close(index);
@@ -1191,6 +1091,7 @@ var tableOperation = {
             data: {},
         })
         .done(function(result) {
+            console.log(result);
             if(result.code){
                 var _text = _this.text();
                 if(_text=='正常'){

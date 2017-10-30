@@ -1,0 +1,11 @@
+<script id="toolbar" type="text/html">
+    {if condition="$type.v"}
+      	<a href="{:url('details')}?id={{d.editid}}" onclick="return false" class="layui-btn layui-btn-primary layui-btn-mini" lay-event="detail">查看</a>
+    {/if}
+    {if condition="$type.e"}
+      	<a href="{:url('edit')}?id={{d.editid}}" onclick="return false" class="layui-btn layui-btn-mini" lay-event="edit">编辑</a>
+    {/if}
+    {if condition="$type.d"}
+      	<a href="{:url('del')}?id={{d.editid}}" onclick="return false" class="layui-btn layui-btn-danger layui-btn-mini" lay-event="del">删除</a>
+    {/if}
+</script>

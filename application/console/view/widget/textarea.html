@@ -1,0 +1,11 @@
+    <div class="layui-form-item layui-form-text">
+        {present name="wdata.title"}
+            <label class="layui-form-label">{$wdata.title}</label>
+        {/present}
+        <div class="layui-input-block">
+            <textarea name="{$wdata.name}" id="{$wdata.elementid}" placeholder="{$wdata.value|default='请输入内容'}" class="layui-textarea col-xs-10 col-sm-5">{$wdata.value}</textarea>
+            {if condition="$wdata.aux"}
+                <div class="layui-form-mid layui-word-aux">{$wdata.aux}</div>
+            {/if}
+        </div>
+    </div>
