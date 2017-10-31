@@ -96,6 +96,8 @@ class ActionLog
                 $action = 'add';
             }
         }
+        session('action', $action);
+        // dump($action);die;
 
         switch (strtolower($controller . '_' . $action)) {
             case 'config_groupupdate':
@@ -109,7 +111,7 @@ class ActionLog
 
         $record_id = $id;
 
-        if (Request::isGet() || Request::isPut() || Request::isDelete()) {
+        if (Request::isGet() || Request::isPut() || Request::isDelete() || Request::isPost()) {
             $this->actionLogRun($record_id, $action); // 记录日志
         }
 
