@@ -1,0 +1,49 @@
+{extend name="mould:base" /}
+{block name="title"}{/block}
+{block name="css"}{/block}
+{block name="content"}
+
+<!-- <div class="demoTable"> -->
+<div>
+  <div class="layui-btn-group demoTable">
+    <button class="layui-btn select-all" data-type="selectAll">全选</button>
+    <button class="layui-btn" data-type="reSelectAll">反选</button>
+    <button class="layui-btn" data-type="delete">删除</button>
+    <button class="layui-btn" data-type="getCheckData">获取选中行数据</button>
+    <button class="layui-btn" data-type="getCheckLength">获取选中数目</button>
+    <button class="layui-btn" data-type="isAll">验证是否全选</button>
+  </div>
+  <div class="search-area" style="float: right;">
+    搜索ID：
+    <div class="layui-inline">
+      <input name="id" class="layui-input" data-like="1">
+    </div>
+    <button class="layui-btn" data-type="search">搜索</button>
+    <button class="layui-btn" data-type="allShow">全部</button>
+  </div>
+</div>
+
+<table class="layui-hide" id="table_list" lay-filter="#table_list" data-url="{:url('lists')}">
+  <thead>
+    <tr>
+      <th lay-data="{checkbox: true, fixed: true,}"></th>
+      <th lay-data="{field:'id',title:'ID', width:70, sort: true}">ID</th>
+      <th lay-data="{field:'remark',title:'日志备注', width:300}">日志备注</th>
+      <th lay-data="{field:'model',title:'数据表', width:120, sort: true}">数据表</th>
+      <th lay-data="{field:'record_id',title:'数据ID', width:100, sort: true}">数据ID</th>
+      <th lay-data="{field:'method',title:'请求方法', width:100, sort: true}">请求方法</th>
+      <th lay-data="{field:'status',title:'状态', width:80}">状态</th>
+      <th lay-data="{field:'create_time',title:'时间', width:177}">时间</th>
+      <th lay-data="{field:'create_ip',title:'IP', width:120, sort: true}">IP</th>
+      <th lay-data="{title:'操作', width:160, align:'center', toolbar: '#toolbar'}">操作</th>
+    </tr>
+  </thead>
+</table>
+{:widget('Widgets/tabletoolbar',['v'=>1,'e'=>0,'d'=>1])}
+
+{/block}
+{block name="script"}
+<script type="text/javascript">
+
+</script>
+{/block}
