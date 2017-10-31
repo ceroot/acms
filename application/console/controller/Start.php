@@ -26,7 +26,6 @@ use think\facade\Session;
 class Start extends Controller
 {
     protected $model;
-
     /**
      * [initialize 控制器初始化]
      */
@@ -34,7 +33,6 @@ class Start extends Controller
     {
         $this->model = App::model('manager');
     }
-
     /**
      * [ index 登录页面 ]
      * @Author   SpringYang
@@ -51,15 +49,12 @@ class Start extends Controller
             $username = Request::param('username'); // 用户名
             $password = Request::param('password'); // 密码
             $code     = Request::param('verify'); // 验证码
-
             // 设置错误 session
             if (!Session::has('error_num')) {
                 Session::set('error_num', 0);
             }
-
             // 检测错误次数
             $error_num = Session::get('error_num');
-
             // 验证码验不为空
             if ($error_num > 3) {
                 if (!$code) {
@@ -72,34 +67,26 @@ class Start extends Controller
                     $this->error($error, '', array('error_num' => $error_num, 'verifyhtml' => $this->verifyhtml()));
                 }
             }
-
             $user = User::login($username, $password); // 用户登录验证
-
             // 验证不成功时
             if (!$user) {
                 Session::set('error_num', $error_num + 1); // 错误次数加 1
                 $this->error(User::getError(), '', array('error_num' => $error_num, 'verifyhtml' => $this->verifyhtml()));
             }
-
             $manager = $this->model->login($user->id); // 管理员用户验证并返回管理用户信息
             $manager || $this->error($this->model->getError(), '', array('error_num' => $error_num));
-
             User::autoLogin($user); // 用户自动登录
             $this->model->autoLogin($manager); // 管理用户自动登录
             App::model('ActionLog')->actionLogRun($user, 'login', 'manager', $user); // 记录登录日志
             Session::pull('error_num'); // 登录成功，清除登录错误次数记录，释放 sesseion
-
             $time     = date('YmdHis');
             $authcode = authcode($time);
-
             $this->success('登录成功', url('console/index/index?time=' . $time . '&authcode=' . $authcode), ['error_num' => 0]);
-
         } else {
             $this->assign('verifyhtml', $this->verifyhtml());
             return $this->fetch();
         }
     }
-
     public function test($id = null)
     {
         $test = null;
@@ -109,7 +96,6 @@ class Start extends Controller
         dump(getbackurl(false));
         Session::pull('manager_id');
     }
-
     /**
      * [ verifyhtml 登录页面验证码 html ]
      * @Author   SpringYang
@@ -126,7 +112,6 @@ class Start extends Controller
             '</div>';
         return $html;
     }
-
     /**
      * [ verify 验证码 ]
      * @Author   SpringYang
@@ -139,7 +124,6 @@ class Start extends Controller
         $captcha = new \think\captcha\Captcha();
         return $captcha->entry();
     }
-
     public function indd()
     {
         // 判断session完成标记是否存在
@@ -154,15 +138,12 @@ class Start extends Controller
                 ->remember();
         }
     }
-
     public function hello()
     {
         dump(redirect()->restore());
-
         $name = session('name');
         return 'hello,' . $name . '! <br/><a href="/console/start/restore">点击回到来源地址</a>';
     }
-
     public function restore()
     {
         // 设置session标记完成
