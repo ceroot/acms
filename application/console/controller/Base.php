@@ -346,4 +346,66 @@ class Base extends Extend
         }
 
     }
+
+    /**
+     * [ del 通用删除 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-10-31T09:52:43+0800
+     * @return   [type]                   [description]
+     */
+    public function del()
+    {
+        // 参数判断
+        if (!$this->id) {
+            return $this->error('参数错误');
+        }
+
+        $controller = strtolower($this->app->request->controller()); // 取得控制器
+
+        // 各种模型下的处理
+        switch ($controller) {
+            case 'manager':
+                if ($this->id == 1) {
+                    return $this->error('超级管理员不能进行删除');
+                }
+                # code...
+                break;
+
+            default:
+                # code...
+                break;
+        }
+        // return 132;
+        $status = $this->model::destroy($this->id); // 删除操作（如果模型里引用软删除就是软件删除，如果没有就是直接删除）
+        // 成功之后
+        if ($status) {
+            switch ($controller) {
+                case 'manager':
+                    model('authGroupAccess')->delDataByUid($this->id);
+                    break;
+                case 'muthgroup':
+                    model('authGroupAccess')->delDataByGid($this->id);
+                    break;
+                case 'authrule':
+                    $this->model->updateCache();
+                    break;
+                default:
+                    # code...
+                    break;
+            }
+
+            return $this->success('删除成功');
+        } else {
+            return $this->error('删除失败');
+        }
+    }
+
+    public function deltest()
+    {
+        // dump($this->model);die;
+        $status = $this->model::destroy(1119);
+
+        dump($status);
+    }
 }

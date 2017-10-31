@@ -20,9 +20,13 @@ namespace app\console\model;
 
 use app\common\model\Extend;
 use think\facade\App;
+use think\model\concern\SoftDelete;
 
 class ActionLog extends Extend
 {
+    use SoftDelete;
+    protected $deleteTime = 'delete_time';
+
     /**
      * { actionLogRun 行为记录写入}
      * @Author   SpringYang <ceroot@163.com>
