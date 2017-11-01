@@ -31,6 +31,7 @@ class ActionLog
 
     public function run($param)
     {
+        // 先判断要不要执行
         if ($this->logSwitch()) {
             $this->initialization();
             $this->actionLog();
@@ -81,7 +82,7 @@ class ActionLog
         // 有 id 键是更新，没有是新增
         if (Request::has($pk)) {
             $id = deauthcode(Request::param($pk)); // id解密
-            if ($action == 'update') {
+            if ($action == 'renew') {
                 $action = 'edit';
             }
         } else {
@@ -92,12 +93,10 @@ class ActionLog
 
             }
 
-            if ($action == 'update') {
+            if ($action == 'renew') {
                 $action = 'add';
             }
         }
-        session('action', $action);
-        // dump($action);die;
 
         switch (strtolower($controller . '_' . $action)) {
             case 'config_groupupdate':

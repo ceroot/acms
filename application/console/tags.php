@@ -9,6 +9,10 @@ return [
     ],
 
     'app_end'      => [
+
+    ],
+
+    'action_log'   => [
         'app\\console\\behavior\\ActionLog',
     ],
 ];

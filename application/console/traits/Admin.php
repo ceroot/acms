@@ -1,8 +1,10 @@
 <?php
 namespace app\console\traits;
 
+use think\facade\Hook;
 use think\facade\Request;
 use traits\controller\Jump;
+
 trait Admin
 {
     use Jump;
@@ -272,13 +274,12 @@ trait Admin
                 // return $status;
 
             }
-            // return 132;
+
             // 数据验证不通过返回提示
             if ($status === false) {
                 return $this->error($this->model->getError());
             }
-            // return $status;
-            //die;
+
             // 是否成功返回
             if ($status) {
 
@@ -312,6 +313,7 @@ trait Admin
                         break;
                 }
 
+                $this->app->hook->listen('action_log', $record_id); // 行为日志记录
                 return $this->success($this->app->request->has($this->pk) ? '修改成功' : '新增成功', cookie('__forward__'));
             } else {
                 return $this->error('操作失败');
@@ -359,6 +361,7 @@ trait Admin
                 $this->model->updateCache();
             }
 
+            $this->app->hook->listen('action_log', $this->id); // 行为日志记录
             return $this->success('操作成功');
         } else {
             return $this->error('操作失败');
@@ -427,6 +430,7 @@ trait Admin
                 $data->save();
             }
 
+            $this->app->hook->listen('action_log', $this->id); // 行为日志记录
             return $this->success('删除成功');
         } else {
             return $this->error('删除失败');

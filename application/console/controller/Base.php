@@ -35,9 +35,9 @@ class Base extends Extend
 
     public function test()
     {
-        $data = session('action');
+        $data = session('dd');
         dump($data);
-
+        dump(session('da'));
     }
 
     /**
@@ -151,6 +151,7 @@ class Base extends Extend
     {
         $one = $this->_edit();
         $this->assign('one', $one);
+        //$this->app->hook->listen('action_log', 1);
         return $this->menusView('add');
     }
 
