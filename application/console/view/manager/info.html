@@ -1,0 +1,54 @@
+{extend name="mould:base" /}
+{block name="title"}{/block}
+{block name="content"}
+<form action="{:url('info')}" method="post" class="layui-form" role="form">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" value="{$one.username}" disabled="disabled" autocomplete="off">
+            </div>
+        </div>
+    </div>
+    {:widget('Widgets/form', ['type'=>'text','title'=>'用户昵称','name'=>'nickname','value'=>$one.nickname,'placeholder'=>'请填写用户昵称','explain'=>'1','layverify'=>'required','inline'=>1])}
+    {:widget('Widgets/form', ['type'=>'tel','title'=>'手机','name'=>'mobile','value'=>$one.mobile,'elementid'=>'mobile','placeholder'=>'请填写手机号','layverify'=>'phone'])}
+    {:widget('Widgets/form', ['type'=>'email','title'=>'邮箱','name'=>'email','value'=>$one.email,'elementid'=>'email','inline'=>0,'layverify'=>'email'])}
+    {:widget('Widgets/form', ['type'=>'text','title'=>'测试','name'=>'text','value'=>'dfd','layverify'=>'required|title','aux'=>'辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息'])}
+    {:widget('Widgets/button', ['name'=>'id','value'=>$one.id,'buttontext'=>'保存'])}
+</form>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    layui.use(['form', 'layedit', 'laydate'], function(){
+      var form = layui.form
+      ,layer = layui.layer
+      ,layedit = layui.layedit
+      ,laydate = layui.laydate;
+
+     
+      //自定义验证规则
+      form.verify({
+        title: function(value){
+          if(value.length < 5){
+            return '标题至少得5个字符啊';
+          }
+        }
+        ,pass: [/(.+){6,12}$/, '密码必须6到12位']
+        ,content: function(value){
+          layedit.sync(editIndex);
+        }
+      });
+      
+      //监听指定开关
+      form.on('switch(switchTest)', function(data){
+        layer.msg('开关checked：'+ (this.checked ? 'true' : 'false'), {
+          offset: '6px'
+        });
+        layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+      });
+      
+      
+      
+    });
+</script>
+{/block}

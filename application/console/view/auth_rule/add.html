@@ -1,0 +1,34 @@
+{extend name="mould:base" /}
+{block name="title"}{/block}
+{block name="css"}
+<style type="text/css">
+    form.cy-form .form-inline span{width: 140px; text-align: right; display: inline-block;}
+</style>
+{/block}
+
+{block name="content"}
+<form action="{:url('renew')}" method="post" class="layui-form" data-validate="true">
+    {:widget('Widgets/form', ['type'=>'select','title'=>'父级规则','name'=>'pid','value'=>$one.pid,'elementid'=>'pid','datalist'=>$rule])}
+    {:widget('Widgets/form', ['type'=>'text','title'=>'规则标识','name'=>'name','value'=>$one.name,'elementid'=>'name','layverify'=>'required','placeholder'=>'规则标识'])}
+    {:widget('Widgets/form', ['type'=>'text','title'=>'规则名称','name'=>'title','value'=>$one.title,'elementid'=>'title','layverify'=>'required','placeholder'=>'规则名称'])}
+    {:widget('Widgets/form', ['type'=>'text','title'=>'图标','name'=>'icon','value'=>$one.icon,'elementid'=>'icon','placeholder'=>'菜单显示图标','aux'=>'菜单显示图标'])}
+    {:widget('Widgets/form', ['type'=>'radio','title'=>'状态','name'=>'status','value'=>$one.status,'elementid'=>'status','datalist'=>[['value' => '1', 'title' => '启用'],['value' => '0', 'title' => '禁用']],'aux'=>'（启用|禁用开关）'])}
+    {:widget('Widgets/form', ['type'=>'switch','title'=>'是否显示菜单','name'=>'isnavshow','value'=>$one.isnavshow,'elementid'=>'isnavshow','aux'=>'控制台菜单显示'])}
+    {:widget('Widgets/form', ['type'=>'switch','title'=>'是否是控制器','name'=>'controller','value'=>$one.controller,'elementid'=>'controller','aux'=>'控制器标记开启'])}
+    {:widget('Widgets/form', ['type'=>'switch','title'=>'是否需要实例化','name'=>'instantiation','value'=>$one.instantiation,'elementid'=>'instantiation','default'=>0,'aux'=>'实例化控制器标识开启'])}
+    {:widget('Widgets/form', ['type'=>'switch','title'=>'是否需要进行权限验证','name'=>'auth','value'=>$one.auth,'elementid'=>'auth','aux'=>'权限验证开启标识'])}
+    {:widget('Widgets/form', ['type'=>'text','title'=>'排序','name'=>'sort','value'=>$one.sort|100,'elementid'=>'sort','placeholder'=>'排序'])}
+    {:widget('Widgets/form', ['type'=>'text','title'=>'url地址','name'=>'url','value'=>$one.url,'elementid'=>'url','placeholder'=>'url地址','inline'=>0])}
+    {:widget('Widgets/form', ['type'=>'textarea','title'=>'条件','name'=>'condition','value'=>$one.condition,'elementid'=>'condition','explain'=>'这里是说明'])}
+    {notpresent name="one"}
+        {:widget('Widgets/form', ['type'=>'checkbox','title'=>'日志记录','name'=>'_log','datalist'=>[1=>'开启日志记录'],'aux'=>'（开启日志记录默认为系统选项，需要修改请到用户行为里添加或者修改）'])}
+    {/notpresent}
+    {:widget('Widgets/test', ['text',['name'=>'name','title'=>'标题','value'=>'123']])}
+    {:widget('Widgets/button', ['name'=>'id','value'=>$one.editid,'buttontext'=>'保存'])}
+</form>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+
+</script>
+{/block}

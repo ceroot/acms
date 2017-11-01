@@ -2,30 +2,33 @@
 // +----------------------------------------------------------------------+
 // | CYCMS                                                                |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2017 http://www.benweng.com All rights reserved.       |
+// | Copyright (c) 2016 http://beneng.com All rights reserved.            |
 // +----------------------------------------------------------------------+
 // | Authors: SpringYang [ceroot@163.com]                                 |
 // +----------------------------------------------------------------------+
 /**
- *
- * @filename  Manager.php
+ * @filename  AuthRule.php[规则表验证器]
  * @authors   SpringYang
  * @email     ceroot@163.com
  * @QQ        525566309
- * @date      2017-11-01 17:07:27
+ * @date      2016-05-03 14:50:33
  * @site      http://www.benweng.com
- * @version   $Id$
  */
-namespace app\console\controller;
+namespace app\console\validate;
 
-use app\console\controller\Base;
+use think\Validate;
 
-class Manager extends Base
+class AuthRule extends Validate
 {
+    protected $rule = [
+        'name'  => 'require|unique:authRule',
+        'title' => 'require',
+    ];
 
-    public function initialize()
-    {
-        parent::initialize();
+    protected $message = [
+        'name.require'  => '规则标识必须',
+        'name.unique'   => '规则标识已存在',
+        'title.require' => '规则名称必须',
+    ];
 
-    }
 }

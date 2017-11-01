@@ -48,7 +48,7 @@ class AuthRule extends Extend
 
     public function updateCache()
     {
-        App::model('AuthRule', 'logic');
+        App::model('AuthRule', 'logic')->updateCache();
     }
 
 }

@@ -1,0 +1,28 @@
+{extend name="mould:base" /}
+{block name="title"}{/block}
+{block name="css"}
+
+{/block}
+{block name="content"}
+<form action="{:url('update')}" method="post" class="layui-form" data-validate="true">
+
+    {:widget('Widgets/form', ['type'=>'select','title'=>'角色','name'=>'group_id','value'=>$one.group_id,'elementid'=>'group_id','datalist'=>$newgroupdata])}
+    {:widget('Widgets/form', ['type'=>'text','title'=>'用户名','name'=>'username','value'=>$one.username,'elementid'=>'username','placeholder'=>'用户名'])}
+    {:widget('Widgets/form', ['type'=>'text','title'=>'用户昵称','name'=>'nickname','value'=>$one.nickname,'elementid'=>'nickname','placeholder'=>'用户昵称'])}
+    {:widget('Widgets/form', ['type'=>'text','title'=>'姓名','name'=>'realname','value'=>$one.realname,'elementid'=>'realname','placeholder'=>'姓名'])}
+    {:widget('Widgets/form', ['type'=>'text','title'=>'邮箱','name'=>'email','value'=>$one.email,'elementid'=>'email','placeholder'=>'邮箱'])}
+    {:widget('Widgets/form', ['type'=>'password','title'=>'用户密码','name'=>'password','elementid'=>'password','placeholder'=>'用户密码'])}
+    {:widget('Widgets/form', ['type'=>'password','title'=>'确认密码','name'=>'password_confirm','elementid'=>'password_confirm','placeholder'=>'确认密码'])}
+    {:widget('Widgets/form', ['type'=>'radio','title'=>'状态','name'=>'status','value'=>$one.status,'elementid'=>'status','datalist'=>[['value' => '1', 'title' => '启用'],['value' => '0', 'title' => '禁用']],'aux'=>'（启用|禁用开关）'])}
+    {:widget('Widgets/button', ['name'=>'id','value'=>$one.editid,'buttontext'=>'保存'])}
+
+
+</form>
+{/block}
+{block name="script"}
+
+<script type="text/javascript">
+
+
+</script>
+{/block}

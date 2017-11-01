@@ -1,0 +1,27 @@
+{extend name="mould:base" /}
+{block name="title"}{/block}
+{block name="content"}
+<table class="layui-hide" id="table_list" lay-filter="#table_list" data-url="{:url('lists')}">
+  <thead>
+    <tr>
+      <th lay-data="{checkbox: true, fixed: true}"></th>
+      <th lay-data="{field:'id',title:'ID', width:70, sort: true}">ID</th>
+      <th lay-data="{field:'url',title:'url', width:280}">url</th>
+      <th lay-data="{field:'os',title:'系统', width:100, sort: true}">系统</th>
+      <th lay-data="{field:'browser',title:'浏览器', width:100, sort: true}">浏览器</th>
+      <th lay-data="{field:'controller',title:'控制器', width:100, sort: true}">控制器</th>
+      <th lay-data="{field:'action',title:'方法', width:80, sort: true}">方法</th>
+      <th lay-data="{field:'method',title:'访问类型', width:80, sort: true}">访问类型</th>
+      <th lay-data="{field:'create_ip',title:'访问IP', width:100}">访问IP</th>
+      <th lay-data="{field:'create_time',title:'访问时间', width:150}">访问时间</th>
+      <th lay-data="{title:'操作', width:80, align:'center', toolbar: '#toolbar'}">操作</th>
+    </tr>
+  </thead>
+</table>
+{:widget('Widgets/tabletoolbar',['e'=>0,'d'=>0])}
+{/block}
+{block name="script"}
+<script type="text/javascript">
+
+</script>
+{/block}

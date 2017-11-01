@@ -1,0 +1,40 @@
+
+  <table class="layui-table">
+        <colgroup>
+	        <col width="90">
+	        <col width="200">
+	        <col width="90">
+	        <col>
+        </colgroup>
+        <tbody>
+          	<tr>
+	          	<td align="right">id</td>
+	          	<td>{$one.id}</td>
+	          	<td align="right">访问类型</td>
+	            <td>{$one.method}</td>
+          	</tr>
+          	<tr>
+	          	<td align="right">浏览器</td>
+	            <td>{$one.browser}</td>
+          		<td align="right">系统</td>
+	          	<td>{$one.os}</td>
+          	</tr>
+          	<tr>
+	          	<td align="right">控制器</td>
+	            <td>{$one.controller}</td>
+          		<td align="right">方法</td>
+	          	<td>{$one.action}</td>
+          	</tr>
+          	<tr>
+	          	<td align="right">时间</td>
+	            <td>{$one.create_time}</td>
+          		<td align="right">IP</td>
+	          	<td>{$one.create_ip}</td>
+          	</tr>
+          	<tr>
+          		<td align="right">url</td>
+	          	<td colspan="3">{$one.url}</td>
+          	</tr>
+        </tbody>
+	</table>
+

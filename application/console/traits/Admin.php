@@ -261,7 +261,7 @@ trait Admin
                 if (!$validate->scene('edit')->check($data)) {
                     return $this->error($validate->getError());
                 }
-                // return $data;
+
                 // 数据保存
                 $status = $this->model->save($data, [$this->pk => $this->id]);
 
@@ -292,11 +292,12 @@ trait Admin
 
                 switch ($this->app->request->controller()) {
                     case 'AuthRule': // 更新规则缓存
-                        // return 132;
+
                         $this->model->updateCache();
+                        // return $this->app->request->has('_log');
                         // 新增时是否添加日志记录标记
-                        if (!$has_id) {
-                            model('action')->add_for_rule();
+                        if ($this->app->request->has('_log')) {
+                            return $this->app->model('Action')->add_for_rule();
                         }
                         break;
                     case 'Manager': // 管理员操作时的操作
