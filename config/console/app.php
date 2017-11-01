@@ -19,4 +19,5 @@
 
 return [
     'auth_superadmin' => [1, 2],
+    'action_log'      => true,
 ];

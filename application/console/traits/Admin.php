@@ -11,6 +11,7 @@ trait Admin
 
     public function bindContainer()
     {
+
     }
 
     /**
@@ -142,6 +143,7 @@ trait Admin
                     unset($value[toUnderline($relationName)]); // 去掉关联数据
                 }
                 $value->editid = authcode($value['id']); // 增加编辑 editid 并加密
+
                 // 开发模式判断
                 if (!config('app_debug') && $this->app->session->get('manager_id') != 1) {
                     unset($value['id']);
@@ -204,7 +206,8 @@ trait Admin
     {
 
         if ($this->app->request->isPost()) {
-            $data = $this->app->request->param();
+            $data  = $this->app->request->param();
+            $scene = 'add';
 
             //
             //$has_id = array_key_exists($this->pk, $data); // 判断是否存在 ID 键
@@ -262,6 +265,7 @@ trait Admin
                 // 数据保存
                 $status = $this->model->save($data, [$this->pk => $this->id]);
 
+                $scene = 'edit'; // 更改默认场景
             } else {
                 // 数据验证
                 $validate = $this->app->validate($this->app->request->controller());
@@ -313,7 +317,8 @@ trait Admin
                         break;
                 }
 
-                $this->app->hook->listen('action_log', $record_id); // 行为日志记录
+                $this->app->hook->listen('action_log', ['action' => $scene, 'record_id' => $record_id]); // 行为日志记录
+
                 return $this->success($this->app->request->has($this->pk) ? '修改成功' : '新增成功', cookie('__forward__'));
             } else {
                 return $this->error('操作失败');
@@ -361,7 +366,8 @@ trait Admin
                 $this->model->updateCache();
             }
 
-            $this->app->hook->listen('action_log', $this->id); // 行为日志记录
+            $this->app->hook->listen('action_log', ['record_id' => $this->id]); // 行为日志记录
+
             return $this->success('操作成功');
         } else {
             return $this->error('操作失败');
@@ -430,7 +436,8 @@ trait Admin
                 $data->save();
             }
 
-            $this->app->hook->listen('action_log', $this->id); // 行为日志记录
+            Hook::listen('action_log', ['record_id' => $this->id]); // 行为日志记录
+
             return $this->success('删除成功');
         } else {
             return $this->error('删除失败');

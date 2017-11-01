@@ -37,7 +37,6 @@ class ActionLog extends Model
      */
     public function actionLogRun($record_id = null, $action = null, $model = null, $user_id = null)
     {
-
         // 参数检查
         if (empty($record_id)) {
             return '参数不能为空';

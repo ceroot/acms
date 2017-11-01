@@ -26,7 +26,7 @@ use think\facade\Log;
 class ModuleInit
 {
 
-    public function run($param)
+    public function run($params)
     {
         $this->initialization();
         $this->cacheAuthRule(); // 缓存规则表数据
