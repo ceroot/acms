@@ -1,0 +1,1 @@
+ALTER TABLE `cy_action` ADD `delete_time` INT(10) NULL DEFAULT NULL COMMENT '删除时间（软删除）' AFTER `update_ip`, ADD `delete_uid` INT(10) NOT NULL COMMENT '删除用户 id' AFTER `delete_time`, ADD `delete_ip` BIGINT(11) NOT NULL COMMENT '删除 ip' AFTER `delete_uid`;
