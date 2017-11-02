@@ -12,9 +12,9 @@
 <!-- <div class="demoTable"> -->
 <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
     <ul class="layui-tab-title">
-        <li class="{if condition="!input('?param.group')"}layui-this{/if}"><a href="{:url('list')}">全部</a></li>
+        <li class="{if condition="!input('?param.group')"}layui-this{/if}"><a href="{:url('lists')}">全部</a></li>
         {volist name="Think.config.config_group_list" id="group"}
-      	    <li class="{if condition="input('?param.group')"}{eq name=":input('param.group')" value="$key"}layui-this{/eq}{/if}"><a href="{:url('list?group='.$key)}">{$group}</a></li>
+      	    <li class="{if condition="input('?param.group')"}{eq name=":input('param.group')" value="$key"}layui-this{/eq}{/if}"><a href="{:url('lists?group='.$key)}">{$group}</a></li>
         {/volist}
     </ul>
     <div class="layui-tab-content"></div>
@@ -74,25 +74,9 @@
       	{/volist}
     </tbody>
   </table>
-  {:widget('Widgets/page',['page'=>$page])}
+
 </div>
-<table class="layui-hide" id="table_list11" lay-filter="#table_list" data-url="{:url('list?group='.input('param.group'))}">
-  <thead>
-    <tr>
-    	<th lay-data="{checkbox: true, fixed: true}"></th>
-        <th lay-data="{field:'id',title:'ID', width:70, sort: true}">ID</th>
-        <th lay-data="{field:'sort',title:'排序', width:80, sort: true}">排序</th>
-        <th lay-data="{field:'name',title:'名称', width:200, sort: true}">名称</th>
-        <th lay-data="{field:'title',title:'标题', width:200}">标题</th>
-        <th lay-data="{field:'group',title:'分组', width:80, sort: true}">分组</th>
-        <th lay-data="{field:'type',title:'类型', width:80, sort: true}">类型</th>
-        <th lay-data="{field:'status',title:'状态', width:120, sort: true, toolbar: '#updatestatus'}"}">状态</th>
-        <th lay-data="{title:'操作', width:160, align:'center', toolbar: '#toolbar'}">操作</th>
-    </tr>
-  </thead>
-</table>
-{:widget('Widgets/updatestatus')}
-{:widget('Widgets/tabletoolbar')}
+
 
 
 

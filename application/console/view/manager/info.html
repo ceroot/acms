@@ -11,6 +11,7 @@
         </div>
     </div>
     {:widget('Widgets/form', ['type'=>'text','title'=>'用户昵称','name'=>'nickname','value'=>$one.nickname,'placeholder'=>'请填写用户昵称','explain'=>'1','layverify'=>'required','inline'=>1])}
+    {:widget('Widgets/form', ['type'=>'text','title'=>'真实姓名','name'=>'realname','value'=>$one.realname,'placeholder'=>'请填写真实姓名','explain'=>'1','inline'=>1])}
     {:widget('Widgets/form', ['type'=>'tel','title'=>'手机','name'=>'mobile','value'=>$one.mobile,'elementid'=>'mobile','placeholder'=>'请填写手机号','layverify'=>'phone'])}
     {:widget('Widgets/form', ['type'=>'email','title'=>'邮箱','name'=>'email','value'=>$one.email,'elementid'=>'email','inline'=>0,'layverify'=>'email'])}
     {:widget('Widgets/form', ['type'=>'text','title'=>'测试','name'=>'text','value'=>'dfd','layverify'=>'required|title','aux'=>'辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息'])}

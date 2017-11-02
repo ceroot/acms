@@ -118,4 +118,34 @@ class User
         $this->UcenterMember->update($data);
     }
 
+    /**
+     * [ modifyPassword 设置密码（修改密码） ]
+     * @author SpringYang <ceroot@163.com>
+     * @dateTime 2017-11-02T15:38:30+0800
+     * @param    intger                   $id       [用户 id]
+     * @param    string                   $password [用户密码]
+     * @return   boolean                            [返回布尔型]
+     */
+    public function modifyPassword($id, $password)
+    {
+        // $salt = $this->UcenterMember->getFieldById($id, 'salt');
+        $data             = $this->UcenterMember->get($id);
+        $data['password'] = encrypt_password($password, $data['salt']);
+        $status           = $data->save($data);
+        return $status ? true : false;
+    }
+
+    /**
+     * [ function_name function_description ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-11-02T16:13:32+0800
+     * @param    array                    $data [用户数据]
+     * @return   [type]                   [description]
+     */
+    public function modifyInfo($data)
+    {
+
+    }
+
 }

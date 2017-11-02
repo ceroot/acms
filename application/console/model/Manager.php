@@ -108,6 +108,7 @@ class Manager extends Extend
             'email',
             'login_time',
             'member_create_time' => 'create_time',
+            'mobile',
         ];
         $data = $this->belongsTo('app\common\model\UcenterMember', 'uid')->bind($field);
         return $data;

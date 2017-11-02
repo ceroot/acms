@@ -1,0 +1,24 @@
+{extend name="mould:base" /}
+{block name="title"}{/block}
+{block name="content"}
+<form action="{:url('update')}" method="post" class="form-horizontal cy-ajaxForm cy-form" data-validate="true">
+    {:widget('Widgets/form', ['type'=>'text','title'=>'角色名称：','field'=>'title','value'=>$one.title,'eleid'=>'title','placeholder'=>'请填写角色名称'])}
+    {:widget('Widgets/form', ['type'=>'radio','title'=>'状态','field'=>'status','value'=>$one.status,'eleid'=>'status','radiotype'=>40,'radiodefault'=>1])}
+    {:widget('Widgets/button', ['field'=>'id','value'=>$one.id,'buttontext'=>'保存'])}
+</form>
+<script type="text/javascript">
+var userValidate = {
+    rules: {
+        'title':{
+            required:true
+        }
+    }, 
+    messages: {
+        'title':{
+            required:'请填写规则名称'
+        }
+    }
+};
+
+</script>
+{/block}

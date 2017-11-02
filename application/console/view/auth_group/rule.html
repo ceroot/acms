@@ -1,0 +1,77 @@
+{extend name="mould:base" /}
+{block name="title"}{/block}
+{block name="content"}
+<style type="text/css">
+fieldset{padding:.35em .625em .75em;margin:0 2px; border:1px dotted silver}
+legend{padding:.5em; border:0; width:auto; font-size: 1rem;}
+legend label{ margin: 0; margin-right:15px; word-wrap: break-word; word-break: break-all; line-height: 24px;}
+h5{ font-family: "微软雅黑"; background: #f1f1f1; padding-top: 5px}
+
+</style>
+<form action="{:url('update',array('rule'=>1))}" method="post" class="layui-form">
+	<table width="100%" class="table_form">
+	   	{volist name='rules' id='node1'}
+	        <tr>
+		        <td style="border:1px dotted #ccc; margin-bottom: 10px; padding: 10px;">
+		            <h5>
+		            	<label>
+		            		<input pid='0' type="checkbox" value="{$node1.id}" id='node{$node1.id}' name="rules[]" {in name='node1.id' value='$field["rules"]'}checked = 'checked' {/in} /> 
+		            		<span class="input-text">{$node1.title}</span>
+		            	</label>
+		            </h5>
+		            {volist name='node1._data' id='node2'}
+			        	<fieldset>
+			                <legend>
+			                	<label>
+			                		<input pid='{$node1.id}' type="checkbox" value="{$node2.id}"  id='node{$node2.id}' name="rules[]" {in name='node2.id' value='$field["rules"]'}checked = 'checked' {/in}/> 
+			                		<span class="input-text">{$node2.title}</span>
+			                	</label>
+			                </legend>
+			                <div class="" style="padding-left: 10px;">
+			                	{volist name='node2._data' id='node3'}
+			                        <label>
+			                        	<input pid='{$node1.id}' type="checkbox" value="{$node3.id}" class='{$node2.id}' name="rules[]" {in name='node3.id' value='$field["rules"]'}checked = 'checked' {/in}/> 
+			                        	<span class="input-text">{$node3.title}</span>
+			                        </label>
+			    				{/volist}
+			    			</div>
+			           </fieldset>
+		    		{/volist}
+		        </td>
+		    </tr>
+		{/volist}
+	</table>
+	<div class="fixed-bottom">
+		<div class="bottom-area">
+			<input type="hidden" name="id" value="{$field.id|authcode}" />
+		    <button class="btn btn-sm btn-default btn-post">保存</button>
+		</div>
+	</div>
+</form>
+
+{/block}
+{block name="script"}
+<script type="application/javascript">
+$(function(){
+	$('body').on('click','input[type=checkbox]',function(){
+		var _self   = $(this);
+		var _value  = _self.val();
+		var _pid    = _self.attr('pid');
+		var _class  = _self.attr('class');
+
+		if(_self.is(':checked')){
+			$('[pid='+_value+']').prop('checked',true);
+			$('.'+_value).prop('checked',true);
+		}else{
+			$('[pid='+_value+']').prop('checked',false);
+			$('.'+_value).prop('checked',false);
+		}
+		
+		$('.'+_class+':checked').length ? $('#node'+_class).prop('checked',true) : $('#node'+_class).prop('checked',false);
+		$('[pid='+_pid+']:checked').length ? $('#node'+_pid).prop('checked',true) : $('#node'+_pid).prop('checked',false);
+		
+	});
+
+})
+</script>
+{/block}

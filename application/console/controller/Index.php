@@ -105,4 +105,46 @@ class Index extends Base
         }
         return round($size, 2) . $delimiter . $units[$i];
     }
+
+    public function setcollapsed()
+    {
+        $collapsed = $this->app->request->param('collapsed');
+        if ($collapsed == 1 || $collapsed == 0) {
+            if ($collapsed == '1') {
+                $this->app->session->set('collapsed', $collapsed);
+            } else {
+                $this->app->session->set('collapsed', null);
+            }
+        }
+    }
+
+    public function getcollapsed()
+    {
+        if ($this->app->session->has('collapsed')) {
+            return $this->app->session->get('collapsed');
+        } else {
+            return 0;
+        }
+    }
+
+    public function setsmscscreen()
+    {
+        $smscreen = $this->app->request->param('screen');
+        if ($smscreen == 1 || $smscreen == 0) {
+            if ($smscreen == '1') {
+                $this->app->session->set('screen', $smscreen);
+            } else {
+                $this->app->session->set('screen', null);
+            }
+        }
+    }
+
+    public function getsmscscreen()
+    {
+        if ($this->app->session->has('screen')) {
+            return $this->app->session->get('screen');
+        } else {
+            return 0;
+        }
+    }
 }

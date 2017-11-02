@@ -19,13 +19,17 @@
 namespace app\console\controller;
 
 use app\console\controller\Base;
+use app\facade\User;
 
 class Manager extends Base
 {
+    private $ucenterMember;
 
     public function initialize()
     {
         parent::initialize();
+
+        $this->ucenterMember = $this->app->model('UcenterMember'); // 实例化用户模型
 
         $groupdata    = db('authGroup')->where('status', 1)->field('id,title,status,describe')->select();
         $authgroup    = db('AuthGroupAccess')->where('uid', input('param.id'))->select();
@@ -44,42 +48,97 @@ class Manager extends Base
 
     }
 
+    /**
+     * [ info 个人信息 ]
+     * @author SpringYang <ceroot@163.com>
+     * @dateTime 2017-11-02T15:03:49+0800
+     * @return   [type]                   [description]
+     */
     public function info()
     {
         $mid = $this->app->session->get('manager_id');
 
-        if (request()->isPost()) {
-            $data        = input('param.');
-            $mid         = deauthcode($data['id']);
-            $data['msg'] = '正确返回';
-            // return $data;
+        if ($this->app->request->isPost()) {
+            $data = $this->app->request->param();
+            if (!$this->id) {
+                return $this->error('参数错误');
+            }
 
-            $uid = $this->model->getFieldByUid($mid, 'uid');
+            $user = $this->model::get($this->id, 'UcenterMember'); // 从数据取得用户数据
+
+            if (!$user) {
+                return $this->error('用户数据错误');
+            }
+
+            // 数据验证
+            $result = $this->dataH($data);
+            if ($result !== true) {
+                return $this->error($result);
+            };
+
+            $data['id'] = $user['uid'];
+            // 数据保存
+            $status = $this->ucenterMember->save($data, ['id' => $user['uid']]);
+
+            if ($status) {
+                $this->app->hook->listen('action_log', ['action' => 'info', 'record_id' => $this->id, 'model' => 'manager']); // 行为日志记录
+                return $this->success('个人信息修改成功');
+            } else {
+                if ($status == 0) {
+                    return $this->error('数据没有改变');
+                } else {
+                    return $this->error('个人信息修改失败');
+                }
+            }
+        } else {
+            $one       = $this->model->find($mid);
+            $one       = $this->model::get($one['uid'], 'UcenterMember'); // 从数据取得用户数据
+            $one['id'] = authcode($one['id']);
+
+            $this->assign('one', $one);
+            return $this->menusView();
+        }
+    }
+
+    /**
+     * [ password 修改密码 ]
+     * @author SpringYang <ceroot@163.com>
+     * @dateTime 2017-11-02T15:03:28+0800
+     * @return   [type]                   [description]
+     */
+    public function password()
+    {
+        if ($this->app->request->isPost()) {
+            $data = $this->app->request->param();
+
+            if (!$this->id) {
+                return $this->error('参数错误');
+            }
+
+            $uid = $this->model->getFieldById($this->id, 'uid'); // 取得用户 id
+
             if (!$uid) {
                 return $this->error('数据有误');
             }
-            $data['id'] = $uid;
 
-            // 实例化用户 api
-            $user = new UserApi();
+            $result = $this->validate($data, 'app\common\validate\UcenterMember.password'); // 数据验证
+            if ($result !== true) {
+                return $this->error($result);
+            }
 
-            $resdata = $user->update($data);
-            return $resdata;
-            if ($resdata == 1) {
-                action_log($mid); // 记录操作日志
-                return $this->success('个人信息修改成功');
+            $status = User::modifyPassword($uid, $data['password']); // 数据保存操作
+
+            if ($status) {
+                $this->app->hook->listen('action_log', ['record_id' => $this->id]); // 行为日志记录
+                return $this->success('修改密码成功');
             } else {
-                return $resdata;
-                return $this->error('个人信息修改失败');
+                return $this->error('修改密码失败');
             }
 
         } else {
-            $one       = $this->model->find($mid);
-            $user      = new UserApi();
-            $one       = $user->getone($mid);
-            $one['id'] = authcode($one['id']);
+            $one['id'] = authcode($this->app->session->get('manager_id'));
             $this->assign('one', $one);
-            return $this->fetch();
+            return $this->menusView();
         }
     }
 
@@ -88,7 +147,6 @@ class Manager extends Base
         if (request()->isPost()) {
             $data = $this->app->request->param();
             // return $data;
-            $ucenterMember = $this->app->model('UcenterMember'); // 实例化用户模型
 
             // 判断是更新还是新增
             if ($this->app->request->has($this->pk)) {
@@ -103,36 +161,20 @@ class Manager extends Base
                     return $this->error('用户数据错误');
                 }
 
-                $mid = $user['id']; // 管理用户id
-
                 $data['username'] || $this->error('请输入用户名');
 
-                $nameCount = $ucenterMember->where('username', $data['username'])->select()->count();
-                if ($nameCount > 1) {
-                    return $this->error('用户名已存在，请换一个');
-                }
-
-                $nickCount = $ucenterMember->where('nickname', $data['username'])->select()->count();
-                if ($nameCount > 1) {
-                    return $this->error('用户名昵称已存在，请换一个');
-                }
-
-                $emailCount = $ucenterMember->where('email', $data['username'])->select()->count();
-                if ($emailCount > 1) {
-                    return $this->error('邮箱已存在，请换一个');
-                }
-
-                $mobileCount = $ucenterMember->where('mobile', $data['username'])->select()->count();
-                if ($mobileCount > 1) {
-                    return $this->error('手机已存在，请换一个');
-                }
+                // 数据验证
+                $result = $this->dataH($data);
+                if ($result !== true) {
+                    return $this->error($result);
+                };
 
                 // 密码处理
                 if ($data['password']) {
                     if ($data['password'] != $data['password_confirm']) {
                         return $this->error('两次输入的密码不正确');
                     }
-                    $data['password'] = encrypt_password($data['password'], $user['ucenter_member']['salt']); // 密码加密
+                    $data['password'] = encrypt_password($data['password'], $user['salt']); // 密码加密
                 } else {
                     unset($data['password']);
                 }
@@ -147,8 +189,8 @@ class Manager extends Base
                 unset($data['status']); // 去掉状态（因为管理用户表和用户表的状态不一样，所以这里得去掉用户状态）
 
                 // 数据保存
-                $status = $ucenterMember->save($data, ['id' => $user['uid']]);
-                $mid    = $ucenterMember->id; // 取得管理用户 id
+                $status = $this->ucenterMember->save($data, ['id' => $user['uid']]);
+                $mid    = $this->id; // 取得管理用户 id
                 $scene  = 'edit'; // 编辑场景
 
             } else {
@@ -162,11 +204,11 @@ class Manager extends Base
                 $data['password'] = encrypt_password($data['password'], $salt);
                 $data['salt']     = $salt; // 增加 salt
 
-                $status = $ucenterMember->save($data); // 数据保存
+                $status = $this->ucenterMember->save($data); // 数据保存
 
                 // 在管理用户表里新增数据
                 if ($status) {
-                    $mdata['uid'] = $ucenterMember->getLastInsID(); // 取得新增 id;
+                    $mdata['uid'] = $this->ucenterMember->getLastInsID(); // 取得新增 id;
                     $status       = $this->model->save($mdata); // 保存管理用户数据
                     $mid          = $this->model->getLastInsID(); // 取得管理用户 id
                     $scene        = 'add'; // 编辑场景
@@ -188,5 +230,53 @@ class Manager extends Base
 
         }
 
+    }
+
+    /**
+     * [ dataH 修改用户时数据处理 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-11-02T14:04:27+0800
+     * @param    array                   $data [description]
+     * @return   string                        [description]
+     */
+    private function dataH($data)
+    {
+
+        $error = true;
+        if (array_key_exists('username', $data)) {
+            if ($data['username']) {
+                $count = $this->ucenterMember->where('username', $data['username'])->select()->count();
+                if ($count > 1) {
+                    $error = '用户名已存在，请换一个';
+                }}
+        }
+
+        if (array_key_exists('nickname', $data)) {
+            if ($data['nickname']) {
+                $count = $this->ucenterMember->where('nickname', $data['nickname'])->select()->count();
+                if ($count > 1) {
+                    $error = '用户名昵称已存在，请换一个';
+                }}
+        }
+
+        if (array_key_exists('email', $data)) {
+            if ($data['email']) {
+                $count = $this->ucenterMember->where('email', $data['email'])->select()->count();
+                if ($count > 1) {
+                    $error = '邮箱已存在，请换一个';
+                }}
+        }
+
+        if (array_key_exists('mobile', $data)) {
+            if ($data['mobile']) {
+                $count = $this->ucenterMember->where('mobile', $data['mobile'])->select()->count();
+                if ($count > 1) {
+                    $error = $count;
+                }
+            }
+        }
+
+        return $error;
     }
 }
