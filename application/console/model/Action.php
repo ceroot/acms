@@ -22,13 +22,12 @@ class Action extends Extend
         if (Request::isPost()) {
 
             $name = Request::param('name'); // 取得规则名称
+            $arr  = explode('/', $name);
 
-            $arr = explode('/', $name);
-
-            ///$controller = toUnderline($arr[0]);
-            if (count($arr) < 1) {
+            if (count($arr) <= 1) {
                 return false;
             }
+
             $name  = strtolower($arr[0] . '_' . $arr[1]);
             $title = Request::param('title'); // 取得规则标题
 
@@ -37,7 +36,12 @@ class Action extends Extend
             $data['create_uid'] = Session::get('manager_id');
             $data['log']        = '[user|get_realname]在[time|time_format]操作了' . $title;
 
-            $this->save($data);
+            $validate = new \app\console\validate\Action; // 数据验证
+
+            if ($validate->check($data)) {
+                return $this->save($data);
+            }
+
         }
     }
 

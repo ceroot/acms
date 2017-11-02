@@ -207,10 +207,7 @@ trait Admin
 
         if ($this->app->request->isPost()) {
             $data  = $this->app->request->param();
-            $scene = 'add';
-
-            //
-            //$has_id = array_key_exists($this->pk, $data); // 判断是否存在 ID 键
+            $scene = 'add'; // 验证场景，默认是新增
 
             // 判断是新增还是更新，如果有键值就是更新，如果没有键值就是新增
             if ($this->app->request->has($this->pk)) {
@@ -275,7 +272,6 @@ trait Admin
 
                 // 数据保存
                 $status = $this->model->save($data);
-                // return $status;
 
             }
 
@@ -291,13 +287,12 @@ trait Admin
                 $record_id = $this->model->$pk; // 数据 id 值
 
                 switch ($this->app->request->controller()) {
-                    case 'AuthRule': // 更新规则缓存
+                    case 'AuthRule':
+                        $this->model->updateCache(); // 更新规则缓存
 
-                        $this->model->updateCache();
-                        // return $this->app->request->has('_log');
                         // 新增时是否添加日志记录标记
                         if ($this->app->request->has('_log')) {
-                            return $this->app->model('Action')->add_for_rule();
+                            $this->app->model('Action')->add_for_rule();
                         }
                         break;
                     case 'Manager': // 管理员操作时的操作
