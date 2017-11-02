@@ -46,6 +46,32 @@ trait Admin
         $order = [
             $this->pk => 'desc',
         ];
+
+        // 各种条件
+        switch (strtolower($this->request->controller())) {
+            case 'Manager':
+                $order = [
+                    $this->pk => 'asc',
+                ];
+                break;
+            case 'Config111':
+                $order = [
+                    'group' => 'desc',
+                ];
+                $map['group'] = input('param.group');
+                if (!input('?param.group')) {
+                    unset($map['group']);
+                }
+                break;
+            case 'attribute':
+                $model_id        = input('param.model_id');
+                $map['model_id'] = $model_id;
+                break;
+            default:
+                # code...
+                break;
+        }
+
         // 查询条件
         if ($search) {
             $tableFields = $this->model->getTableFields(); // 取得表字段
@@ -86,30 +112,6 @@ trait Admin
                     break;
             }
         }
-        // 各种条件
-        switch (request()->controller()) {
-            case 'Manager':
-                $order = [
-                    $this->pk => 'asc',
-                ];
-                break;
-            case 'Config111':
-                $order = [
-                    'group' => 'desc',
-                ];
-                $map['group'] = input('param.group');
-                if (!input('?param.group')) {
-                    unset($map['group']);
-                }
-                break;
-            case 'attribute':
-                $model_id        = input('param.model_id');
-                $map['model_id'] = $model_id;
-                break;
-            default:
-                # code...
-                break;
-        }
 
         $list = '';
 
@@ -118,7 +120,7 @@ trait Admin
             $list  = $this->model->withTrashed()->where($map)->order($order)->paginate($pageLimit, false, ['page' => $page, 'list_rows' => $pageLimit]);
             $count = $this->model->withTrashed()->where($map)->order($order)->count(); // 总计数
         } else {
-            $list  = $this->mode->where($map)->order($order)->paginate($pageLimit, false, ['page' => $page, 'list_rows' => $pageLimit]);
+            $list  = $this->model->where($map)->order($order)->paginate($pageLimit, false, ['page' => $page, 'list_rows' => $pageLimit]);
             $count = $this->model->where($map)->order($order)->count(); // 总计数
         }
 
@@ -137,11 +139,13 @@ trait Admin
                         # code...
                         break;
                 }
+
                 // 模型关联处理
                 if ($relationTag) {
                     $value = $this->model::get($relationId, $relationName); // 关联预载入查询
                     unset($value[toUnderline($relationName)]); // 去掉关联数据
                 }
+                // dump($value);die;
                 $value->editid = authcode($value['id']); // 增加编辑 editid 并加密
 
                 // 开发模式判断
@@ -153,6 +157,7 @@ trait Admin
         }
         $redata['count'] = $count;
         $redata['data']  = $newList;
+        // dump($redata);die;
         return $redata;
     }
 
@@ -173,8 +178,9 @@ trait Admin
                     if ($this->isWithTrashed()) {
                         $one = $this->model->withTrashed()->get($this->id, $relationName); // 关联预载入查询
                     } else {
-                        $one = $this->model->find($this->id, $relationName); // 关联预载入查询
+                        $one = $this->model->get($this->id, $relationName); // 关联预载入查询
                     }
+
                     $one             = $one->getData(); // 取得原始数据
                     $gdata           = model('AuthGroupAccess')->where('uid', $this->id)->find(); // 查找管理员所属角色
                     $one['group_id'] = $gdata['group_id'];
@@ -191,6 +197,7 @@ trait Admin
             }
 
             $one['editid'] = authcode($one['id']); // 加密编辑 editid
+
             return $one;
 
         }

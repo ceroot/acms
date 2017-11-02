@@ -91,4 +91,25 @@ class Manager extends Extend
     {
         Session::set('manager_id', $manager['id']);
     }
+
+    /**
+     * [ ucenterMember 取得用户信息关联 ]
+     * @author SpringYang <ceroot@163.com>
+     * @dateTime 2017-11-02T10:13:07+0800
+     * @return   [type]                   [description]
+     */
+    public function ucenterMember()
+    {
+        // return $this->hasOne('UcenterMember', 'id');
+        $field = [
+            'username',
+            'nickname',
+            'realname',
+            'email',
+            'login_time',
+            'member_create_time' => 'create_time',
+        ];
+        $data = $this->belongsTo('app\common\model\UcenterMember', 'uid')->bind($field);
+        return $data;
+    }
 }
