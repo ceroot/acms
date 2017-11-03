@@ -46,7 +46,7 @@
 						<input name="sort[{$list.id}]" type='text' size='3' value='{$list.sort}' class='input'>
 					</td>
 					<td>{$list.name}</td>
-					<td>{$list._name}</td>
+					<td>{$list._name|raw}</td>
 					<td><a class="cy-ajax" href="{:url('updateauth?id='.authcode($list['id']))}" title="快捷设置验证状态">{$list.auth? '需要' : '否'}</a></td>
 					<td><a class="cy-ajax" href="{:url('updatestatus?id='.authcode($list['id']))}" title="快捷设置状态">{$list.status}</a></td>
 					<td><a class="cy-ajax" href="{:url('updateshow?id='.authcode($list['id']))}" title="快捷设置显示状态">{$list.isnavshow? '显示' : '隐藏'}</a></td>
