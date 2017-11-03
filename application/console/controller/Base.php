@@ -154,6 +154,7 @@ class Base extends Extend
     {
         $one = $this->_edit();
         $this->assign('one', $one);
+        // dump($one);die;
 
         return $this->menusView('add');
     }
