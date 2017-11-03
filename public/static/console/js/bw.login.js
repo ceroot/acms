@@ -95,12 +95,9 @@ layui.use(['form'], function(){
             
             var href = window.location.href
                 ,jumpurl;
-            
-            if(href.indexOf('?backurl=') >= 0 || href.indexOf('backurl/') >= 0){
-                href = href.split('backurl/');
-                if(href[1] == 'undefined'){
-                    href = href.split('?backurl=');
-                }
+            // if(href.indexOf('?backurl=') >= 0 || href.indexOf('backurl/') >= 0){
+            if(href.indexOf('backurl=') >= 0){
+                href = href.split('backurl=');
                 jumpurl = href[1];
                 if(!jumpurl){
                     jumpurl = '/console/index/index';

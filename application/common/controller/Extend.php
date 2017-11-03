@@ -35,5 +35,17 @@ class Extend extends Controller
     {
         $this->app = Container::getInstance()->make('think\App');
 
+        // 关于服务端url没有#!的处理
+        if ($this->app->request->isPut()) {
+            $hash = $this->app->request->param('hash');
+            if ($hash) {
+                $this->app->session->set('hash', $hash);
+            } else {
+                $this->app->session->set('hash', null);
+            }
+        } else {
+            $this->app->session->set('hash', null);
+        }
+
     }
 }

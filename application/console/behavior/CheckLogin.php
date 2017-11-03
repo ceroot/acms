@@ -80,14 +80,20 @@ class CheckLogin
             return true;
         }
 
-        Session::has('user_auth') || $this->redirect('Start/index'); // 用户判断 session
+        // Session::has('user_auth') || $this->redirect('Start/index?backurl=' . getbackurl(false)); // 用户判断 session
 
-        Session::has('user_auth_sign') || $this->redirect('Start/index'); // 用户判断 session
+        // Session::has('user_auth_sign') || $this->redirect('Start/index?backurl=' . getbackurl(false)); // 用户判断 session
 
-        is_login() || $this->redirect('Start/index'); // 判断是否登录
+        // is_login() || $this->redirect('Start/index?backurl=' . getbackurl(false)); // 判断是否登录
 
-        Session::has('manager_id') || $this->redirect('Start/index?backurl=' . getbackurl(false)); // 判断是否登录
+        // Session::has('manager_id') || $this->redirect('Start/index?backurl=' . getbackurl(false)); // 判断是否登录
+
+        if (!Session::has('user_auth') || !Session::has('user_auth_sign') || !is_login() || !Session::has('manager_id')) {
+            $loginurl = url('console/start/index?time=' . time()) . '?backurl=' . getbackurl();
+            return $this->success('用户已经退出，请重新登录', $loginurl);
+        }
 
         Log::record('[ 检查登录日志 ]：管理用户 id 为' . Session::get('manager_id') . '登录成功');
+
     }
 }
