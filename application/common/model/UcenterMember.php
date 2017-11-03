@@ -19,9 +19,12 @@
 namespace app\common\model;
 
 use app\common\model\Extend;
+use think\model\concern\SoftDelete;
 
 class UcenterMember extends Extend
 {
+    use SoftDelete;
+    protected $deleteTime = 'delete_time';
 
     /**
      * [ getLoginTimeAttr 取得登录时间格式 ]

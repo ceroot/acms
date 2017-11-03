@@ -36,6 +36,8 @@ class AuthRule extends Base
                 $_pid = deauthcode($this->app->request->param('id'));
                 $this->assign('_pid', $_pid);
             }
+        } else {
+            $this->assign('_pid', null);
         }
 
     }
