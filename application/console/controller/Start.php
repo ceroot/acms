@@ -19,7 +19,7 @@ namespace app\console\controller;
 use app\facade\User;
 use think\Controller;
 use think\facade\App;
-use think\facade\Config;
+use think\facade\Hook;
 use think\facade\Request;
 use think\facade\Session;
 
@@ -71,14 +71,16 @@ class Start extends Controller
             // 验证不成功时
             if (!$user) {
                 Session::set('error_num', $error_num + 1); // 错误次数加 1
-                $this->error(User::getError(), '', array('error_num' => $error_num, 'verifyhtml' => $this->verifyhtml()));
+                return $this->error(User::getError(), '', array('error_num' => $error_num, 'verifyhtml' => $this->verifyhtml()));
             }
             $manager = $this->model->login($user->id); // 管理员用户验证并返回管理用户信息
-            $manager || $this->error($this->model->getError(), '', array('error_num' => $error_num));
+            $manager || $this->error($this->model->getError(), '', array('error_num' => $error_num)); // 用户不存在返回提示
+
             User::autoLogin($user); // 用户自动登录
             $this->model->autoLogin($manager); // 管理用户自动登录
-            App::model('ActionLog')->actionLogRun($user, 'login', 'manager', $user); // 记录登录日志
+            Hook::listen('action_log', ['action' => 'login', 'record_id' => $user->id, 'model' => 'manager']); // 行为日志记录
             Session::pull('error_num'); // 登录成功，清除登录错误次数记录，释放 sesseion
+
             $time     = date('YmdHis');
             $authcode = authcode($time);
             $this->success('登录成功', url('console/index/index?time=' . $time . '&authcode=' . $authcode), ['error_num' => 0]);
@@ -89,12 +91,9 @@ class Start extends Controller
     }
     public function test($id = null)
     {
-        $test = null;
-        $dd   = Config::get('checklogin.not_login_action') ?: [];
-        dump($dd);
-        $backurl = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-        dump(getbackurl(false));
-        Session::pull('manager_id');
+        $hashT = session('hash');
+        dump($hashT);
+
     }
     /**
      * [ verifyhtml 登录页面验证码 html ]
@@ -150,5 +149,27 @@ class Start extends Controller
         session('complete', true);
         // 跳回之前的来源地址
         return redirect()->restore();
+    }
+
+    public function logout()
+    {
+        $mid = Session::get('user_auth.id');
+        if (!$mid) {
+            $this->redirect('console/start/index');
+        }
+
+        User::loginout(); // 清除 session
+
+        //App::model('ActionLog')->actionLogRun($mid, 'logout', 'manager', $mid); // 记录退出日志
+        // Hook::listen();
+        Hook::listen('action_log', ['action' => 'logout', 'record_id' => $mid, 'model' => 'manager']); // 行为日志记录
+        $backurl = Request::param('backurl');
+        //$hashT   = session('hash');
+        //$backurl = $backurl . $hashT;
+
+        $backurl  = rawurlencode($backurl); //encodeURIComponent
+        $loginurl = url('console/start/index?time=' . time()) . '?backurl=' . $backurl;
+
+        return $this->success('注销成功', $loginurl);
     }
 }

@@ -148,4 +148,16 @@ class User
 
     }
 
+    /**
+     * [ loginout 退出登录 ]
+     * @author SpringYang <ceroot@163.com>
+     * @dateTime 2017-11-03T15:03:35+0800
+     * @return   [type]                   [description]
+     */
+    public function loginout()
+    {
+        Session::pull('user_auth');
+        Session::pull('user_auth_sign');
+    }
+
 }

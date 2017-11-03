@@ -296,7 +296,7 @@ function data_auth_sign($data)
 function logouturl()
 {
     // $loginout = url('Login/loginout') . '?backurl=' . getbackurl();
-    $loginout = url('console/login/logout?time=' . date('YmdHis') . getrandom(128)) . '?backurl=' . getbackurl();
+    $loginout = url('console/start/logout?time=' . date('YmdHis') . getrandom(128)) . '?backurl=' . getbackurl();
     return $loginout;
 }
 
