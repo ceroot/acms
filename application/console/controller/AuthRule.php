@@ -30,6 +30,14 @@ class AuthRule extends Base
         $rule = $this->model->getAll();
         $this->assign('rule', $rule);
 
+        // 新增子规则的时候给 pid
+        if ($this->app->request->action() == 'add') {
+            if ($this->app->request->has('id')) {
+                $_pid = deauthcode($this->app->request->param('id'));
+                $this->assign('_pid', $_pid);
+            }
+        }
+
     }
 
     function list() {
