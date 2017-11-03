@@ -37,6 +37,7 @@ class ActionLog extends Model
      */
     public function actionLogRun($record_id = null, $action = null, $model = null, $user_id = null)
     {
+
         // 参数检查
         if (empty($record_id)) {
             return '参数不能为空';
@@ -76,25 +77,29 @@ class ActionLog extends Model
 
         // 解析日志规则,生成日志备注
         if (!empty($action_log)) {
+
             if (preg_match_all('/\[(\S+?)\]/', $action_log, $match)) {
                 $log['user_id']  = $user_id;
                 $log['record']   = $record_id;
                 $log['model']    = $model;
                 $log['time']     = time();
                 $log['table_id'] = $model . '|' . $record_id;
-                $log['type']     = session('log_text');
+                $log['type']     = Session::get('log_text');
                 $log['data']     = array('user_id' => $user_id, 'model' => $model, 'record' => $record_id, 'time' => time());
 
                 foreach ($match[1] as $key => $value) {
                     //dump($value);
                     $param = explode('|', $value);
+
                     if (isset($param[1])) {
                         $replace[] = call_user_func($param[1], $log[$param[0]]);
+
                     } else {
                         $replace[] = $log[$param[0]];
                     }
-                }
 
+                }
+                // return $replace;
                 $data['remark'] = str_replace($match[0], $replace, $action_log);
             } else {
                 $data['remark'] = $action_log;

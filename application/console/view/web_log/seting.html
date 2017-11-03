@@ -1,0 +1,27 @@
+{extend name="mould:base" /}
+{block name="title"}{/block}
+{block name="author"}{$second.title}{/block}
+{block name="keywords"}{$second.title}{/block}
+{block name="description"}{$second.title}{/block}
+{block name="css"}
+
+<style type="text/css">
+	.commonindex{ padding-top: 20px; }
+	.commonindex a{ margin-right: 10px }
+	.commonindex a:hover{}
+
+
+</style>
+{/block}
+{block name="content"}
+	<div class="commonindex">
+seting
+    </div>
+	<div>
+	    这是共用index
+	</div>
+
+
+
+
+{/block}

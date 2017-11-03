@@ -115,7 +115,7 @@ trait Models
      * @return bool
      */
 
-    // public function renew(?array $data=null,bool $rule=false,?string $pkId='',$validate_name='') {
+    // public function renew1111(?array $data=null,bool $rule=false,?string $pkId='',$validate_name='') {
     //     if(empty($validate_name)){//获取验证器
     //         $class_name=get_class();
     //         $start=strrpos($class_name,'\\')+1;

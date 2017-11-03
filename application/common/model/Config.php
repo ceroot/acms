@@ -18,6 +18,8 @@
 namespace app\common\model;
 
 use app\common\model\Extend;
+use think\facade\Cache;
+use think\facade\Config as Cfg;
 
 class Config extends Extend
 {
@@ -31,7 +33,7 @@ class Config extends Extend
         //     3 => '前台',
         //     4 => '网站',
         // ];
-        $group = config('config_group_list');
+        $group = Cfg::set('config_group_list');
         return $group[$data['group']];
     }
 
@@ -52,7 +54,7 @@ class Config extends Extend
         //     11 => '数组',
         //     12 => '富文本',
         // ];
-        $type = config('config_type_list');
+        $type = Cfg::get('config_type_list');
         return $type[$data['type']];
     }
 
@@ -70,7 +72,7 @@ class Config extends Extend
                 $config[$value['name']] = self::parse($value['type'], $value['value']);
             }
         }
-        cache('db_config_data', $config);
+        Cache::set('db_config_data', $config);
         return $config;
     }
 

@@ -16,13 +16,13 @@
  */
 namespace app\common\behavior;
 
+use think\facade\Cache;
 use think\facade\Config;
 
 class ModuleInit
 {
     public function run($params)
     {
-        // dump(122);die;
         //$this->initialization(); // 初始化
         $this->config(); // 配置信息
 
@@ -41,13 +41,16 @@ class ModuleInit
     // 配置信息处理
     private function config()
     {
-        // 读取数据库中的配置并加入配置
-        $config = cache('db_config_data');
-
-        if (empty($config)) {
+        // 判断是否存在
+        if (!Cache::has('db_config_data')) {
             $Config = new \app\common\model\Config;
             $config = $Config->cache_config();
         }
+
+        // 读取数据库中的配置并加入配置
+        $config = Cache::get('db_config_data');
+
+        // 配置输出
         foreach ($config as $key => $value) {
             Config::set($key, $value);
         }

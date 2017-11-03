@@ -35,6 +35,9 @@ class Base extends Extend
 
     public function test()
     {
+        $value  = 1;
+        $result = $this->model->where($this->pk, $this->id)->setField('status', $value);
+        dump($result);die;
         // session('dd', null);
         dump(session('dd'));
         dump(session('paramss'));
@@ -203,6 +206,22 @@ class Base extends Extend
     public function del()
     {
         return $this->_del();
+    }
+
+    /**
+     * [ seting 通用设置 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-11-03T10:18:50+0800
+     * @return   [type]                   [description]
+     */
+    public function seting()
+    {
+        if ($this->app->request->isAjax()) {
+
+        } else {
+            return $this->menusView();
+        }
     }
 
 }

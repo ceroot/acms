@@ -51,4 +51,25 @@ class AuthRule extends Extend
         App::model('AuthRule', 'logic')->updateCache();
     }
 
+    /**
+     * [del 删除规则]
+     * @return [type] [description]
+     */
+    public function del($id)
+    {
+        $count = $this::where('pid', $id)->count();
+        if ($count) {
+            $this->error = '请先删除子规则';
+            return false;
+        }
+        $status = $this::destroy($id);
+        if ($status) {
+            $this->updateCache();
+            return true;
+        } else {
+            $this->error = '根据条件没有数据可进行删除';
+            return false;
+        }
+    }
+
 }

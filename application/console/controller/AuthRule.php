@@ -39,12 +39,15 @@ class AuthRule extends Base
 
     public function del()
     {
-        return false;
+        if (!$this->id) {
+            return $this->error('参数错误');
+        }
+
         $status = $this->model->del($this->id);
 
         if ($status) {
-
             $this->model->updateCache(); // 更新缓存
+            $this->app->hook->listen('action_log', ['record_id' => $this->id]); // 行为日志记录
             return $this->success('成功');
         } else {
             return $this->error($this->model->getError());
@@ -71,23 +74,23 @@ class AuthRule extends Base
 
     /**
      * @name   更新字段
-     * @param  string   $string     [说明]
+     * @param  string   $field      [字段名称]
+     * @param  string   $value      [字段值]
      * @return boolean              [返回布尔值]
      * @author SpringYang <ceroot@163.com>
      */
-    protected function updatefield($field)
+    protected function updatefield($field, $value = null)
     {
+        if (is_null($value)) {
+            $value = $this->model->getFieldById($this->id, $field);
+            $value = $value ? 0 : 1;
+        }
 
-        $status = db(request()->controller())->getFieldById($this->id, $field);
-        //return $status;
-        $data[$field] = ($status == 1) ? 0 : 1;
-
-        $status = $this->model->save($data, [$this->pk => $this->id]);
+        $status = $this->model->where($this->pk, $this->id)->setField($field, $value);
 
         if ($status) {
             $this->model->updateCache(); // 更新缓存
-
-            //action_log($this->id); // 记录日志
+            $this->app->hook->listen('action_log', ['record_id' => $this->id]); // 行为日志记录
             return $this->success('成功');
         } else {
             return $this->error('失败');

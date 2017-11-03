@@ -58,19 +58,18 @@ class Config extends Base
     {
         $data = $this->app->request->param();
 
-        $dt = [];
+        $datatemp = [];
         foreach ($data as $key => $value) {
             $id            = $this->model->getByName($key);
             $temp['id']    = $id['id'];
             $temp['value'] = $value;
-            $dt[]          = $temp;
+            $datatemp[]    = $temp;
         }
 
-        // return $dt;
-
-        if ($dt) {
-            if ($this->model->saveAll($dt)) {
+        if ($datatemp) {
+            if ($this->model->saveAll($datatemp)) {
                 $this->app->model('app\common\model\Config')->cache_config(); // 更新数据缓存
+                $this->app->hook->listen('action_log', ['action' => 'edit', 'record_id' => 0]); // 行为日志记录
                 return $this->success('修改成功');
             } else {
                 return $this->error('修改失败');
@@ -80,7 +79,6 @@ class Config extends Base
 
     public function lists()
     {
-
         $group = $this->app->request->param('group');
         $page  = $this->app->request->param('page');
 

@@ -389,6 +389,19 @@ function get_realname($uid = null)
 }
 
 /**
+ * 获得禁用和启用状态文字
+ * @param  string  $table_id [表名和当前id]
+ * @return string            [返回启用或者禁用]
+ * @author SpringYang <ceroot@163.com>
+ */
+function status_text($table_id)
+{
+    $arr   = explode('|', $table_id);
+    $value = db($arr[0])->getFieldById($arr[1], 'status');
+    return ($value == 1) ? '启用' : '禁用';
+}
+
+/**
  * 随机数函数
  * @param  string    $length     [长度]
  * @param  int       $numeric    [类型 0为数字，1为全部，2为大小写，3为数字加大写，4为数字加小写，5为大写，6为小写，7为uniqid()]

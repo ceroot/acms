@@ -48,7 +48,7 @@
 					<td>{$list.name}</td>
 					<td>{$list._name}</td>
 					<td><a class="cy-ajax" href="{:url('updateauth?id='.authcode($list['id']))}" title="快捷设置验证状态">{$list.auth? '需要' : '否'}</a></td>
-					<td><a class="cy-ajax" href="{:url('updatestatus?id='.authcode($list['id']))}" title="快捷设置状态">{$list.status? '正常' : '禁用'}</a></td>
+					<td><a class="cy-ajax" href="{:url('updatestatus?id='.authcode($list['id']))}" title="快捷设置状态">{$list.status}</a></td>
 					<td><a class="cy-ajax" href="{:url('updateshow?id='.authcode($list['id']))}" title="快捷设置显示状态">{$list.isnavshow? '显示' : '隐藏'}</a></td>
 					<td align='center' >
 						<a href="{:url('edit?id='.authcode($list['id']))}" title="修改"><i class="fa fa-pencil"></i></a> | 

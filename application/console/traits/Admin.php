@@ -356,17 +356,27 @@ trait Admin
         if ($this->isWithTrashed()) {
             $data = $this->model::withTrashed()->find($this->id);
         } else {
-            $data = $this->model->find($this->id);
+            $data = $this->model->get($this->id);
         }
-        $value        = $data->getData('status'); // 取得 status 原始数据
-        $data->status = $value ? 0 : 1; // status 数据
 
-        $status = $data->save();
+        $value = $data->getData('status'); // 取得 status 原始数据
 
-        // 各种模式下的处理
-        if ($status) {
-            if ($controller == 'AuthRule') {
-                $this->model->updateCache();
+        $value = $value ? 0 : 1; // status 数据
+
+        $result = $this->model->where($this->pk, $this->id)->setField('status', $value);
+
+        if ($result) {
+            switch (strtolower($controller)) {
+                case 'authrule':
+                    $this->model->updateCache();
+                    break;
+                case 'config':
+                    $Config = new \app\common\model\Config;
+                    $config = $Config->cache_config();
+                    break;
+                default:
+                    # code...
+                    break;
             }
 
             $this->app->hook->listen('action_log', ['record_id' => $this->id]); // 行为日志记录
@@ -392,7 +402,7 @@ trait Admin
         }
 
         $controller = strtolower($this->app->request->controller()); // 取得控制器
-
+        return $controller;
         // 各种模型下的处理
         switch ($controller) {
             case 'manager':
