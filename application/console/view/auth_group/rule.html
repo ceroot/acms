@@ -95,19 +95,19 @@ layui.use('form', function(){
 				$('.'+_value).prop('checked',false);
 			}
 
-			if($('.'+_class+':checked').length){
+			if($('.'+_class+':checked').length > 0){
 				$('#'+_class).prop('checked',true);
 			}else{
 				$('#'+_class).prop('checked',false);
 			}
 
-			if($('[pid='+_pid+']:checked').length){
+			if($('[pid='+_pid+']:checked').length > 0){
 				$('#node'+_pid).prop('checked',true);
 			}else{
 				$('#node'+_pid).prop('checked',false);
 			}
 
-			if($('[cid='+_cid+']:checked').length){
+			if($('[cid='+_cid+']:checked').length > 0){
 				$('.node'+_cid).prop('checked',true);
 			}else{
 				$('.node'+_cid).prop('checked',false);
