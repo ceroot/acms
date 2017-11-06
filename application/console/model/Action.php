@@ -34,7 +34,7 @@ class Action extends Extend
             $data['title']      = $title;
             $data['name']       = $name;
             $data['create_uid'] = Session::get('manager_id');
-            $data['log']        = '[user|get_realname]在[time|time_format]操作了' . $title;
+            $data['log']        = '[user_id|get_realname]在[time|time_format]操作了' . $title;
 
             $validate = new \app\console\validate\Action; // 数据验证
 

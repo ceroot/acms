@@ -19,7 +19,6 @@ namespace app\console\controller;
 use app\facade\User;
 use think\Controller;
 use think\facade\App;
-use think\facade\Env;
 use think\facade\Hook;
 use think\facade\Request;
 use think\facade\Session;
@@ -92,7 +91,9 @@ class Start extends Controller
     }
     public function test($id = null)
     {
-        dump(Env::get('root_path'));
+        $user = User::getUserInfo(222);
+
+        dump($user);
 
     }
     /**

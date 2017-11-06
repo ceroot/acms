@@ -718,6 +718,7 @@ function _init(){
                 
                 //监听提交
                 form.on('submit(bw-submit)', function(data){
+                    
                     console.log(data.field);
                     // layer.alert(JSON.stringify(data.field), {
                     //   title: '最终的提交信息'

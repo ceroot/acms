@@ -130,6 +130,8 @@ class Widgets extends Extend
                 break;
             case 'email':
                 $type = 'text';
+            case 'mobile':
+                $type = 'text';
                 break;
             case 'number':
                 $type = 'text';

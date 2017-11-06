@@ -4,31 +4,51 @@
 	<div class="details-content">
 	    <table class="layui-table">
 	        <colgroup>
-		        <col width="90">
+		        <col width="100">
 		        <col width="200">
-		        <col width="80">
+		        <col width="100">
 		        <col>
 	        </colgroup>
 	        <tbody>
 	          	<tr>
 		          	<td align="right">id</td>
 		          	<td>{$one.id}</td>
-		          	<td align="right">标识</td>
-		            <td>{$one.name}</td>
+		          	<td align="right">用户名</td>
+		            <td>{$one.username}</td>
 	          	</tr>
 	          	<tr>
-		          	<td align="right">标题</td>
-		            <td>{$one.title}</td>
-	          		<td align="right">状态</td>
-		          	<td>{$one.status ? '正常':'禁用'}</td>
+		          	<td align="right">邮箱</td>
+		            <td>{$one.email}</td>
+	          		<td align="right">手机号</td>
+		          	<td>{$one.mobile}</td>
 	          	</tr>
 	          	<tr>
-		          	<td align="right">描述</td>
-		            <td colspan="3">{$one.remark}</td>
+		          	<td align="right">昵称</td>
+		            <td>{$one.nickname}</td>
+		            <td align="right">真实姓名</td>
+		            <td>{$one.realname}</td>
 	          	</tr>
 	          	<tr>
-	          		<td align="right">日志规则</td>
-		          	<td colspan="3">{$one.log}</td>
+		          	<td align="right">创建时间</td>
+		            <td>{$one.create_time}</td>
+		            <td align="right">创建 IP</td>
+		            <td>{$one.create_ip}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">更新时间</td>
+		            <td>{$one.update_time}</td>
+		            <td align="right">更新 IP</td>
+		            <td>{$one.update_ip}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">登录时间</td>
+		            <td>{$one.login_time}</td>
+		            <td align="right">登录 IP</td>
+		            <td>{$one.login_ip}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">状态</td>
+		            <td colspan="3">{$one.status}</td>
 	          	</tr>
 	        </tbody>
 		</table>

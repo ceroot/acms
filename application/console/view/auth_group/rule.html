@@ -8,31 +8,22 @@ legend label{ margin: 0; margin-right:15px; word-wrap: break-word; word-break: b
 h5{ font-family: "微软雅黑"; background: #f1f1f1; padding-top: 5px}
 
 </style>
-<form action="{:url('update',array('rule'=>1))}" method="post" class="layui-form">
-	<table width="100%" class="table_form">
+<form action="{:url('rule',array('rule'=>1))}" method="post" class="layui-form" lay-filter="rules">
+	<table width="100%" class="table_form"> 
 	   	{volist name='rules' id='node1'}
 	        <tr>
 		        <td style="border:1px dotted #ccc; margin-bottom: 10px; padding: 10px;">
 		            <h5>
-		            	<label>
-		            		<input pid='0' type="checkbox" value="{$node1.id}" id='node{$node1.id}' name="rules[]" {in name='node1.id' value='$field["rules"]'}checked = 'checked' {/in} /> 
-		            		<span class="input-text">{$node1.title}</span>
-		            	</label>
+		            	<input id='node{$node1.id}' pid='0' type="checkbox" value="{$node1.id}" name="rules[{$node1.id}]" {in name='node1.id' value='$field["rules"]'}checked = 'checked' {/in} title="{$node1.title}{$node1.id}" lay-skin="primary" lay-filter="rules"/>
 		            </h5>
 		            {volist name='node1._data' id='node2'}
 			        	<fieldset>
 			                <legend>
-			                	<label>
-			                		<input pid='{$node1.id}' type="checkbox" value="{$node2.id}"  id='node{$node2.id}' name="rules[]" {in name='node2.id' value='$field["rules"]'}checked = 'checked' {/in}/> 
-			                		<span class="input-text">{$node2.title}</span>
-			                	</label>
+			                	<input id='node{$node2.id}' pid='{$node1.id}' cid="{$node2.id}" type="checkbox" value="{$node2.id}" name="rules[{$node2.id}]" {in name='node2.id' value='$field["rules"]'}checked = 'checked' {/in} title="{$node2.title}{$node2.id}" lay-skin="primary" lay-filter="rules"/>
 			                </legend>
 			                <div class="" style="padding-left: 10px;">
 			                	{volist name='node2._data' id='node3'}
-			                        <label>
-			                        	<input pid='{$node1.id}' type="checkbox" value="{$node3.id}" class='{$node2.id}' name="rules[]" {in name='node3.id' value='$field["rules"]'}checked = 'checked' {/in}/> 
-			                        	<span class="input-text">{$node3.title}</span>
-			                        </label>
+			                        <input pid='{$node1.id}' type="checkbox" value="{$node3.id}" class='node{$node2.id}' name="rules[{$node3.id}]" {in name='node3.id' value='$field["rules"]'}checked = 'checked' {/in} title="{$node3.title}{$node3.id}" lay-skin="primary" lay-filter="rules"/>
 			    				{/volist}
 			    			</div>
 			           </fieldset>
@@ -41,37 +32,90 @@ h5{ font-family: "微软雅黑"; background: #f1f1f1; padding-top: 5px}
 		    </tr>
 		{/volist}
 	</table>
-	<div class="fixed-bottom">
-		<div class="bottom-area">
-			<input type="hidden" name="id" value="{$field.id|authcode}" />
-		    <button class="btn btn-sm btn-default btn-post">保存</button>
-		</div>
-	</div>
+	{:widget('Widgets/button', ['name'=>'id','value'=>$field.editid,'buttontext'=>'保存'])}
 </form>
 
 {/block}
 {block name="script"}
 <script type="application/javascript">
 $(function(){
-	$('body').on('click','input[type=checkbox]',function(){
-		var _self   = $(this);
-		var _value  = _self.val();
-		var _pid    = _self.attr('pid');
-		var _class  = _self.attr('class');
 
-		if(_self.is(':checked')){
-			$('[pid='+_value+']').prop('checked',true);
-			$('.'+_value).prop('checked',true);
-		}else{
-			$('[pid='+_value+']').prop('checked',false);
-			$('.'+_value).prop('checked',false);
-		}
-		
-		$('.'+_class+':checked').length ? $('#node'+_class).prop('checked',true) : $('#node'+_class).prop('checked',false);
-		$('[pid='+_pid+']:checked').length ? $('#node'+_pid).prop('checked',true) : $('#node'+_pid).prop('checked',false);
+layui.use('form', function(){
+	var form = layui.form;
+	form.on('checkbox(rules11111)', function(data){
+		console.log(data.elem); //得到checkbox原始DOM对象
+		//console.log(data.elem.checked); //是否被选中，true或者false
+		//console.log(data.value); //复选框value值，也可以通过data.elem.value得到
+		//console.log(data.othis); //得到美化后的DOM对象
+		// form.render(null, 'rules');
 		
 	});
 
+});
+
+layui.use('form', function(){
+	var form = layui.form;
+	//全选
+	$('#checkbox-all').click(function(){
+		$("input[type='checkbox']").prop("checked", true);
+		form.render('checkbox','rulesd');
+	});
+	//反选
+	$('#checkbox-reverse').click(function(){
+		$("input[type='checkbox']").prop("checked", function(index, attr){
+			return !attr;
+		});
+		form.render('checkbox','rulesd');
+	});
+});
+
+
+	layui.use('form', function(){
+		var form = layui.form;
+		$('body').on('click','.layui-form-checkbox',function(){
+
+			var _self   = $(this);
+			var _input  = _self.siblings('input');
+			var _value  = _input.val();
+			var _pid    = _input.attr('pid');
+			var _cid 	= _input.attr('cid');
+			var _class  = _input.attr('class');
+
+			console.log('value:'+_value);
+			console.log('pid:'+_pid);
+			console.log('cid:'+_cid);
+			console.log('class:'+_class);
+
+
+			if(_input.is(':checked')){
+				$('[pid='+_value+']').prop('checked',true);
+				$('.'+_value).prop('checked',true);
+			}else{
+				$('[pid='+_value+']').prop('checked',false);
+				$('.'+_value).prop('checked',false);
+			}
+
+			if($('.'+_class+':checked').length){
+				$('#'+_class).prop('checked',true);
+			}else{
+				$('#'+_class).prop('checked',false);
+			}
+
+			if($('[pid='+_pid+']:checked').length){
+				$('#node'+_pid).prop('checked',true);
+			}else{
+				$('#node'+_pid).prop('checked',false);
+			}
+
+			if($('[cid='+_cid+']:checked').length){
+				$('.node'+_cid).prop('checked',true);
+			}else{
+				$('.node'+_cid).prop('checked',false);
+			}
+
+			form.render('checkbox','rules');
+		});
+	});
 })
 </script>
 {/block}

@@ -215,10 +215,10 @@ trait Admin
         if ($this->app->request->isPost()) {
             $data  = $this->app->request->param();
             $scene = 'add'; // 验证场景，默认是新增
-
+            // return $data;
             // 判断是新增还是更新，如果有键值就是更新，如果没有键值就是新增
             if ($this->app->request->has($this->pk)) {
-
+                // return $data;
                 $data[$this->pk] = $this->id;
                 if (!$this->id) {
                     return $this->error('参数错误');
@@ -226,15 +226,6 @@ trait Admin
 
                 // 各种模式下对数据的处理
                 switch ($this->app->request->controller()) {
-                    case 'AuthGroup':
-                        $rulesdata = input('param.rules/a');
-                        if ($rulesdata) {
-                            $data['rules'] = implode(',', $rulesdata);
-                            session('log_text', '修改了权限');
-                        } else {
-                            session('log_text', '编辑了角色');
-                        }
-                        break;
                     case 'Model':
                         if (input('param.field_sort/a')) {
                             $data['field_sort'] = json_encode($data['field_sort']);
@@ -252,13 +243,8 @@ trait Admin
                         # code...
                         break;
                 }
-                // return $data;
 
-                if ($this->app->request->param('rule')) {
-                    if ($this->app->request->param('rule') == 1) {
-                        $validate = false;
-                    }
-                }
+                // return $data;
 
                 // 数据验证
                 $validate = $this->app->validate($this->app->request->controller());
@@ -272,6 +258,7 @@ trait Admin
                 $scene = 'edit'; // 更改默认场景
             } else {
                 // 数据验证
+                return $data;
                 $validate = $this->app->validate($this->app->request->controller());
                 if (!$validate->check($data)) {
                     return $this->error($validate->getError());
@@ -282,7 +269,7 @@ trait Admin
 
             }
 
-            // 数据验证不通过返回提示
+            // 数据保存不通过返回提示
             if ($status === false) {
                 return $this->error($this->model->getError());
             }
@@ -346,10 +333,22 @@ trait Admin
         $controller = $this->app->request->controller(); // 取得控制器名称
 
         // 管理员时的特殊处理
-        if (strtolower($controller) == 'manager') {
-            if ($this->id == 1) {
-                return $this->error('超级管理员不能禁用');
-            }
+        //
+        switch (strtolower($controller)) {
+            case 'manager':
+                if ($this->id == 1) {
+                    return $this->error('超级管理员不能禁用');
+                }
+                break;
+            case 'ucentermember':
+                if ($this->id == 1) {
+                    return $this->error('不好意思，你这是用造反么？我是创始用户');
+                }
+                # code...
+                break;
+            default:
+                # code...
+                break;
         }
 
         // 判断超级管理员
@@ -402,7 +401,7 @@ trait Admin
         }
 
         $controller = strtolower($this->app->request->controller()); // 取得控制器
-        return $controller;
+
         // 各种模型下的处理
         switch ($controller) {
             case 'manager':
@@ -411,7 +410,12 @@ trait Admin
                 }
                 # code...
                 break;
-
+            case 'ucentermember':
+                if ($this->id == 1) {
+                    return $this->error('不好意思，你这是用造反么？我是创始用户');
+                }
+                # code...
+                break;
             default:
                 # code...
                 break;

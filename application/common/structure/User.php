@@ -52,10 +52,13 @@ class User
      */
     public function login($username, $password, $type = 1)
     {
-        // $map['username|email|mobile'] = $username;
         if (!is_null($username) && !is_null($password)) {
             $field = 'id,username,password,salt,status,times,create_time,update_time';
-            $user  = $this->UcenterMember->field($field)->getByUsername($username);
+            $map   = [
+                ['username|email|mobile', '=', $username],
+            ];
+
+            $user = $this->UcenterMember->where($map)->field($field)->find();
 
             if (!$user) {
                 $this->error = '用户不存在';
@@ -119,10 +122,32 @@ class User
     }
 
     /**
+     * [ isLogin 检测用户是否登录 ]
+     * @author SpringYang <ceroot@163.com>
+     * @dateTime 2017-11-06T12:17:10+0800
+     * @return   integer                  [0-未登录，大于0-当前登录用户ID]
+     */
+    public function isLogin()
+    {
+        $user = Session::get('user_auth');
+        if (empty($user)) {
+            return 0;
+        } else {
+            $status = $this->getUserInfo($user['id'], 'status');
+            // 查询用户是否存在及用户状态
+            if (!$status) {
+                return 0;
+            } else {
+                return Session::get('user_auth_sign') == data_auth_sign($user) ? $user['id'] : 0;
+            }
+        }
+    }
+
+    /**
      * [ modifyPassword 设置密码（修改密码） ]
      * @author SpringYang <ceroot@163.com>
      * @dateTime 2017-11-02T15:38:30+0800
-     * @param    intger                   $id       [用户 id]
+     * @param    integer                  $id       [用户 id]
      * @param    string                   $password [用户密码]
      * @return   boolean                            [返回布尔型]
      */
@@ -149,12 +174,61 @@ class User
     }
 
     /**
+     * [ getUserInfo 取得用户信息 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-11-06T11:36:42+0800
+     * @param    intger                   $uid   [用户id]
+     * @param    string                   $field [表字段]
+     * @return   string & array                  [返回字符（单独取得单个信息）或者数组（用户全部信息）]
+     */
+    public function getUserInfo($uid = null, $field = null)
+    {
+        if (!($uid && is_numeric($uid))) {
+            return false;
+        }
+
+        if (is_null($field)) {
+            $info = $this->UcenterMember->find($uid);
+        } else {
+            $info = $this->UcenterMember->getFieldById($uid, $field);
+        }
+        return $info;
+    }
+
+    /**
+     * [ userStatus 取得用户状态 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-11-06T11:55:01+0800
+     * @param    intger                    $uid [用户id]
+     * @return   boolear                        [0-禁用，1-正常]
+     */
+    public function userStatus($uid)
+    {
+        if ($uid && is_numeric($uid)) {
+            return $this->UcenterMember->getFieldById($uid, 'status');
+        }
+    }
+
+    /**
      * [ loginout 退出登录 ]
      * @author SpringYang <ceroot@163.com>
      * @dateTime 2017-11-03T15:03:35+0800
      * @return   [type]                   [description]
      */
     public function loginout()
+    {
+        $this->clearSession();
+    }
+
+    /**
+     * [ clearSession 清除用户登录 session ]
+     * @author SpringYang <ceroot@163.com>
+     * @dateTime 2017-11-06T13:40:53+0800
+     * @return   [type]                   [description]
+     */
+    public function clearSession()
     {
         Session::pull('user_auth');
         Session::pull('user_auth_sign');

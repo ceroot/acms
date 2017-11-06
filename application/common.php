@@ -12,6 +12,7 @@
 // 应用公共文件
 //
 
+use app\facade\User;
 use think\facade\Request;
 
 /**
@@ -256,21 +257,6 @@ function encrypt_password($password, $salt)
 }
 
 /**
- * 检测用户是否登录
- * @return integer 0-未登录，大于0-当前登录用户ID
- * @author 麦当苗儿 <zuojiazi@vip.qq.com>
- */
-function is_login()
-{
-    $user = session('user_auth');
-    if (empty($user)) {
-        return 0;
-    } else {
-        return session('user_auth_sign') == data_auth_sign($user) ? $user['id'] : 0;
-    }
-}
-
-/**
  * 数据签名认证
  * @param  array  $data 被认证的数据
  * @return string       签名
@@ -334,25 +320,16 @@ function time_format($time = null, $format = 'Y-m-d H:i:s')
 }
 
 /**
- * 取得管理员信息
- * @param  int    $uid    [用户id]
- * @param  int    $field  [表字段]
- * @return string&array   [返回字符或者数组]
+ * 取得管理员昵称
+ * @param  int    $uid  [用户id]
+ * @return string       [返回字符]
  * @author SpringYang <ceroot@163.com>
  */
-function get_userinfo($uid = null, $field = null)
-{
-    if (!($uid && is_numeric($uid))) {
-        return session('username');
+if (!function_exists('get_username')) {
+    function get_username($uid = null)
+    {
+        return User::getUserInfo($uid, 'username');
     }
-
-    $db = db('ucenterMember');
-    if (is_null($field)) {
-        $info = $db->find($uid);
-    } else {
-        $info = $db->getFieldById($uid, $field);
-    }
-    return $info;
 }
 
 /**
@@ -361,20 +338,11 @@ function get_userinfo($uid = null, $field = null)
  * @return string       [返回字符]
  * @author SpringYang <ceroot@163.com>
  */
-function get_username($uid = null)
-{
-    return get_userinfo($uid, 'username');
-}
-
-/**
- * 取得管理员昵称
- * @param  int    $uid  [用户id]
- * @return string       [返回字符]
- * @author SpringYang <ceroot@163.com>
- */
-function get_nickname($uid = null)
-{
-    return get_userinfo($uid, 'nickname');
+if (!function_exists('get_nickname')) {
+    function get_nickname($uid = null)
+    {
+        return User::getUserInfo($uid, 'nickname');
+    }
 }
 
 /**
@@ -383,9 +351,11 @@ function get_nickname($uid = null)
  * @return string       [返回字符]
  * @author SpringYang <ceroot@163.com>
  */
-function get_realname($uid = null)
-{
-    return get_userinfo($uid, 'realname');
+if (!function_exists('get_realname')) {
+    function get_realname($uid = null)
+    {
+        return User::getUserInfo($uid, 'realname');
+    }
 }
 
 /**
@@ -394,11 +364,13 @@ function get_realname($uid = null)
  * @return string            [返回启用或者禁用]
  * @author SpringYang <ceroot@163.com>
  */
-function status_text($table_id)
-{
-    $arr   = explode('|', $table_id);
-    $value = db($arr[0])->getFieldById($arr[1], 'status');
-    return ($value == 1) ? '启用' : '禁用';
+if (!function_exists('status_text')) {
+    function status_text($table_id)
+    {
+        $arr   = explode('|', $table_id);
+        $value = db($arr[0])->getFieldById($arr[1], 'status');
+        return ($value == 1) ? '启用' : '禁用';
+    }
 }
 
 /**
@@ -553,4 +525,27 @@ function getCateByPid($cate, $pid = 0)
         }
     }
     return $arr;
+}
+
+if (!function_exists('get_visit_source')) {
+    function get_visit_source()
+    {
+        $user_agent = $_SERVER['HTTP_USER_AGENT'];
+        if (stripos($user_agent, 'MicroMessenger') !== false) {
+            return 'weixin';
+        }
+        $mobile_agents = array("240x320", "acer", "acoon", "acs-", "abacho", "ahong", "airness", "alcatel", "amoi", "android", "anywhereyougo.com", "applewebkit/525", "applewebkit/532", "asus", "audio", "au-mic", "avantogo", "becker", "benq", "bilbo", "bird", "blackberry", "blazer", "bleu", "cdm-", "compal", "coolpad", "danger", "dbtel", "dopod", "elaine", "eric", "etouch", "fly ", "fly_", "fly-", "go.web", "goodaccess", "gradiente", "grundig", "haier", "hedy", "hitachi", "htc", "huawei", "hutchison", "inno", "ipad", "ipaq", "ipod", "jbrowser", "kddi", "kgt", "kwc", "lenovo", "lg ", "lg2", "lg3", "lg4", "lg5", "lg7", "lg8", "lg9", "lg-", "lge-", "lge9", "longcos", "maemo", "mercator", "meridian", "micromax", "midp", "mini", "mitsu", "mmm", "mmp", "mobi", "mot-", "moto", "nec-", "netfront", "newgen", "nexian", "nf-browser", "nintendo", "nitro", "nokia", "nook", "novarra", "obigo", "palm", "panasonic", "pantech", "philips", "phone", "pg-", "playstation", "pocket", "pt-", "qc-", "qtek", "rover", "sagem", "sama", "samu", "sanyo", "samsung", "sch-", "scooter", "sec-", "sendo", "sgh-", "sharp", "siemens", "sie-", "softbank", "sony", "spice", "sprint", "spv", "symbian", "tablet", "talkabout", "tcl-", "teleca", "telit", "tianyu", "tim-", "toshiba", "tsm", "up.browser", "utec", "utstar", "verykool", "virgin", "vk-", "voda", "voxtel", "vx", "wap", "wellco", "wig browser", "wii", "windows ce", "wireless", "xda", "xde", "zte");
+        $is_mobile     = false;
+        foreach ($mobile_agents as $device) {
+            if (stristr($user_agent, $device)) {
+                $is_mobile = true;
+                break;
+            }
+        }
+        if ($is_mobile) {
+            return 'mobile';
+        }
+
+        return 'pc';
+    }
 }

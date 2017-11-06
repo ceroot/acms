@@ -116,6 +116,7 @@ class ActionLog extends Model
         $data['method']    = Request::method();
         $data['record_id'] = $record_id;
         $data['url']       = Request::url();
+        $data['device']    = get_visit_source();
 
         // $data['create_time'] = time();
         // $data['create_ip']   = ip2int();

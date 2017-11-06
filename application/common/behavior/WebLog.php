@@ -126,6 +126,7 @@ class WebLog
             'action'     => Request::action(),
             'method'     => Request::method(),
             'data'       => serialize($paramData),
+            'device'     => get_visit_source(),
         ];
 
         // App::model('WebLog')->create($data);

@@ -18,13 +18,14 @@ namespace app\console\model;
 
 use app\common\model\Extend;
 use data\Data;
+use think\facade\Cache;
 
 class AuthGroup extends Extend
 {
     public function getRules($list)
     {
         $rulesTree = [];
-        $rules     = cache('authrule');
+        $rules     = Cache::get('authrule');
         foreach ($list as $value) {
             $rulesid = $value['rules'];
             if ($rulesid != '') {

@@ -126,11 +126,25 @@ class Base extends Extend
             $one = $this->model::get($this->id);
         }
         $this->assign('one', $one);
+        // dump($one);die;
 
         if (request()->isAjax()) {
 
         }
         return $this->menusView();
+    }
+
+    public function detailstest()
+    {
+        if (!$this->id) {
+            return $this->error('参数错误');
+        }
+        if ($this->isWithTrashed()) {
+            $one = $this->model::withTrashed()->find($this->id);
+        } else {
+            $one = $this->model::get($this->id);
+        }
+        dump($one);die;
     }
 
     /**

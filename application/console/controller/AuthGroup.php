@@ -19,6 +19,7 @@
 namespace app\console\controller;
 
 use app\console\controller\Base;
+use think\facade\Request;
 
 class AuthGroup extends Base
 {
@@ -45,6 +46,7 @@ class AuthGroup extends Base
             $newlist[]       = $value;
             # code...
         }
+
         $rulesTree = $this->model->getRules($newlist);
 
         $this->assign('list', $rulesTree);
@@ -54,14 +56,33 @@ class AuthGroup extends Base
         cookie('__forward__', $_SERVER['REQUEST_URI']);
         return $this->menusView();
     }
+
     public function rule()
     {
-        $rules = model('authRule')->getAll(1);
-        $this->assign('rules', $rules);
+        if ($this->app->request->isPost()) {
 
-        $field = db('authGroup')->find(deauthcode(input('param.id')));
-        $this->assign('field', $field);
-        return $this->menusView();
+            $data = $this->app->request->param('rules/a');
+            $temp = '';
+            foreach ($data as $value) {
+                $temp .= $value . ',';
+            }
+            $temp = rtrim($temp, ",");
+            return $temp;
+            $status = $this->model->where('id', $this->id)->setField('rules', $temp);
+
+            if ($status) {
+                return $this->success('修改成功');
+            } else {
+                return $this->error('修改成功');
+            }
+        } else {
+            $rules = $this->app->model('authRule')->getAll(1);
+            $this->assign('rules', $rules);
+            $field           = db('authGroup')->find($this->id);
+            $field['editid'] = authcode($field['id']);
+            $this->assign('field', $field);
+            return $this->menusView();
+        }
     }
 
 }

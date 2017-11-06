@@ -19,6 +19,8 @@
 
 namespace app\console\behavior;
 
+use app\facade\User;
+use think\facade\App;
 use think\facade\Config;
 use think\facade\Log;
 use think\facade\Request;
@@ -43,11 +45,11 @@ class CheckLogin
      */
     private function initialization()
     {
-
+        // User::isLogin();
     }
 
     /**
-     * [ check function_description ]
+     * [ check 运行检查 ]
      * @Author   SpringYang <ceroot@163.com>
      * @DateTime 2017-10-26T11:04:10+0800
      * @return   [type]                   [description]
@@ -80,20 +82,28 @@ class CheckLogin
             return true;
         }
 
-        // Session::has('user_auth') || $this->redirect('Start/index?backurl=' . getbackurl(false)); // 用户判断 session
-
-        // Session::has('user_auth_sign') || $this->redirect('Start/index?backurl=' . getbackurl(false)); // 用户判断 session
-
-        // is_login() || $this->redirect('Start/index?backurl=' . getbackurl(false)); // 判断是否登录
-
-        // Session::has('manager_id') || $this->redirect('Start/index?backurl=' . getbackurl(false)); // 判断是否登录
-
-        if (!Session::has('user_auth') || !Session::has('user_auth_sign') || !is_login() || !Session::has('manager_id')) {
+        if (!User::isLogin() || !$this->managerLogin()) {
+            User::clearSession(); // 清除登录数据信息
+            Session::pull('manager_id');
             $loginurl = url('console/start/index?time=' . time()) . '?backurl=' . getbackurl();
             return $this->success('用户已经退出，请重新登录', $loginurl);
         }
 
         Log::record('[ 检查登录日志 ]：管理用户 id 为' . Session::get('manager_id') . '登录成功');
 
+    }
+
+    /**
+     * [ managerLogin 管理用户登录判断 ]
+     * @author SpringYang <ceroot@163.com>
+     * @dateTime 2017-11-06T13:33:38+0800
+     * @return   [type]                   [0-没有登录，1-登录]
+     */
+    private function managerLogin()
+    {
+        if (!Session::has('manager_id')) {
+            return 0;
+        }
+        return App::model('manager')->getFieldById(Session::get('manager_id'), 'status') ?: 0;
     }
 }

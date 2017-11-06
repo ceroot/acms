@@ -35,7 +35,7 @@
 						</div>
 					{/neq}
 				</td>
-				<td><a href="{:url('updatestatus?id='.$list['editid'])}" class="cy-ajax" title="快捷设置状态">{neq name="list.id" value="1"}{$list.status ? '正常' : '禁用'}{/neq}</a></td>
+				<td><a href="{:url('updatestatus?id='.$list['editid'])}" class="cy-ajax" title="快捷设置状态">{neq name="list.id" value="1"}{$list.status}{/neq}</a></td>
 				<td align='center'>
 					{neq name="list.id" value="1"}
 						<a href="{:url('rule?id='.$list['editid'])}">权限分配</a> | 
@@ -50,7 +50,7 @@
 		<div class="fixed-bottom pager-wrapper">
 			<div class="bottom-area">
 			  	<div class="pager">
-			      {$page}
+			      {$page|raw}
 			   </div>
 			</div>
 		</div>
