@@ -14,16 +14,16 @@ h5{ font-family: "微软雅黑"; background: #f1f1f1; padding-top: 5px}
 	        <tr>
 		        <td style="border:1px dotted #ccc; margin-bottom: 10px; padding: 10px;">
 		            <h5>
-		            	<input id='node{$node1.id}' pid='0' type="checkbox" value="{$node1.id}" name="rules[{$node1.id}]" {in name='node1.id' value='$field["rules"]'}checked = 'checked' {/in} title="{$node1.title}{$node1.id}" lay-skin="primary" lay-filter="rules"/>
+		            	<input id='node{$node1.id}' pid='0' type="checkbox" value="{$node1.id}" name="rules[{$node1.id}]" {in name='node1.id' value='$field["rules"]'}checked = 'checked' {/in} title="{$node1.title}" lay-skin="primary" lay-filter="rules"/>
 		            </h5>
 		            {volist name='node1._data' id='node2'}
 			        	<fieldset>
 			                <legend>
-			                	<input id='node{$node2.id}' pid='{$node1.id}' cid="{$node2.id}" type="checkbox" value="{$node2.id}" name="rules[{$node2.id}]" {in name='node2.id' value='$field["rules"]'}checked = 'checked' {/in} title="{$node2.title}{$node2.id}" lay-skin="primary" lay-filter="rules"/>
+			                	<input id='node{$node2.id}' pid='node{$node1.id}' cid="node{$node2.id}" type="checkbox" value="{$node2.id}" name="rules[{$node2.id}]" {in name='node2.id' value='$field["rules"]'}checked = 'checked' {/in} title="{$node2.title}" lay-skin="primary" lay-filter="rules"/>
 			                </legend>
 			                <div class="" style="padding-left: 10px;">
 			                	{volist name='node2._data' id='node3'}
-			                        <input pid='{$node1.id}' type="checkbox" value="{$node3.id}" class='node{$node2.id}' name="rules[{$node3.id}]" {in name='node3.id' value='$field["rules"]'}checked = 'checked' {/in} title="{$node3.title}{$node3.id}" lay-skin="primary" lay-filter="rules"/>
+			                        <input id="node{$node3.id}" pid='node{$node2.id}' class="node{$node1.id}" type="checkbox" value="{$node3.id}" name="rules[{$node3.id}]" {in name='node3.id' value='$field["rules"]'}checked = 'checked' {/in} title="{$node3.title}" lay-skin="primary" lay-filter="rules"/>
 			    				{/volist}
 			    			</div>
 			           </fieldset>
@@ -73,44 +73,28 @@ layui.use('form', function(){
 	layui.use('form', function(){
 		var form = layui.form;
 		$('body').on('click','.layui-form-checkbox',function(){
+			var _self   = $(this),
+			    _input  = _self.siblings('input'),
+			    _value  = _input.val(),
+			    _pid    = _input.attr('pid'),
+			    _cid 	= _input.attr('cid'),
+			    _class  = _input.attr('class');
 
-			var _self   = $(this);
-			var _input  = _self.siblings('input');
-			var _value  = _input.val();
-			var _pid    = _input.attr('pid');
-			var _cid 	= _input.attr('cid');
-			var _class  = _input.attr('class');
-
-			console.log('value:'+_value);
-			console.log('pid:'+_pid);
-			console.log('cid:'+_cid);
-			console.log('class:'+_class);
-
-
-			if(_input.is(':checked')){
-				$('[pid='+_value+']').prop('checked',true);
-				$('.'+_value).prop('checked',true);
-			}else{
-				$('[pid='+_value+']').prop('checked',false);
-				$('.'+_value).prop('checked',false);
+			// 第一层
+			if(_pid == 0){
+				_input.is(':checked') ? _self.closest('td').find('input').prop('checked', true) : _self.closest('td').find('input').prop('checked', false);
 			}
 
-			if($('.'+_class+':checked').length > 0){
-				$('#'+_class).prop('checked',true);
-			}else{
-				$('#'+_class).prop('checked',false);
+			// 第二层
+			if(_pid != 0 && _cid != undefined){
+				$('[pid='+_pid+']:checked').length ? $('#'+_pid).prop('checked',true) : $('#'+_pid).prop('checked',false);
+				_input.is(':checked') ? $('[pid='+_cid+']').prop('checked',true) : $('[pid='+_cid+']').prop('checked',false);
 			}
 
-			if($('[pid='+_pid+']:checked').length > 0){
-				$('#node'+_pid).prop('checked',true);
-			}else{
-				$('#node'+_pid).prop('checked',false);
-			}
-
-			if($('[cid='+_cid+']:checked').length > 0){
-				$('.node'+_cid).prop('checked',true);
-			}else{
-				$('.node'+_cid).prop('checked',false);
+			// 第三层
+			if(_pid != 0 && _cid == undefined){
+				_input.is(':checked') ? $('#'+_pid).prop('checked',true) : $('#'+_pid).prop('checked',false);
+				$('.'+_class+':checked').length ? $('#'+_class).prop('checked',true) : $('#'+_class).prop('checked',false);
 			}
 
 			form.render('checkbox','rules');
