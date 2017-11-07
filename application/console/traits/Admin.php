@@ -434,7 +434,7 @@ trait Admin
                 case 'manager':
                     model('authGroupAccess')->delDataByUid($this->id);
                     break;
-                case 'muthgroup':
+                case 'authgroup':
                     model('authGroupAccess')->delDataByGid($this->id);
                     break;
                 case 'authrule':
@@ -446,7 +446,12 @@ trait Admin
             }
 
             // 写入操作用户 id 和 ip
-            $data = $this->model->withTrashed()->find($this->id);
+            if ($this->isWithTrashed()) {
+                $data = $this->model->withTrashed()->find($this->id);
+            } else {
+                $data = $this->model->get($this->id);
+            }
+
             if ($data) {
                 $data->delete_uid = $this->app->session->get('manager_id');
                 $data->delete_ip  = ip2int();

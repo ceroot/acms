@@ -91,9 +91,17 @@ class Start extends Controller
     }
     public function test($id = null)
     {
-        $user = User::getUserInfo(222);
+        $data    = model('manager')->select();
+        $newdata = [];
+        foreach ($data as $key => $value) {
+            $value['img'] = 'http://www.tripone.cn/Data/travelimg/2015-10-24/562b46c170d7c.jpg';
+            $newdata[]    = $value;
+        }
+        $redata['code']    = 0;
+        $redata['message'] = 'success';
+        $redata['result']  = $newdata;
 
-        dump($user);
+        return json($redata);
 
     }
     /**
