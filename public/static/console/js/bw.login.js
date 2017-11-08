@@ -82,9 +82,9 @@ layui.use(['form'], function(){
     .done(function(result) {
         console.log(result);
         if(result.code==1){
-            layer.msg(result.msg);
+            // layer.msg(result.msg);
             layer.close(loading);
-
+            //swal(result.msg, "你点击了按钮！","success");
             // if(getQueryString('backurl')){
             //     var jumpurl  = getQueryString('backurl');
             //     jumpurl = href;
@@ -92,26 +92,45 @@ layui.use(['form'], function(){
             // }else{
             //     var jumpurl  = result.url;
             // }
-            
-            var href = window.location.href
-                ,jumpurl;
-            // if(href.indexOf('?backurl=') >= 0 || href.indexOf('backurl/') >= 0){
-            if(href.indexOf('backurl=') >= 0){
-                href = href.split('backurl=');
-                jumpurl = href[1];
-                if(!jumpurl){
-                    jumpurl = '/console/index/index';
+            swal({
+                title:result.msg,
+                text: "正在进行页面跳转……",
+                type:"success",
+                timer: 2000,
+                closeOnConfirm:false,
+                showLoaderOnConfirm: true, 
+                confirmButtonText:'进入',
+            },
+            function(){
+                layer.load();
+                var href = window.location.href
+                    ,jumpurl;
+                // if(href.indexOf('?backurl=') >= 0 || href.indexOf('backurl/') >= 0){
+                if(href.indexOf('backurl=') >= 0){
+                    href = href.split('backurl=');
+                    jumpurl = href[1];
+                    if(!jumpurl){
+                        jumpurl = '/console/index/index';
+                    }
+                }else{
+                    jumpurl  = result.url;
                 }
-            }else{
-                jumpurl  = result.url;
-            }
 
-            jumpurl = decodeURIComponent(jumpurl);
-            console.log(jumpurl);
-            window.location.href = jumpurl;
+                jumpurl = decodeURIComponent(jumpurl);
+                console.log(jumpurl);
+                window.location.href = jumpurl;
+            });
         }else{
-            layer.msg(result.msg,function(){});
+            // layer.msg(result.msg,function(){});
             layer.close(loading);
+            swal({ 
+                  title: '登录失败', 
+                  text: result.msg, 
+                  timer: 2000, 
+                  type:'error',
+                  confirmButtonText:'关闭',
+                  // showConfirmButton: false 
+                });
             button.prop('disabled',false).text('登录');
         }
         if(result.data){

@@ -83,6 +83,7 @@ function _init(){
             _this.main();
             _this.slimScroll();
             _this.productSidebar();
+            _this.logout(); // 退出
 
             $.Cy.sidebar.init();
             $.Cy.fulWrapper.init();
@@ -207,6 +208,31 @@ function _init(){
 
         fix:function(){
             console.log(0);
+        },
+        logout:function(){
+            $('body').on('click', '.logout', function(event) {
+                event.preventDefault();
+                var _href = $(this).attr('href');
+                
+                swal({ 
+                  title: '确定要注销么', 
+                  text: '注销之后再登录才能进行操作', 
+                  type: 'warning', 
+                  confirmButtonText:'注销',
+                  cancelButtonText:'关闭',
+                  showCancelButton: true, 
+                  closeOnConfirm: false, 
+                  showLoaderOnConfirm: true, 
+                },
+                function(){
+                    $.post(_href, {}, function(data, textStatus, xhr) {
+                        /*optional stuff to do after success */
+                        window.location.href = data.url;
+                    });
+                });
+                // return false;
+                /* Act on the event */
+            });;
         }
     };
 
