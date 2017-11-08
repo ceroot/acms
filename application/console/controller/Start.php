@@ -167,10 +167,9 @@ class Start extends Controller
             $this->redirect('console/start/index');
         }
 
+        Hook::listen('action_log', ['action' => 'logout', 'record_id' => $mid, 'model' => 'manager']); // 行为日志记录
         User::loginout(); // 清除用户 session
         Session::pull('manager_id'); // 清除管理用户 session
-
-        Hook::listen('action_log', ['action' => 'logout', 'record_id' => $mid, 'model' => 'manager']); // 行为日志记录
         $backurl = Request::param('backurl');
         //$hashT   = session('hash');
         //$backurl = $backurl . $hashT;
