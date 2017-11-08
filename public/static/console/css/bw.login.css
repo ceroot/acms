@@ -28,10 +28,11 @@ body{
 
 .wrapper {
     min-height: 100%;
-    height: auto !important;
+    /*height: auto !important;*/
     height: 100%;
     /*margin: 0 auto -26px;*/
     /*padding-bottom: 26px;*/
+    position: relative;
 }
 
 .copyright{
@@ -82,9 +83,13 @@ body{
 
 .login-box{
     width: 360px;
-    margin: 7% auto;
+    /*margin: 7% auto;*/
     z-index: 1;
     position: relative;
+    top: 40%;
+    margin-top: -120px;
+    left: 50%;
+    margin-left: -180px;
 }
 
 @media (max-width: 768px) {
