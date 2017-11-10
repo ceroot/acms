@@ -62,6 +62,10 @@ body.skin-default{
 
 .skin-default .bw-sidebar {
     background: #021c2c;/*#222d32*/
+    background-image: -webkit-gradient(linear,top left,top right,from(#3797b4),to(#00b4aa));
+    background-image: -webkit-linear-gradient(top,#3797b4,#00b4aa);
+    background-image: -moz-linear-gradient(top,#3797b4,#00b4aa);
+    background-image: linear-gradient(to bottom,#3797b4,#00b4aa);
 }
 
 .skin-default .sidebar ul{
@@ -69,34 +73,39 @@ body.skin-default{
 }
 
 .skin-default .sidebar ul > li > dl > dt > a {
-	color: #aaa;
+	/*color: #aaa;*/
+	color: #fff;
 	font-size: 14px;
 }
 
 .skin-default .sidebar ul > li > dl >dt > a:hover,
 .skin-default .sidebar ul > li > dl >dt > a.current,
-.skin-default .sidebar ul > li.active > dl > dt > a{
-	background: #072a3f;
+.skin-default .sidebar ul > li.active > dl > dt > a
+{
+	/*background: #072a3f;*/
+	background: #00b4aa;
 	color: #FFF;
 	border-left-color: #07913a;
 }
 
 .skin-default .sidebar ul > li.active dl > dt > a{
 	border-left-color: #07913a;
-	background: #072a3f;
+	/*background: #072a3f;*/
 	color: #FFF;
 }
 
 .skin-default .sidebar ul > li > dl > dd{
-	background: #042235;
+	/*background: #042235;*/
 }
 
 .skin-default .sidebar ul > li > dl > dd a{
-	color: #aaa;
+	/*color: #aaa;*/
+	color: #fff;
 }
 
 .skin-default .sidebar ul > li > dl > dd > a:hover{
-	background: #072a3f;
+	/*background: #072a3f;*/
+	background: #0BAEAC;
 }
 
 .skin-default .sidebar ul > li > dl > dd > a.active{

@@ -468,10 +468,10 @@ a:visited {
 	bottom: 0;
 	left: 0;
 	z-index: 900;
-	color: #939393;
+	color: #fff;/*#939393;*/
 	font-size: 12px;
 	text-align: center;
-	background: #07263a;
+	background: #299EB2;/*07263a;*/
 	white-space: nowrap;
 	-webkit-transition: -webkit-transform 0.3s ease-in-out, left 0.3s ease-in-out;
 	-moz-transition: -moz-transform 0.3s ease-in-out, left 0.3s ease-in-out;
