@@ -86,9 +86,7 @@ class Start extends Controller
             $authcode = authcode($time);
             $this->success('登录成功', url('console/index/index?time=' . $time . '&authcode=' . $authcode), ['error_num' => 0]);
         } else {
-            $text = '<p>　　根据《省教育厅省财政厅 省人力资源和社会保障厅 省机构编制委员会办公室关于印发〈贵州省2014年农村义务教育阶段学校教师特设岗位计划实施方案〉的通知》（黔教师发〔2014〕113号）、《州人社局 州教育局关于办理“特岗教师”聘用手续有关问题的通知》（黔南人社通〔2012〕75号）文件精神和县人民政府《惠水县2014年特岗计划承诺书》的相关承诺，经审核，目前有赵成妹等251名“特岗教师”符合服务期满接转到当地任教的条件，经惠水县人民政府常务会议研究，同意将赵成妹等251名“特岗教师”接转为我县正式教师。现进行公示，公示期自发布之日起七个工作日。</p><p>　　如对接转人员有异议，请在公示期内向惠水县人力资源和社会保障局人事科反映。</p><p>　　联系电话： 0854&#8212;6221862（惠水县人力资源和社会保障局人事科）</p><p>　　监督电话： 0854&#8212;6221197 （惠水县纪委监察局）</p><p>　　附件：惠水县2014年特岗教师服务期满接转为正式教师花名册.xlsx</p><p>&#160;</p><p style="text-align:right;">　　惠水县人力资源和社会保障局</p><p style="text-align:right;">　　2017年11月8日</p>';
             $this->assign('verifyhtml', $this->verifyhtml());
-            $this->assign('text', $text);
             return $this->fetch();
         }
     }
@@ -106,6 +104,10 @@ class Start extends Controller
 
         return json($redata);
 
+    }
+    public function vue()
+    {
+        return $this->fetch();
     }
     /**
      * [ verifyhtml 登录页面验证码 html ]
