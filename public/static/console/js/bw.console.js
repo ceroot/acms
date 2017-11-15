@@ -448,7 +448,7 @@ function _init(){
                     tmp = eval('(' + tmp + ')');
                     cols.push(tmp);
                 });
-
+                
                 table.init('demo', {
                     height: 315 //设置高度
                     //支持所有基础参数
@@ -500,15 +500,20 @@ function _init(){
                         console.log(table);
                         // var data = checkStatus.data;
                         // var data = $('input[lay-filter="layTableAllChoose"]');
+                        // $('input[lay-filter="layTableAllChoose"]').click();
+                        
+                        $('input[name="layTableCheckbox"]').prop('checked',true);
+                        $(this).attr('data-type','selectSancel').text('取消');
+                        form.render('checkbox');
+
                         // 
                     },
                     selectSancel: function(){ // 取消选择
-                        var _this = $(this);
 
                         $('input[name="layTableCheckbox"]').prop('checked','');
-                        $('input[name="layTableCheckbox"]').siblings('.layui-form-checkbox').removeClass('layui-form-checked');
-                        //$('body').find('th[data-type="checkbox"]').find('.layui-form-checkbox').click();
                         _this.attr('data-type','selectAll').text('全选');
+
+                        form.render('checkbox');
                     },
                     getCheckData: function(){
                         var checkStatus = table.checkStatus(elem_id)
@@ -596,11 +601,11 @@ function _init(){
 
                     if(obj.type == 'one' || obj.type == 'all'){
                         if(checkStatus.data.length>0){
-                            select_all.data('type','selectSancel').text('取消');
-                            //select_all.attr('data-type','selectSancel').text('取消');
+                            // select_all.data('type','selectSancel').text('取消');
+                            select_all.attr('data-type','selectSancel').text('取消');
                         }else{
-                            select_all.data('type','selectAll').text('取消');
-                            //select_all.attr('data-type','selectAll').text('全选');
+                            // select_all.data('type','selectAll').text('取消');
+                            select_all.attr('data-type','selectAll').text('全选');
                         }
                     }
 
