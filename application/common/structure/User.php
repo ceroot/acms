@@ -184,6 +184,7 @@ class User
      */
     public function getUserInfo($uid = null, $field = null)
     {
+
         if (!($uid && is_numeric($uid))) {
             return false;
         }

@@ -258,7 +258,7 @@ trait Admin
                 $scene = 'edit'; // 更改默认场景
             } else {
                 // 数据验证
-                return $data;
+                // return $data;
                 $validate = $this->app->validate($this->app->request->controller());
                 if (!$validate->check($data)) {
                     return $this->error($validate->getError());

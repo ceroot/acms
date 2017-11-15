@@ -61,13 +61,18 @@ class AuthGroup extends Base
     {
         if ($this->app->request->isPost()) {
 
-            $data = $this->app->request->param('rules/a');
-            $temp = '';
-            foreach ($data as $value) {
-                $temp .= $value . ',';
+            if ($this->app->request->has('rules')) {
+                $data = $this->app->request->param('rules/a');
+                $temp = '';
+                foreach ($data as $value) {
+                    $temp .= $value . ',';
+                }
+                $temp = rtrim($temp, ",");
+            } else {
+                $temp = '';
             }
-            $temp = rtrim($temp, ",");
-            return $temp;
+
+            // return $temp;
             $status = $this->model->where('id', $this->id)->setField('rules', $temp);
 
             if ($status) {

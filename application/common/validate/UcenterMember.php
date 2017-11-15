@@ -28,6 +28,7 @@ class UcenterMember extends Validate
         'password_confirm' => 'require',
         'nickname'         => 'unique:UcenterMember',
         'email'            => 'email|unique:UcenterMember',
+        'mobile'           => 'mobile|unique:UcenterMember',
     ];
 
     protected $message = [
@@ -43,12 +44,14 @@ class UcenterMember extends Validate
         'nickname.unique'          => '昵称已经存在',
         'email'                    => '邮箱格式不正确',
         'email.unique'             => '邮箱已经存在，请换一个',
+        'mobile'                   => '手机格式不正确',
+        'mobile.unique'            => '手机已经存在，请换一个',
     ];
 
     protected $scene = [
         'add'      => ['username', 'password'],
-        'edit'     => ['username'],
+        'edit'     => ['username', 'nickname', 'email', 'mobile'],
         'password' => ['password', 'password_confirm'],
-        'info'     => ['nickname', 'email'],
+        'info'     => ['nickname', 'email', 'mobile'],
     ];
 }

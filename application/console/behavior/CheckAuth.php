@@ -50,7 +50,7 @@ class CheckAuth
 
         $controller = Request::controller(); // 取得控制器
         $action     = strtolower($controller . '/' . Request::action()); // 取得控制器
-
+        // dump(Config::get('auth_superadmin'));die;
         // 验证权限
         // 满足条件
         // 1 不是超级管理员
@@ -64,7 +64,8 @@ class CheckAuth
             // 权限验证
             // 执行验证
             if (!$this->authCheck($action, Session::get('manager_id'))) {
-                return $this->error('您没有相关权限，请联系管理员', url('index/index'));
+                $url = url('index/index?time=' . time()) . '?backurl=' . getbackurl();
+                return $this->error('您没有相关权限，请联系管理员', $url);
             }
         }
 

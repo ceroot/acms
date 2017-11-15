@@ -59,7 +59,7 @@ function getBroswer()
         $exp[1] = $safari[1];
     } else {
         $exp[0] = "未知浏览器";
-        $exp[1] = "";
+        $exp[1] = "0.00";
     }
     return $exp[0] . '(' . $exp[1] . ')';
 }

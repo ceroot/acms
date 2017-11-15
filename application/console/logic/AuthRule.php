@@ -86,7 +86,7 @@ class AuthRule extends Extend
      */
     public function consoleMenu()
     {
-        $cache = cache('authrule');
+        $cache = Cache::get('authrule');
         // dump($cache);die;
         // 判断是不是超级管理员
         if (in_array(Session::get('manager_id'), Config::get('auth_superadmin'))) {
@@ -96,13 +96,14 @@ class AuthRule extends Extend
             // 满足条件
             // 1 权限管理所拥有的
             // 2 不需要进行权限验证的
-            $authModel = cache('authModel'); // 从缓存取得不需要进行权限验证的数据
-            //dump($authModel);die;
+            $notAuth = Cache::get('not_auth'); // 从缓存取得不需要进行权限验证的数据
+            // dump($notAuth);die;
             $data = array();
             foreach ($cache as $value) {
-                if (authCheck($value['name'], UID) || in_array(strtolower($value['name']), $authModel['not_auth'])) {
+                if ($this->authCheck($value['name'], Session::get('manager_id')) || in_array(strtolower($value['name']), $notAuth)) {
                     $data[] = $value;
                 }
+
             }
         }
 
@@ -208,5 +209,15 @@ class AuthRule extends Extend
         $treeArray['menu'] = getCateTreeArr($showData, 0); // 生成树形结构$showData
 
         return $treeArray;
+    }
+
+    private function authCheck($authName, $uid)
+    {
+        $auth = new \auth\Auth();
+        if ($auth->check(strtolower($authName), $uid)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

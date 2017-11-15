@@ -18,6 +18,6 @@
  */
 
 return [
-    'auth_superadmin' => [1, 2],
+    'auth_superadmin' => [1],
     'action_log'      => true,
 ];
