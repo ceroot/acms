@@ -27,6 +27,7 @@ class WebLog extends Extend
     use SoftDelete;
     protected $deleteTime = 'delete_time';
 
+    // 取得来自地区，待完善
     public function getFromAttr($value)
     {
         return '贵州';
