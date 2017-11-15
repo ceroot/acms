@@ -24,6 +24,7 @@ use think\facade\App;
 use think\facade\Config;
 use think\facade\Log;
 use think\facade\Request;
+use think\facade\Session;
 
 class WebLog
 {
@@ -81,6 +82,7 @@ class WebLog
             'test', // 测试方法
             'showverify', // 验证码
             'setcollapsed', // 侧边栏
+            'getcollapsed',
         ];
         $not_log_action_exc_config = Config::get('weblog.not_log_action_exc') ?: []; // 取得配置
         $not_log_action_exc        = array_merge($not_log_action_exc_default, $not_log_action_exc_config);
@@ -117,7 +119,7 @@ class WebLog
 
         // 写入数据组合
         $data = [
-            'uid'        => session('mid') ?: 0,
+            'uid'        => Session::get('user_auth.id') ?: 0,
             'os'         => getOs(),
             'browser'    => getBroswer(),
             'url'        => Request::url(),

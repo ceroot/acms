@@ -92,17 +92,7 @@ class Start extends Controller
     }
     public function test($id = null)
     {
-        $data    = model('manager')->select();
-        $newdata = [];
-        foreach ($data as $key => $value) {
-            $value['img'] = 'http://www.tripone.cn/Data/travelimg/2015-10-24/562b46c170d7c.jpg';
-            $newdata[]    = $value;
-        }
-        $redata['code']    = 0;
-        $redata['message'] = 'success';
-        $redata['result']  = $newdata;
-
-        return json($redata);
+        dump(Session::get('user_auth.id'));
 
     }
     public function vue()

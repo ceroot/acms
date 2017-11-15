@@ -23,16 +23,28 @@
 		          	<td>{$one.os}</td>
 	          	</tr>
 	          	<tr>
-		          	<td align="right">控制器</td>
-		            <td>{$one.controller}</td>
-	          		<td align="right">方法</td>
-		          	<td>{$one.action}</td>
+		          	<td align="right">模块</td>
+		            <td>{$one.module}</td>
+	          		<td align="right">控制器</td>
+		          	<td>{$one.controller}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">方法</td>
+		            <td>{$one.action}</td>
+	          		<td align="right">设备</td>
+		          	<td>{$one.device}</td>
 	          	</tr>
 	          	<tr>
 		          	<td align="right">时间</td>
 		            <td>{$one.create_time}</td>
 	          		<td align="right">IP</td>
 		          	<td>{$one.create_ip}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">访客类型</td>
+		            <td>{$one.uid?'平台用户':'游客'}</td>
+	          		<td align="right">来自</td>
+		          	<td>{$one.from}</td>
 	          	</tr>
 	          	<tr>
 	          		<td align="right">url</td>

@@ -20,8 +20,16 @@
 namespace app\common\model;
 
 use app\common\model\Extend;
+use think\model\concern\SoftDelete;
 
 class WebLog extends Extend
 {
+    use SoftDelete;
+    protected $deleteTime = 'delete_time';
+
+    public function getFromAttr($value)
+    {
+        return '贵州';
+    }
 
 }
