@@ -26,8 +26,11 @@
 <table class="layui-hide" id="table_list" lay-filter="#table_list" data-url="{:url('lists')}">
   <thead>
     <tr>
-      <th lay-data="{checkbox: true, fixed: true,}"></th>
-      <th lay-data="{field:'id',title:'ID', width:70, sort: true}">ID</th>
+      <th lay-data="{type:'checkbox', fixed: 'left',}"></th>
+      <th lay-data="{type:'numbers', fixed: 'left',title:'序号'}"></th>
+      {if condition="$Think.session.manager_id eq 1"}
+        <th lay-data="{field:'id',title:'ID', width:70, sort: true}">ID</th>
+      {/if}
       <th lay-data="{field:'remark',title:'日志备注'}">日志备注</th>
       <th lay-data="{field:'model',title:'数据表', width:120, sort: true}">数据表</th>
       <th lay-data="{field:'record_id',title:'数据ID', width:100, sort: true}">数据ID</th>

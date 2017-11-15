@@ -419,7 +419,7 @@ function _init(){
                     var _event = _this.data('event');
                     console.log(_event);
                     if(_event){
-                        tableOperation[_event] ? tableOperation[_event].call(this) : '';
+                        tableOperation[_event] ? tableOperation[_event].call(e) : '';
                     }
                     return false;
                     
@@ -583,13 +583,14 @@ function _init(){
                 
                 //监听工具条
                 table.on('tool('+ elem_id +')', function(obj){
-                    var data = obj.data;
                     var _this = $(this);
                     var _href = _this.attr('href');
                     var _event = obj.event;
-                    // alert(1);
+
+                    obj.data.url = _href; // 把 href 添加到对象
+                    
                     if(_event){
-                        tableOperation[_event] ? tableOperation[_event].call(this) : '';
+                        tableOperation[_event] ? tableOperation[_event].call(obj) : '';
                     }
 
                 });
@@ -1002,10 +1003,9 @@ function putHash(obj=null)
 }
 
 var tableOperation = {
-    detail:function(obj){
-        var _href = this.href;
+    detail:function(){
+        var _href = this.data.url;
         var loading = layer.load();
-        console.log(obj);
 
         if(!_href){
             layer.msg('请设置URL参数'); return false;
@@ -1039,7 +1039,7 @@ var tableOperation = {
     },
 
     edit:function(){
-        var _href = this.href;
+        var _href = this.data.url;
         var loading = layer.load();
 
         if(!_href){
@@ -1076,9 +1076,9 @@ var tableOperation = {
 
     },
     del:function(){
-        var _this = $(this);
-        var _href = _this[0].href;
-
+        var _obj = this;
+        var _href = _obj.data.url;
+        
         if(!_href){
             layer.msg('请设置URL参数'); return false;
         }
@@ -1095,9 +1095,7 @@ var tableOperation = {
                 console.log(result);
                 if(result.code){
                     // 删除行
-                    _this.closest('tr').slideUp(function(){
-                       _this.closest('tr').remove(); 
-                    });
+                    _obj.del();
                     
                     layer.msg(result.msg,{icon:6});
                 }else{
