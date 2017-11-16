@@ -110,6 +110,7 @@ body.skin-default{
 
 .skin-default .sidebar ul > li > dl > dd > a.active{
 	color: #FFF;
+	background: #0BAEAC;
 }
 
 .skin-default .content-main{}

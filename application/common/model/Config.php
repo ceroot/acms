@@ -69,6 +69,32 @@ class Config extends Extend
         $config = array();
         if ($data && is_array($data)) {
             foreach ($data as $value) {
+                switch (strtolower($value['name'])) {
+                    case 'app_debug':
+                        if ($value['value'] == 0) {
+                            $value['value'] = false;
+                        } else {
+                            $value['value'] = true;
+                        }
+                        break;
+                    case 'show_page_trace':
+                        if ($value['value'] == 0) {
+                            $value['value'] = false;
+                        } else {
+                            $value['value'] = true;
+                        }
+                        break;
+                    case 'develop_mode':
+                        if ($value['value'] == 0) {
+                            $value['value'] = false;
+                        } else {
+                            $value['value'] = true;
+                        }
+                        break;
+                    default:
+                        # code...
+                        break;
+                }
                 $config[$value['name']] = self::parse($value['type'], $value['value']);
             }
         }

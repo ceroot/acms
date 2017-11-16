@@ -28,7 +28,7 @@
 <script src="__LIBS__/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body class="hold-transition login-page">
+<body class="login-page">
 <div id="particles-js"></div>
 <div class="wrapper">
     <div class="color-line"></div>
@@ -38,21 +38,18 @@
         </div>
         <!-- /.login-logo -->
         <div class="login-box-body">
-            <div class="box_img_back_grey">
-                <img src="__IMAGES__/po.jpg">
-            </div>
             <div class="login-box-content">
-                <p class="login-box-msg">后面管理登录</p>
+                <p class="login-box-msg">后台管理登录</p>
                 <form class="layui-form" action="" method="post">
                     <div class="layui-form-item">
                         <div class="layui-input-block" style="margin-left: 0">
-                            <input type="text" name="username" lay-verify="username" placeholder="用户名/邮箱" class="layui-input">
+                            <input type="text" name="username" required lay-verify="required|username" lay-verType="" placeholder="用户名/邮箱" class="layui-input">
                             <span class="ion-person bw-feedback"></span>
                         </div>
                     </div>
                     <div class="layui-form-item">
                         <div class="layui-input-block" style="margin-left: 0;">
-                            <input type="password" name="password" lay-verify="required" placeholder="密码" class="layui-input">
+                            <input type="password" name="password" required lay-verify="required|password" lay-verType="" placeholder="密码" class="layui-input">
                             <span class="ion-locked bw-feedback"></span>
                         </div>
                     </div>
@@ -60,9 +57,9 @@
                         {$verifyhtml|raw}
                     {/if}
                     <div class="btn-area">
-                        <span style="float: left;">
+                        <span style="float: left; color: #009688">
                             <input type="checkbox" name="" id="remember" title="记住用户名" lay-skin="primary">
-                            <br><small>为了安全，公共电脑请去掉记住</small>
+                            <br><small>为了安全，公共电脑请去掉记住用户名</small>
                         </span>
                         <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1" style="float: right; padding:0 40px;">登录</button>
                     </div>

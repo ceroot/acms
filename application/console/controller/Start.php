@@ -92,7 +92,7 @@ class Start extends Controller
     }
     public function test($id = null)
     {
-        dump(Session::get('user_auth.id'));
+        dump(config('app_debug'));
 
     }
     public function vue()

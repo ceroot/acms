@@ -270,6 +270,10 @@ a:visited {
 	transform: rotate(-90deg);
 }
 
+.sidebar ul > li > dl > dd > a.active{
+	background: #0BAEAC;
+}
+
 /*dd*/
 .sidebar ul > li > dl > dd{
 	display: none;
@@ -469,7 +473,7 @@ a:visited {
 	left: 0;
 	z-index: 900;
 	color: #fff;/*#939393;*/
-	font-size: 12px;
+	font-size: 10px;
 	text-align: center;
 	background: #299EB2;/*07263a;*/
 	white-space: nowrap;

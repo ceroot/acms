@@ -134,12 +134,7 @@ function _init(){
         contentMainScroll:function(){
             var contentMain  = $('.content-main');
             var height;
-
-            if($('body').hasClass('full-wrapper')){
-                height  = $(window).height();
-            }else{
-                height  = $(window).height() - $('.bw-header').height();
-            }
+            $('body').hasClass('full-wrapper') ? height  = $(window).height() : height  = $(window).height() - $('.bw-header').height();
 
             contentMain.slimScroll({destroy: true}).height("auto");
             contentMain.slimscroll({
@@ -186,22 +181,12 @@ function _init(){
                 var productSidebarControl  = $('.product-sidebar-control i');
                 if(mainWrapper.hasClass('product-sidebar-fold')){
                     mainWrapper.removeClass('product-sidebar-fold');
-
                     // 本地存储数据判断[html5/cookie]
-                    if(storage){
-                        storage.removeItem('productSidebarFold');
-                    }else{
-                        $.cookie(productSidebarFold, null, { path: '/' });  //删除cookie
-                    }
+                    storage ? storage.removeItem('productSidebarFold') : $.cookie(productSidebarFold, null, { path: '/' });  //删除cookie
                 }else{
                     mainWrapper.addClass('product-sidebar-fold');
-
                     // 本地存储数据判断[html5/cookie]
-                    if(storage){
-                        storage.setItem('productSidebarFold',1);
-                    }else{
-                        $.cookie(productSidebarFold,1, { path: '/', expires: 15 });
-                    }
+                    storage ? storage.setItem('productSidebarFold',1) : $.cookie(productSidebarFold,1, { path: '/', expires: 15 });
                 };
             });
         },
@@ -349,22 +334,13 @@ function _init(){
             if($('body').hasClass('sidebar-expanded')){
                 $('body').removeClass('sidebar-expanded').addClass('sidebar-collapsed');
                 $.post('/console/index/setcollapsed',{collapsed:1});
-
                 // 本地存储数据判断[html5/cookie]
-                if(storage){
-                    storage.setItem('sidebarFold',1);
-                }else{
-                    $.cookie(sidebarFold,1, { path: '/', expires: 15 });
-                }
+                storage ? storage.setItem('sidebarFold',1) : $.cookie(sidebarFold,1, { path: '/', expires: 15 });
             }else{
                 $('body').removeClass('sidebar-collapsed').addClass('sidebar-expanded');
                 $.post('/console/index/setcollapsed',{collapsed:0});
                 // 本地存储数据判断[html5/cookie]
-                if(storage){
-                    storage.removeItem('sidebarFold');
-                }else{
-                    $.cookie(sidebarFold, null, { path: '/' });  //删除cookie
-                }
+                storage ? storage.removeItem('sidebarFold') : $.cookie(sidebarFold, null, { path: '/' });  //删除cookie
             };
         }
         
@@ -380,11 +356,7 @@ function _init(){
             });
         },
         main:function(){
-            if($('body').hasClass('full-wrapper')){
-                $('body').removeClass('full-wrapper');
-            }else{
-                $('body').addClass('full-wrapper');
-            };
+            $('body').hasClass('full-wrapper') ? $('body').removeClass('full-wrapper') : $('body').addClass('full-wrapper');
             // 主体滚动函数
             //$.Cy.layout.contentMainScroll();
         }
@@ -419,7 +391,7 @@ function _init(){
                     var _event = _this.data('event');
                     console.log(_event);
                     if(_event){
-                        tableOperation[_event] ? tableOperation[_event].call(e) : '';
+                        tableOperation[_event] ? tableOperation[_event].call(this) : '';
                     }
                     return false;
                     
@@ -465,6 +437,14 @@ function _init(){
                     //,loading: true
                     ,cols: [cols]
                     ,page: true
+                    // ,page: { //详细参数可参考 laypage 组件文档
+                    //     layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
+                    //     //,curr: 5 //设定初始在第 5 页
+                    //     ,groups: 1 //只显示 1 个连续页码
+                    //     ,first: false //不显示首页
+                    //     ,last: false //不显示尾页
+                      
+                    // }
                     //,width: 1000
                     ,height: 'full-245'
                     //,skin: 'line' //行边框风格
@@ -577,9 +557,10 @@ function _init(){
                 });
                 $('.demoTable .layui-btn').on('click', function(){
                     var type = $(this).attr('data-type');
-                    console.log(type);
+                    
                     active[type] ? active[type].call(this) : '';
                 });
+
                 
                 //监听工具条
                 table.on('tool('+ elem_id +')', function(obj){
@@ -1004,8 +985,9 @@ function putHash(obj=null)
 
 var tableOperation = {
     detail:function(){
-        var _href = this.data.url;
+        var _href;
         var loading = layer.load();
+        (this.data == undefined) ? _href = this.href : _href = this.data.url;
 
         if(!_href){
             layer.msg('请设置URL参数'); return false;
@@ -1039,9 +1021,10 @@ var tableOperation = {
     },
 
     edit:function(){
-        var _href = this.data.url;
+        var _href;
         var loading = layer.load();
-
+        (this.data == undefined) ? _href = this.href : _href = this.data.url;
+        
         if(!_href){
             layer.msg('请设置URL参数'); return false;
         }
@@ -1077,8 +1060,10 @@ var tableOperation = {
     },
     del:function(){
         var _obj = this;
-        var _href = _obj.data.url;
-        
+        var _href;
+
+        (_obj.data == undefined) ? _href = this.href : _href = _obj.data.url;
+
         if(!_href){
             layer.msg('请设置URL参数'); return false;
         }
@@ -1107,35 +1092,24 @@ var tableOperation = {
           
         });
     },
-    updatestatus:function(){
-        
+    updatestatus:function(){        
         var _obj = this;
         var _this = $(this);
         var _href = _obj.href;
         var loading = layer.load();
 
-        $.ajax({
-            url: _href,
-            type: 'POST',
-            dataType: 'json',
-            data: {},
-        })
-        .done(function(result) {
-            console.log(result);
-            if(result.code){
+        $.post(_href, {}, function(data, textStatus, xhr) {
+            if(data.code){
                 var _text = _this.text();
-                if(_text=='正常'){
-                    _text = '禁用';
-                }else{
-                    _text = '正常';
-                }
+                (_text == '正常') ? _text = '禁用' : _text = '正常';
                 _this.text(_text);
-                layer.msg(result.msg);
+                layer.msg(data.msg);
             }else{
-                layer.msg(result.msg);
+                layer.msg(data.msg);
             }
             layer.close(loading);
-        })
+        });
+        
     }
 };
 
