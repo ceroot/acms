@@ -59,6 +59,7 @@ class User
             ];
 
             $user = $this->UcenterMember->where($map)->field($field)->find();
+            $user = $user->getData();
 
             if (!$user) {
                 $this->error = '用户不存在';

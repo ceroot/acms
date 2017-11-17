@@ -69,22 +69,25 @@ class Start extends Controller
                 }
             }
             $user = User::login($username, $password); // 用户登录验证
+            $uid  = $user['id'];
+
             // 验证不成功时
             if (!$user) {
                 Session::set('error_num', $error_num + 1); // 错误次数加 1
                 return $this->error(User::getError(), '', array('error_num' => $error_num, 'verifyhtml' => $this->verifyhtml()));
             }
-            $manager = $this->model->login($user->id); // 管理员用户验证并返回管理用户信息
+
+            $manager = $this->model->login($uid); // 管理员用户验证并返回管理用户信息
             $manager || $this->error($this->model->getError(), '', array('error_num' => $error_num)); // 用户不存在返回提示
 
             User::autoLogin($user); // 用户自动登录
             $this->model->autoLogin($manager); // 管理用户自动登录
-            Hook::listen('action_log', ['action' => 'login', 'record_id' => $user->id, 'model' => 'manager']); // 行为日志记录
+            Hook::listen('action_log', ['action' => 'login', 'record_id' => $uid, 'model' => 'manager']); // 行为日志记录
             Session::pull('error_num'); // 登录成功，清除登录错误次数记录，释放 sesseion
 
             $time     = date('YmdHis');
             $authcode = authcode($time);
-            $this->success('登录成功', url('console/index/index?time=' . $time . '&authcode=' . $authcode), ['error_num' => 0]);
+            return $this->success('登录成功', url('console/index/index?time=' . $time . '&authcode=' . $authcode), ['error_num' => 0]);
         } else {
             $this->assign('verifyhtml', $this->verifyhtml());
             return $this->fetch();
