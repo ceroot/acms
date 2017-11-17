@@ -39,7 +39,7 @@ layui.use(['form'], function(){
   //自定义验证规则
   form.verify({
     username: function(value){
-      if(value.length < 5){
+      if(value.length < 4){
         return '用户名/邮箱至少得5个字符啊';
       }
     }

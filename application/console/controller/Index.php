@@ -22,6 +22,12 @@ class Index extends Base
      */
     public function index()
     {
+        $this->assign('info', $this->serverInfo());
+        $this->assign('extensionsList', $this->extensionsList());
+
+        $this->assign('userCount', App::model('UcenterMember')->count());
+        $this->assign('actionCount', App::model('ActionLog')->count());
+
         return $this->menusView();
 
     }
@@ -36,12 +42,19 @@ class Index extends Base
 
     public function copyright()
     {
-        $request = request();
-        //$common       = Common::getSingleton();
+        $this->assign('info', $this->serverInfo());
+        $this->assign('extensionsList', $this->extensionsList());
+        return $this->menusView();
+    }
+
+    private function serverInfo()
+    {
+        $request      = request();
         $mysqlVersion = Db::query('select version() as version');
-        $serverInfo   = [
+        return [
             'ThinkPHP版本'           => 'ThinkPHP ' . App::version(),
-            'CMS信息'                => '作者 : <a class="text-primary" target="new" href="https://www.benweng.com">笨翁</a> , GIT : <a class="text-primary" target="new" href="https://github.com/ceroot/ccms">CCMS</a>。',
+            'CMS信息'                => '作者 : <a class="text-primary" target="new" href="https://www.benweng.com">SpingYang</a> , GIT : <a class="text-primary" target="new" href="https://github.com/">待开放</a>。',
+            'CMS版本'                => config('system.version'),
             '操作系统'                 => PHP_OS,
             '主机名信息'                => $request->server('SERVER_NAME') . ' (' . $request->server('SERVER_ADDR') . ':' . $request->server('SERVER_PORT') . ')',
             '运行环境'                 => $request->server('SERVER_SOFTWARE'),
@@ -59,13 +72,16 @@ class Index extends Base
             'register_globals'     => get_cfg_var("register_globals") == "1" ? '√' : '×',
             'magic_quotes_gpc'     => (1 === get_magic_quotes_gpc()) ? '√' : '×',
             'magic_quotes_runtime' => (1 === get_magic_quotes_runtime()) ? '√' : '×',
-        ];
+            // '扩展列表'                 => $this->extensionsList(),
 
+        ];
+    }
+
+    // 扩展列表
+    private function extensionsList()
+    {
         $extensionsList = get_loaded_extensions();
-        // dump(request()->server('HTTP_USER_AGENT'));die;
-        $this->assign('info', $serverInfo);
-        $this->assign('extensionsList', implode(' , ', $extensionsList));
-        return $this->menusView();
+        return implode(' , ', $extensionsList);
     }
 
     /**

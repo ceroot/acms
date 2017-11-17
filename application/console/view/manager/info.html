@@ -14,7 +14,6 @@
     {:widget('Widgets/form', ['type'=>'text','title'=>'真实姓名','name'=>'realname','value'=>$one.realname,'placeholder'=>'请填写真实姓名','explain'=>'1','inline'=>1])}
     {:widget('Widgets/form', ['type'=>'tel','title'=>'手机','name'=>'mobile','value'=>$one.mobile,'elementid'=>'mobile','placeholder'=>'请填写手机号','layverify'=>'phone'])}
     {:widget('Widgets/form', ['type'=>'email','title'=>'邮箱','name'=>'email','value'=>$one.email,'elementid'=>'email','inline'=>0,'layverify'=>'email'])}
-    {:widget('Widgets/form', ['type'=>'text','title'=>'测试','name'=>'text','value'=>'dfd','layverify'=>'required|title','aux'=>'辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息辅助信息'])}
     {:widget('Widgets/button', ['name'=>'id','value'=>$one.id,'buttontext'=>'保存'])}
 </form>
 {/block}
@@ -25,20 +24,6 @@
       ,layer = layui.layer
       ,layedit = layui.layedit
       ,laydate = layui.laydate;
-
-     
-      //自定义验证规则
-      form.verify({
-        title: function(value){
-          if(value.length < 5){
-            return '标题至少得5个字符啊';
-          }
-        }
-        ,pass: [/(.+){6,12}$/, '密码必须6到12位']
-        ,content: function(value){
-          layedit.sync(editIndex);
-        }
-      });
       
       //监听指定开关
       form.on('switch(switchTest)', function(data){

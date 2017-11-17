@@ -60,7 +60,6 @@ class AuthGroup extends Base
     public function rule()
     {
         if ($this->app->request->isPost()) {
-
             if ($this->app->request->has('rules')) {
                 $data = $this->app->request->param('rules/a');
                 $temp = '';

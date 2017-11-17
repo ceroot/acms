@@ -1,9 +1,99 @@
 {extend name="mould:base" /}
 {block name="title"}后台首页{/block}
-{block name="css"}{/block}
+{block name="css"}
+<style type="text/css">
+	.tj{}
+	.tj > div{text-align: center;}
+	.tj .tj-box{background: #3797b4; color: #fff; padding: 0 2px; padding-left: 90px; text-align: left; margin-bottom: 5px; position: relative; }
+	.tj .tj-box .tj-icon{ display: inline-block; position: absolute; left: 0; top:0; width: 90px; height: 80px; line-height: 90px; text-align: center;  }
+	.tj .tj-box .tj-icon .layui-icon{ font-size: 48px; transition: all .4s ease; -webkit-transition: all .4s ease; }
+	.tj .tj-box:hover .tj-icon .layui-icon{ color:#000;}
+	.tj .tj-box .tj-content{}
+	.tj .tj-box .tj-content h4{ padding: 10px 20px 10px 5px; padding-bottom: 5px; border-bottom: 1px solid #fff; font-size: 30px; text-shadow: 3px 3px 3px rgba(0,0,0,0.3); }
+	.tj .tj-box .tj-content .box-body{ padding: 5px 20px 10px 5px }
+
+	
+</style>
+{/block}
 {block name="content"}
-<fieldset class="layui-elem-field" style="border: 1px solid #3c8dbc">
-	<legend style="font-size: 14px; padding: 0 10px">常用模块</legend>
-	<div class="layui-field-box">这是什么</div>
-</fieldset>
+    <div class="layui-row layui-col-space10 tj">
+      <div class="layui-col-md4">
+        <div class="tj-box" style="background: #FFB400">
+        	<div class="tj-icon">
+        		<i class="layui-icon">&#xe613;</i>
+        	</div>
+        	<div class="tj-content">
+        		<h4>{$userCount}</h4>
+        		<div class="box-body">会员</div>
+        	</div>
+        </div>
+      </div>
+      <div class="layui-col-md4">
+        <div class="tj-box" style="background: #1ABC9C">
+        	<div class="tj-icon">
+        		<i class="layui-icon">&#xe629;</i>
+        	</div>
+        	<div class="tj-content">
+        		<h4>{$userCount}</h4>
+        		<div class="box-body">文章</div>
+        	</div>
+        </div>
+      </div>
+      <div class="layui-col-md4">
+        <div class="tj-box">
+        	<div class="tj-icon">
+        		<i class="layui-icon">&#xe6b2;</i>
+        	</div>
+        	<div class="tj-content">
+        		<h4>{$actionCount}</h4>
+        		<div class="box-body">行为记录</div>
+        	</div>
+        </div>
+      </div>
+    </div>
+	<fieldset class="layui-elem-field" style="border: 1px solid #3c8dbc">
+		<legend>常用模块</legend>
+		<div class="layui-field-box">这是什么</div>
+	</fieldset>
+	<fieldset class="layui-elem-field">
+		<legend>开发团队</legend>
+		<div class="layui-field-box">
+			<table class="layui-table" lay-size="sm">
+		        <tr>
+		            <td width="20%" align="right">负责人</td>
+		            <td>SpringYang</td>
+		        </tr>
+		        <tr>
+		            <td width="20%" align="right">Email</td>
+		            <td>ceroot@163.com</td>
+		        </tr>
+		        <tr>
+		            <td width="20%" align="right">QQ</td>
+		            <td>525566309</td>
+		        </tr>
+		        <tr>
+		            <td width="20%" align="right">版权所有</td>
+		            <td><a href="http://www.benweng.com" target="_blank" title="笨翁">http://www.benweng.com</a></td>
+		        </tr>
+		    </table>
+		</div>
+	</fieldset>
+    <fieldset class="layui-elem-field">
+		<legend>系统信息</legend>
+		<div class="layui-field-box">
+		    <table class="layui-table" lay-size="sm">
+		    	{volist name="info" id="value" mod="2"}
+			        <tr>
+			            <td width="20%" align="right">{$key}</td>
+			            <td>{$value|raw}</td>
+			        </tr>
+				{/volist}
+				<tr>
+		            <td align="right">扩展列表</td>
+		            <td colspan="3">{$extensionsList}</td>
+		        </tr>
+		    </table>
+		</div>
+	</fieldset>
+
 {/block}

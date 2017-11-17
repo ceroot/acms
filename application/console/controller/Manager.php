@@ -59,6 +59,10 @@ class Manager extends Base
         $mid = $this->app->session->get('manager_id');
 
         if ($this->app->request->isPost()) {
+
+            if (session('manager_id') == 3) {
+                return $this->error('测试用户不能修改数据');
+            }
             $data = $this->app->request->param();
 
             if (!$this->id) {
@@ -93,8 +97,9 @@ class Manager extends Base
                 }
             }
         } else {
-            $one       = $this->model->find($mid);
-            $one       = $this->model::get($one['uid'], 'UcenterMember'); // 从数据取得用户数据
+            $one = $this->model->find($mid);
+            $one = $this->model::get($one['uid'], 'UcenterMember'); // 从数据取得用户数据
+
             $one['id'] = authcode($one['id']);
 
             $this->assign('one', $one);
@@ -111,6 +116,9 @@ class Manager extends Base
     public function password()
     {
         if ($this->app->request->isPost()) {
+            if (session('manager_id') == 3) {
+                return $this->error('测试用户不能修改数据');
+            }
             $data = $this->app->request->param();
 
             if (!$this->id) {
