@@ -17,7 +17,7 @@ return [
     ],
     // 应用开始
     'app_begin'    => [
-
+        'app\\common\\behavior\\AppBegin',
     ],
     // 模块初始化
     'module_init'  => [
