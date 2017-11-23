@@ -39,6 +39,8 @@ class WebLog
     public function run($param)
     {
         // Log::record("[ 系统配置 ]：初始化成功");
+        // $dd = getrandom();
+        // dump($dd);die;
         $this->webLog();
 
     }
@@ -120,8 +122,8 @@ class WebLog
         // 写入数据组合
         $data = [
             'uid'        => Session::get('user_auth.id') ?: 0,
-            'os'         => getOs(),
-            'browser'    => getBroswer(),
+            'os'         => get_os(),
+            'browser'    => get_broswer(),
             'url'        => Request::url(),
             'module'     => Request::module(),
             'controller' => Request::controller(),

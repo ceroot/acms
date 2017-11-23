@@ -72,8 +72,8 @@ class User
                 Log::record('[ 登录错误记录 ]：' . $this->error);
                 return false;
             }
-
-            if ($user['password'] != encrypt_password($password, $user['salt'])) {
+            // return $user;
+            if ($user['password'] != $this->encryptPassword($password, $user['salt'])) {
                 $this->error = '密码错误';
                 Log::record('[登录错误记录 ]：' . $this->error);
                 return false;
@@ -99,9 +99,31 @@ class User
         ];
 
         Session::set('user_auth', $auth);
-        Session::set('user_auth_sign', data_auth_sign($auth));
+        Session::set('user_auth_sign', $this->dataAuthSign($auth));
 
         $this->updateLogin($user['id']); // 更新用户登录信息
+    }
+
+    /**
+     * [ isLogin 检测用户是否登录 ]
+     * @author SpringYang <ceroot@163.com>
+     * @dateTime 2017-11-06T12:17:10+0800
+     * @return   integer                  [0-未登录，大于0-当前登录用户ID]
+     */
+    public function isLogin()
+    {
+        $user = Session::get('user_auth');
+        if (empty($user)) {
+            return 0;
+        } else {
+            $status = $this->getUserInfo($user['id'], 'status');
+            // 查询用户是否存在及用户状态
+            if (!$status) {
+                return 0;
+            } else {
+                return Session::get('user_auth_sign') == $this->dataAuthSign($user) ? $user['id'] : 0;
+            }
+        }
     }
 
     /**
@@ -123,28 +145,6 @@ class User
     }
 
     /**
-     * [ isLogin 检测用户是否登录 ]
-     * @author SpringYang <ceroot@163.com>
-     * @dateTime 2017-11-06T12:17:10+0800
-     * @return   integer                  [0-未登录，大于0-当前登录用户ID]
-     */
-    public function isLogin()
-    {
-        $user = Session::get('user_auth');
-        if (empty($user)) {
-            return 0;
-        } else {
-            $status = $this->getUserInfo($user['id'], 'status');
-            // 查询用户是否存在及用户状态
-            if (!$status) {
-                return 0;
-            } else {
-                return Session::get('user_auth_sign') == data_auth_sign($user) ? $user['id'] : 0;
-            }
-        }
-    }
-
-    /**
      * [ modifyPassword 设置密码（修改密码） ]
      * @author SpringYang <ceroot@163.com>
      * @dateTime 2017-11-02T15:38:30+0800
@@ -156,7 +156,7 @@ class User
     {
         // $salt = $this->UcenterMember->getFieldById($id, 'salt');
         $data             = $this->UcenterMember->get($id);
-        $data['password'] = encrypt_password($password, $data['salt']);
+        $data['password'] = $this->encryptPassword($password, $data['salt']);
         $status           = $data->save($data);
         return $status ? true : false;
     }
@@ -234,6 +234,39 @@ class User
     {
         Session::pull('user_auth');
         Session::pull('user_auth_sign');
+    }
+
+    /**
+     * [ encryptPassword 密码加密 ]
+     * @Author   SpringYang
+     * @Email    ceroot@163.com
+     * @DateTime 2017-10-24T17:35:25+0800
+     * @param    string                   $password [description]
+     * @param    string                   $salt     [description]
+     * @return   string                             [description]
+     */
+
+    public function encryptPassword($password, $salt)
+    {
+        return '' === $password ? '' : md5(sha1($password) . sha1($salt));
+    }
+
+    /**
+     * dataAuthSign 数据签名认证
+     * @param  array  $data 被认证的数据
+     * @return string       签名
+     * @author
+     */
+    private function dataAuthSign($data)
+    {
+        //数据类型检测
+        if (!is_array($data)) {
+            $data = (array) $data;
+        }
+        ksort($data); //排序
+        $code = http_build_query($data); //url编码并生成query字符串
+        $sign = sha1($code); //生成签名
+        return $sign;
     }
 
 }

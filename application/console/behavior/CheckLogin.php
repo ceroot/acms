@@ -82,15 +82,19 @@ class CheckLogin
             return true;
         }
 
-        if (!User::isLogin() || !$this->managerLogin()) {
-            User::clearSession(); // 清除登录数据信息
-            Session::pull('manager_id');
-            $loginurl = url('console/start/index?time=' . time()) . '?backurl=' . getbackurl();
+        $loginurl = url('console/start/index?time=' . time()) . '?backurl=' . getbackurl();
+        if (!User::isLogin()) {
+            User::clearSession(); // 清除用户登录数据信息
             return $this->success('用户已经退出，请重新登录', $loginurl);
         }
 
-        Log::record('[ 检查登录日志 ]：管理用户 id 为' . Session::get('manager_id') . '登录成功');
+        if (!$this->managerLogin()) {
+            User::clearSession(); // 清除用户登录数据信息
+            Session::pull('manager_id'); // 清除管理用户信息
+            return $this->success('管理用户已经退出，请重新登录', $loginurl);
+        }
 
+        Log::record('[ 检查登录日志 ]：管理用户 id 为' . Session::get('manager_id') . '登录成功');
     }
 
     /**

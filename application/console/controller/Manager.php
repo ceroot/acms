@@ -192,7 +192,7 @@ class Manager extends Base
                         $salt = getrandom(10, 1);
                     }
                     $data['salt']     = $salt;
-                    $data['password'] = encrypt_password($data['password'], $salt); // 密码加密
+                    $data['password'] = User::encryptPassword($data['password'], $salt); // 密码加密
 
                 } else {
                     unset($data['password']);
@@ -219,7 +219,7 @@ class Manager extends Base
                 }
 
                 $salt             = getrandom(10, 1);
-                $data['password'] = encrypt_password($data['password'], $salt);
+                $data['password'] = User::encryptPassword($data['password'], $salt);
                 $data['salt']     = $salt; // 增加 salt
 
                 $status = $this->ucenterMember->save($data); // 数据保存

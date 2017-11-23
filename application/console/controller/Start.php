@@ -16,7 +16,6 @@
  */
 namespace app\console\controller;
 
-use app\facade\Tools;
 use app\facade\User;
 use QL\QueryList;
 use think\Controller;
@@ -55,6 +54,7 @@ class Start extends Controller
             if (!Session::has('error_num')) {
                 Session::set('error_num', 0);
             }
+
             // 检测错误次数
             $error_num = Session::get('error_num');
             // 验证码验不为空
@@ -96,7 +96,7 @@ class Start extends Controller
     }
     public function test($id = null)
     {
-        $test = Tools::test();
+        $test = authcode();
         dump($test);
         dump(config('app_debug'));
 
