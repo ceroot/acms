@@ -256,6 +256,10 @@ class User
         return $hashedPassword;
     }
 
+    /**
+     *[ checkPassword 检测密码 ]
+     *
+     */
     public function checkPassword($password, $hashedPassword)
     {
         $PasswordHashs = new \PasswordHash(8, false);
