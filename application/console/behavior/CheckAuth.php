@@ -19,6 +19,7 @@
 
 namespace app\console\behavior;
 
+use app\facade\Auth;
 use think\facade\App;
 use think\facade\Cache;
 use think\facade\Config;
@@ -63,21 +64,18 @@ class CheckAuth
 
             // 权限验证
             // 执行验证
-            if (!$this->authCheck($action, Session::get('manager_id'))) {
+            // if (!$this->authCheck($action, Session::get('manager_id'))) {
+            //     $url = url('index/index?time=' . time()) . '?backurl=' . getbackurl();
+            //     return $this->error('您没有相关权限，请联系管理员', $url);
+            // }
+
+            if (!Auth::check($action, Session::get('manager_id'))) {
                 $url = url('index/index?time=' . time()) . '?backurl=' . getbackurl();
                 return $this->error('您没有相关权限，请联系管理员', $url);
             }
+
         }
 
     }
 
-    private function authCheck($authName, $uid)
-    {
-        $auth = new \auth\Auth();
-        if ($auth->check(strtolower($authName), $uid)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 }

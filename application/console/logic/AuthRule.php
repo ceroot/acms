@@ -19,6 +19,7 @@
 namespace app\console\logic;
 
 use app\common\model\Extend;
+use app\facade\Auth;
 use think\facade\Cache;
 use think\facade\Config;
 use think\facade\Session;
@@ -100,7 +101,7 @@ class AuthRule extends Extend
             // dump($notAuth);die;
             $data = array();
             foreach ($cache as $value) {
-                if ($this->authCheck($value['name'], Session::get('manager_id')) || in_array(strtolower($value['name']), $notAuth)) {
+                if (Auth::check($value['name'], Session::get('manager_id')) || in_array(strtolower($value['name']), $notAuth)) {
                     $data[] = $value;
                 }
 
@@ -211,13 +212,4 @@ class AuthRule extends Extend
         return $treeArray;
     }
 
-    private function authCheck($authName, $uid)
-    {
-        $auth = new \auth\Auth();
-        if ($auth->check(strtolower($authName), $uid)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 }

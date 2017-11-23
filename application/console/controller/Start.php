@@ -16,6 +16,7 @@
  */
 namespace app\console\controller;
 
+use app\facade\Tools;
 use app\facade\User;
 use QL\QueryList;
 use think\Controller;
@@ -95,6 +96,8 @@ class Start extends Controller
     }
     public function test($id = null)
     {
+        $test = Tools::test();
+        dump($test);
         dump(config('app_debug'));
 
     }
