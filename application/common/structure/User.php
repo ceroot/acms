@@ -72,8 +72,9 @@ class User
                 Log::record('[ 登录错误记录 ]：' . $this->error);
                 return false;
             }
-            // return $user;
-            if ($user['password'] != $this->encryptPassword($password, $user['salt'])) {
+
+            $password = $this->md5sha1($password, $user['salt']);
+            if (!$this->checkPassword($password, $user['password'])) {
                 $this->error = '密码错误';
                 Log::record('[登录错误记录 ]：' . $this->error);
                 return false;
@@ -245,10 +246,26 @@ class User
      * @param    string                   $salt     [description]
      * @return   string                             [description]
      */
-
     public function encryptPassword($password, $salt)
     {
-        return '' === $password ? '' : md5(sha1($password) . sha1($salt));
+        $password = $this->md5sha1($password, $salt);
+        // 初始化散列器为不可移植(这样更安全)
+        $PasswordHashs = new \PasswordHash(8, false);
+        // $hashedPassword 是一个长度为 60 个字符的字符串.
+        $hashedPassword = $PasswordHashs->HashPassword($password);
+        return $hashedPassword;
+    }
+
+    public function checkPassword($password, $hashedPassword)
+    {
+        $PasswordHashs = new \PasswordHash(8, false);
+        $status        = $PasswordHashs->CheckPassword($password, $hashedPassword);
+        return $status ? true : false;
+    }
+
+    private function md5sha1($password, $salt)
+    {
+        return md5(sha1($password) . sha1($salt));
     }
 
     /**
