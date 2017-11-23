@@ -8,34 +8,19 @@
 // +----------------------------------------------------------------------+
 /**
  *
- * @filename  Action.php
+ * @filename  Category.php
  * @authors   SpringYang
- * @email     ceroot@163.com
+ * @email     ceroo@163.com
  * @QQ        525566309
- * @date      2017-10-27 16:44:07
+ * @date      2017-11-23 21:38:32
  * @site      http://www.benweng.com
  * @version   $Id$
  */
-namespace app\console\controller;
+namespace app\common\model;
 
-use app\console\controller\Base;
-use data\Data;
+use app\common\model\Extend;
 
-class Category extends Base
+class Category extends Extend
 {
-    public function initialize()
-    {
-        parent::initialize();
-        $category = $this->model->all();
-        $category = $category->toArray();
 
-        $newcategory = [];
-        foreach ($category as $value) {
-            $value['editid'] = authcode($value['id']);
-            $newcategory[]   = $value;
-        }
-        $category = Data::tree($newcategory, 'title', 'id', 'pid');
-        $this->assign('category', $category);
-
-    }
 }

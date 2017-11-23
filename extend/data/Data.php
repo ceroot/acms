@@ -116,10 +116,11 @@ final class Data
      */
     public static function tree($data, $title, $fieldPri = 'cid', $fieldPid = 'pid')
     {
+
         if (!is_array($data) || empty($data)) {
             return [];
         }
-
+        // dump($data);
         $arr = Data::channelList($data, 0, '', $fieldPri, $fieldPid);
         foreach ($arr as $k => $v) {
             $str = "";
