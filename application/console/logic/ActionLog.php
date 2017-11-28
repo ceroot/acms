@@ -39,7 +39,7 @@ class ActionLog extends Model
     {
 
         // 参数检查
-        if (empty($record_id)) {
+        if (is_null($record_id)) {
             return '参数不能为空';
         }
 

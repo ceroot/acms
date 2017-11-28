@@ -123,6 +123,7 @@ class DataBackup extends Base
                     $this->app->session->set('backup_tables', null);
                     $this->app->session->set('backup_file', null);
                     $this->app->session->set('backup_config', null);
+                    // Hook::listen('action_log', ['record_id' => $this->id]); // 行为日志记录
                     return $this->success('备份完成！');
                 }
             } else {
@@ -224,6 +225,8 @@ class DataBackup extends Base
                     $this->success("正在还原...#{$part}", '', $data);
                 } else {
                     $this->app->session->set('backup_list', null);
+                    // Hook::listen('action_log', ['record_id' => $this->id]); // 行为日志记录
+                    $this->app->hook->listen('action_log', ['record_id' => 0, 'action' => 'revert', 'model' => 'databackup']); // 行为日志记录
                     return $this->success('还原完成！');
                 }
             } else {
@@ -255,6 +258,7 @@ class DataBackup extends Base
         if (count(glob($path))) {
             return $this->error('备份文件删除失败，请检查权限！');
         } else {
+            $this->app->hook->listen('action_log', ['record_id' => 0, 'action' => 'del', 'model' => 'databackup']); // 行为日志记录
             return $this->success('备份文件删除成功！');
         }
     }
@@ -269,8 +273,10 @@ class DataBackup extends Base
      */
     public function optimize($tables = null)
     {
+        $record_id = 1;
         if (!$tables) {
-            $tables = $this->app->request->param('ids/a');
+            $record_id = 0;
+            $tables    = $this->app->request->param('ids/a');
         }
 
         if (!$this->app->request->isPost() && !$tables) {
@@ -278,6 +284,7 @@ class DataBackup extends Base
         }
 
         if ($this->_optimize($tables)) {
+            $this->app->hook->listen('action_log', ['record_id' => $record_id, 'action' => 'optimize', 'model' => 'databackup']); // 行为日志记录
             $this->success("数据表优化完成！");
         } else {
             $this->error("数据表优化出错请重试！");
@@ -322,8 +329,10 @@ class DataBackup extends Base
      */
     public function repair($tables = null)
     {
+        $record_id = 1;
         if (!$tables) {
-            $tables = $this->app->request->param('ids/a');
+            $record_id = 0;
+            $tables    = $this->app->request->param('ids/a');
         }
 
         if (!$this->app->request->isPost() && !$tables) {
@@ -331,6 +340,7 @@ class DataBackup extends Base
         }
 
         if ($this->_repair($tables)) {
+            $this->app->hook->listen('action_log', ['record_id' => $record_id, 'action' => 'repair', 'model' => 'databackup']); // 行为日志记录
             $this->success("数据表修复完成！");
         } else {
             $this->error("数据表修复出错请重试");
