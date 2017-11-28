@@ -4,15 +4,16 @@
         {/present}
         <div class="{eq name="wdata.inline" value="1"}layui-input-inline{else /}layui-input-block{/eq}">
             {volist name="wdata.datalist" id="vo"}
-                <input type="radio" name="{$wdata.name}" value="{$vo.value}" title="{$vo.title}"
+                <input type="radio" name="{$wdata.name}" value="{$key}" title="{$vo}"
                     {if condition="$wdata.value eq ''"}
-                        {eq name="key" value="0"}
+                        {eq name="key" value="1"}
+                            checked=""
+                        {/eq}
+                    {else /}
+                        {eq name="$key" value="$wdata.value" }
                             checked=""
                         {/eq}
                     {/if}
-                    {eq name="vo.value" value="$wdata.value" }
-                        checked=""
-                    {/eq}
                 />
             {/volist}
         </div>

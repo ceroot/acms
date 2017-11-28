@@ -123,7 +123,7 @@ class DataBackup extends Base
                     $this->app->session->set('backup_tables', null);
                     $this->app->session->set('backup_file', null);
                     $this->app->session->set('backup_config', null);
-                    // Hook::listen('action_log', ['record_id' => $this->id]); // 行为日志记录
+                    $this->app->hook->listen('action_log', ['record_id' => 0, 'action' => 'export', 'model' => 'databackup']); // 行为日志记录
                     return $this->success('备份完成！');
                 }
             } else {

@@ -48,10 +48,43 @@ class Config extends Base
         if (!$list) {
             return $this->error('没有数据');
         } else {
-            $this->assign('one', $list);
+            $newlist = [];
+            foreach ($list as $value) {
+                if ($value['type'] == 'radio') {
+                    $value['extra'] = $this->parse('radio', $value['extra']);
+                }
+                $newlist[] = $value;
+            }
+            $this->assign('one', $newlist);
         }
 
+        // dump($newlist);die;
+
         return $this->menusView('group');
+    }
+
+    /**
+     * 根据配置类型解析配置
+     * @param  integer $type  配置类型
+     * @param  string  $value 配置值
+     */
+    private static function parse($type, $value)
+    {
+        switch ($type) {
+            case 'radio': //解析数组
+                $array = preg_split('/[,;\r\n]+/', trim($value, ",;\r\n"));
+                if (strpos($value, ':')) {
+                    $value = array();
+                    foreach ($array as $val) {
+                        list($k, $v) = explode(':', $val);
+                        $value[$k]   = $v;
+                    }
+                } else {
+                    $value = $array;
+                }
+                break;
+        }
+        return $value;
     }
 
     public function groupupdate()

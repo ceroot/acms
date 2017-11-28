@@ -21,22 +21,22 @@
     {volist name="one" id="config"}
         {switch name="config.type"}
             {case value="0"}
-                {:widget('Widgets/form', ['type'=>'text','title'=>$config.title,'name'=>$config.name,'field'=>'username','value'=>$config.value,'eleid'=>'username','placeholder'=>$config.value,'aux'=>$config.remark])}
+                {:widget('Widgets/form', ['type'=>'text','title'=>$config.title,'name'=>$config.name,'field'=>$config.name,'value'=>$config.value,'eleid'=>$config.name,'placeholder'=>$config.value,'aux'=>$config.remark])}
             {/case}
             {case value="text"}
-                {:widget('Widgets/form', ['type'=>'text','title'=>$config.title,'name'=>$config.name,'field'=>'username','value'=>$config.value,'eleid'=>'username','placeholder'=>$config.value,'aux'=>$config.remark])}
+                {:widget('Widgets/form', ['type'=>'text','title'=>$config.title,'name'=>$config.name,'field'=>$config.name,'value'=>$config.value,'eleid'=>$config.name,'placeholder'=>$config.value,'aux'=>$config.remark])}
             {/case}
             {case value="textarea"}
-                {:widget('Widgets/form', ['type'=>'textarea','title'=>$config.title,'name'=>$config.name,'field'=>'username','value'=>$config.value,'eleid'=>'username','placeholder'=>$config.value,'aux'=>$config.remark])}
+                {:widget('Widgets/form', ['type'=>'textarea','title'=>$config.title,'name'=>$config.name,'field'=>$config.name,'value'=>$config.value,'eleid'=>$config.name,'placeholder'=>$config.value,'aux'=>$config.remark])}
             {/case}
             {case value="array"}
-                {:widget('Widgets/form', ['type'=>'textarea','title'=>$config.title,'name'=>$config.name,'field'=>'username','value'=>$config.value,'eleid'=>'username','placeholder'=>$config.value,'aux'=>$config.remark])}
+                {:widget('Widgets/form', ['type'=>'textarea','title'=>$config.title,'name'=>$config.name,'field'=>$config.name,'value'=>$config.value,'eleid'=>$config.name,'placeholder'=>$config.value,'aux'=>$config.remark])}
             {/case}
-            {case value="4"}
-                
+            {case value="radio"}
+                {:widget('Widgets/form', ['type'=>'radio','title'=>$config.title,'name'=>$config.name,'field'=>$config.name,'value'=>$config.value,'eleid'=>$config.name,'aux'=>$config.remark,'datalist'=>$config.extra])}
             {/case}
             {case value="switch"}
-                {:widget('Widgets/form', ['type'=>'switch','title'=>$config.title,'name'=>$config.name,'field'=>$config.name,'value'=>$config.value,'eleid'=>'username','placeholder'=>$config.value,'aux'=>$config.remark])}
+                {:widget('Widgets/form', ['type'=>'switch','title'=>$config.title,'name'=>$config.name,'field'=>$config.name,'value'=>$config.value,'eleid'=>$config.name,'placeholder'=>$config.value,'aux'=>$config.remark])}
             {/case}
         {/switch}
     {/volist}
