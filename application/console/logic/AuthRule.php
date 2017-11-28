@@ -143,7 +143,8 @@ class AuthRule extends Extend
                     default:
                         $url = url($value['name']);
                         if ($value['url'] != null) {
-                            $url = url($value['url']);
+                            // $url = url($value['url']);
+                            $url = $value['url'];
                         }
                 }
                 $value['url'] = $url;
