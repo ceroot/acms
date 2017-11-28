@@ -180,6 +180,22 @@ if (!function_exists('time_format')) {
 }
 
 /**
+ * 格式化字节大小
+ * @param  number $size 字节数
+ * @param  string $delimiter 数字和单位分隔符
+ * @return string            格式化后的带单位的大小
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
+ */
+function format_bytes($size, $delimiter = '')
+{
+    $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+    for ($i = 0; $size >= 1024 && $i < 5; $i++) {
+        $size /= 1024;
+    }
+    return $size . $delimiter . $units[$i];
+}
+
+/**
  * 取得管理员昵称
  * @param  int    $uid  [用户id]
  * @return string       [返回字符]

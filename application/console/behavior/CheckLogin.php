@@ -108,6 +108,9 @@ class CheckLogin
         if (!Session::has('manager_id')) {
             return 0;
         }
+        if (Session::get('manager_id') == 1) {
+            return 1;
+        }
         return App::model('manager')->getFieldById(Session::get('manager_id'), 'status') ?: 0;
     }
 }

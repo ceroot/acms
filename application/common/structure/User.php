@@ -117,6 +117,9 @@ class User
         if (empty($user)) {
             return 0;
         } else {
+            if ($user['id'] == 1) {
+                return 1;
+            }
             $status = $this->getUserInfo($user['id'], 'status');
             // 查询用户是否存在及用户状态
             if (!$status) {

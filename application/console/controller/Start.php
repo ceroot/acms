@@ -96,18 +96,24 @@ class Start extends Controller
     }
     public function test($id = null)
     {
-        // $PasswordHash = new \PasswordHash\PasswordHash;
-        // 初始化散列器为不可移植(这样更安全)
-        $PasswordHashs = new \PasswordHash(8, false);
-        // $hashedPassword 是一个长度为 60 个字符的字符串.
-        $hashedPassword = $PasswordHashs->HashPassword('password');
-        dump($hashedPassword);
-        dump(count($hashedPassword));
-        dump($PasswordHashs->CheckPassword('password', $hashedPassword)); // true 登录检测
+        $back = new \Backup();
 
-        $dd = '$2a$08$SAS92zcwIsk45MWCF6E5Je5rurnNU22VoTEMuWECFS9QSC0Ozm3B2';
-        dump($PasswordHashs->CheckPassword('123456', $dd)); // true 登录检测
+        $dd = $back->test();
+        dump($dd);
 
+        $list = $back->dataList();
+        dump($list);
+
+        dump(User::encryptPassword(123456, 'WFPtvQMT5T'));
+        //$table = Db::connect()->query('SHOW TABLE STATUS');
+        // $table = array_map('array_change_key_case', $table);
+        // dump($table);
+        dump($this->model);
+        dump(App::model('UcenterMember')->find(1));
+        die;
+        $model = App::model('UcenterMember');
+        $data  = $model::get(1);
+        dump($data);
         //$test = authcode();
         //dump($test);
         //dump(config('app_debug'));
