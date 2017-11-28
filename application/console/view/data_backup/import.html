@@ -33,8 +33,8 @@
         <td>{$key}</td>
         <td>-</td>
         <td>
-            <a title="还原" class="db-import" href="{:Url::build('revert',['time'=>$vo['time']])}">还原</a>
-            <a class="special confirm" title="删除" href="{:Url::build('del',['time'=>$vo['time']])}">删除</a>
+            <a class="db-import"  title="还原" href="{:Url::build('revert',['time'=>$vo['time']])}">还原</a>
+            <a class="special confirm" title="删除" href="{:Url::build('del',['time'=>$vo['time']])}" data-event="del">删除</a>
         </td>
     </tr>
     {/volist}
@@ -74,6 +74,16 @@
                 }
             }
         });
+
+        layui.$('.confirm').click(function(event) {
+            /* Act on the event */
+            // var _self = $(this);
+            // var _href = this.href;
+            // alert(_href);
+            // return false;
+        });
+
+
     });
     
 function alert_msg(text, icon) {

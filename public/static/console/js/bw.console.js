@@ -1080,7 +1080,11 @@ var tableOperation = {
                 console.log(result);
                 if(result.code){
                     // 删除行
-                    _obj.del();
+                    if(_obj.data != undefined){
+                       _obj.del(); 
+                    }else{
+                        window.location.reload();
+                    }
                     
                     layer.msg(result.msg,{icon:6});
                 }else{
