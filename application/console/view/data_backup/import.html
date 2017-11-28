@@ -34,6 +34,7 @@
         <td>-</td>
         <td>
             <a class="db-import"  title="还原" href="{:Url::build('revert',['time'=>$vo['time']])}">还原</a>
+            <a class="download" title="下载" href="{:Url::build('download',['time'=>$vo['time']])}">下载</a>
             <a class="special confirm" title="删除" href="{:Url::build('del',['time'=>$vo['time']])}" data-event="del">删除</a>
         </td>
     </tr>
