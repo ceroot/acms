@@ -31,20 +31,9 @@ class Manager extends Base
 
         $this->ucenterMember = $this->app->model('UcenterMember'); // 实例化用户模型
 
-        $groupdata    = db('authGroup')->where('status', 1)->field('id,title,status,describe')->select();
-        $authgroup    = db('AuthGroupAccess')->where('uid', input('param.id'))->select();
-        $newgroupdata = [];
-        foreach ($groupdata as $key => $value) {
-            $value['select'] = 0;
-            foreach ($authgroup as $k => $v) {
-                if ($value['id'] == $v['group_id']) {
-                    $value['select'] = 1;
-                }
-            }
-            $newgroupdata[] = $value;
-        }
-
-        $this->assign('newgroupdata', $newgroupdata);
+        $groupdata = db('authGroup')->where('status', 1)->field('id,title')->select();
+        $authgroup = db('AuthGroupAccess')->where('uid', input('param.id'))->select();
+        $this->assign('groupdata', $groupdata);
 
     }
 

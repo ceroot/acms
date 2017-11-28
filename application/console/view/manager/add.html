@@ -6,7 +6,7 @@
 {block name="content"}
 <form action="{:url('renew')}" method="post" class="layui-form" data-validate="true">
 
-    {:widget('Widgets/form', ['type'=>'select','title'=>'角色','name'=>'group_id','value'=>$one.group_id,'elementid'=>'group_id','datalist'=>$newgroupdata])}
+    {:widget('Widgets/form', ['type'=>'select','title'=>'角色','name'=>'group_id','value'=>$one.group_id,'elementid'=>'group_id','datalist'=>$groupdata])}
     {:widget('Widgets/form', ['type'=>'text','title'=>'用户名','name'=>'username','value'=>$one.username,'elementid'=>'username','placeholder'=>'用户名'])}
     {:widget('Widgets/form', ['type'=>'text','title'=>'用户昵称','name'=>'nickname','value'=>$one.nickname,'elementid'=>'nickname','placeholder'=>'用户昵称'])}
     {:widget('Widgets/form', ['type'=>'text','title'=>'姓名','name'=>'realname','value'=>$one.realname,'elementid'=>'realname','placeholder'=>'姓名'])}
