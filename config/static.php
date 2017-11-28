@@ -18,6 +18,6 @@
  */
 
 return [
-    'layui_version'  => 'layui/2.2.2',
+    'layui_version'  => 'layui/2.2.3',
     'jquery_version' => 'jquery/jquery-3.2.1.min.js',
 ];
