@@ -12,11 +12,12 @@
 namespace DataOutput;
 
 use think\Db;
-use think\facade\{
-    Config,Session
-};
+use think\facade\Config;
+use think\facade\Session;
+
 //数据导出模型
-class DataOutput{
+class DataOutput
+{
     /**
      * 文件指针
      * @var resource
@@ -47,7 +48,8 @@ class DataOutput{
      * @param array  $config 备份配置信息
      * @param string $type   执行类型，export - 备份数据， import - 还原数据
      */
-    public function __construct($file, $config, $type = 'export'){
+    public function __construct($file, $config, $type = 'export')
+    {
         $this->file   = $file;
         $this->config = $config;
     }
@@ -56,10 +58,11 @@ class DataOutput{
      * 打开一个卷，用于写入数据
      * @param  integer $size 写入数据的大小
      */
-    private function open($size){
-        if($this->fp){
+    private function open($size)
+    {
+        if ($this->fp) {
             $this->size += $size;
-            if($this->size > $this->config['part']){
+            if ($this->size > $this->config['part']) {
                 $this->config['compress'] ? @gzclose($this->fp) : @fclose($this->fp);
                 $this->fp = null;
                 $this->file['part']++;
@@ -69,7 +72,7 @@ class DataOutput{
         } else {
             $backuppath = $this->config['path'];
             $filename   = "{$backuppath}{$this->file['name']}-{$this->file['part']}.sql";
-            if($this->config['compress']){
+            if ($this->config['compress']) {
                 $filename = "{$filename}.gz";
                 $this->fp = @gzopen($filename, "a{$this->config['level']}");
             } else {
@@ -83,8 +86,9 @@ class DataOutput{
      * 写入初始数据
      * @return boolean true - 写入成功，false - 写入失败
      */
-    public function create(){
-        $sql  = "-- -----------------------------\n";
+    public function create()
+    {
+        $sql = "-- -----------------------------\n";
         $sql .= "-- Think MySQL Data Transfer \n";
         $sql .= "-- \n";
         $sql .= "-- Host     : " . Config::get('database.hostname') . "\n";
@@ -103,14 +107,15 @@ class DataOutput{
      * @param  string $sql 要写入的SQL语句
      * @return boolean     true - 写入成功，false - 写入失败！
      */
-    private function write($sql){
+    private function write($sql)
+    {
         $size = strlen($sql);
-        
+
         //由于压缩原因，无法计算出压缩后的长度，这里假设压缩率为50%，
         //一般情况压缩率都会高于50%；
         $size = $this->config['compress'] ? $size / 2 : $size;
-        
-        $this->open($size); 
+
+        $this->open($size);
         return $this->config['compress'] ? @gzwrite($this->fp, $sql) : @fwrite($this->fp, $sql);
     }
 
@@ -120,20 +125,21 @@ class DataOutput{
      * @param  integer $start 起始行数
      * @return boolean        false - 备份失败
      */
-    public function backup($table, $start){
+    public function backup($table, $start)
+    {
         //创建DB对象
         $db = Db::connect();
 
         //备份表结构
-        if(0 == $start){
+        if (0 == $start) {
             $result = $db->query("SHOW CREATE TABLE `{$table}`");
-            $sql  = "\n";
+            $sql    = "\n";
             $sql .= "-- -----------------------------\n";
             $sql .= "-- Table structure for `{$table}`\n";
             $sql .= "-- -----------------------------\n";
             $sql .= "DROP TABLE IF EXISTS `{$table}`;\n";
             $sql .= trim($result[0]['Create Table']) . ";\n\n";
-            if(false === $this->write($sql)){
+            if (false === $this->write($sql)) {
                 return false;
             }
         }
@@ -141,12 +147,12 @@ class DataOutput{
         //数据总数
         $result = $db->query("SELECT COUNT(*) AS count FROM `{$table}`");
         $count  = $result['0']['count'];
-            
+
         //备份表数据
-        if($count){
+        if ($count) {
             //写入数据注释
-            if(0 == $start){
-                $sql  = "-- -----------------------------\n";
+            if (0 == $start) {
+                $sql = "-- -----------------------------\n";
                 $sql .= "-- Records of `{$table}`\n";
                 $sql .= "-- -----------------------------\n";
                 $this->write($sql);
@@ -157,13 +163,13 @@ class DataOutput{
             foreach ($result as $row) {
                 $row = array_map('addslashes', $row);
                 $sql = "INSERT INTO `{$table}` VALUES ('" . str_replace(["\r", "\n"], ['\r', '\n'], implode("', '", $row)) . "');\n";
-                if(false === $this->write($sql)){
+                if (false === $this->write($sql)) {
                     return false;
                 }
             }
 
             //还有更多数据
-            if($count > $start + 1000){
+            if ($count > $start + 1000) {
                 return [$start + 1000, $count];
             }
         }
@@ -173,25 +179,26 @@ class DataOutput{
     }
 
     //还原数据
-    public function import($start){
+    public function import($start)
+    {
         $db = Db::connect();
-        if($this->config['compress']){
+        if ($this->config['compress']) {
             $gz   = gzopen($this->file[1], 'r');
             $size = 0;
         } else {
             $size = filesize($this->file[1]);
             $gz   = fopen($this->file[1], 'r');
         }
-        $this->fp=$gz;
-        $sql  = '';
-        if($start){
+        $this->fp = $gz;
+        $sql      = '';
+        if ($start) {
             $this->config['compress'] ? gzseek($gz, $start) : fseek($gz, $start);
         }
-        
-        for($i = 0; $i < 1000; $i++){
-            $sql .= $this->config['compress'] ? gzgets($gz) : fgets($gz); 
-            if(preg_match('/.*;$/', trim($sql))){
-                if(false !== $db->execute($sql)){
+
+        for ($i = 0; $i < 1000; $i++) {
+            $sql .= $this->config['compress'] ? gzgets($gz) : fgets($gz);
+            if (preg_match('/.*;$/', trim($sql))) {
+                if (false !== $db->execute($sql)) {
                     $start += strlen($sql);
                 } else {
                     return false;
@@ -206,9 +213,65 @@ class DataOutput{
     }
 
     /**
+     * 优化表
+     * @param  String $tables 表名
+     * @return String $tables
+     */
+    public function optimize($tables = null)
+    {
+        if ($tables) {
+            $db = Db::connect();
+            if (is_array($tables)) {
+                $tables = implode('`,`', $tables);
+                $list   = $db->query("OPTIMIZE TABLE `{$tables}`");
+            } else {
+                $list = $db->query("OPTIMIZE TABLE `{$tables}`");
+            }
+            if ($list) {
+                return $tables;
+            } else {
+                throw new \Exception("data sheet'{$tables}'Repair mistakes please try again!");
+            }
+        } else {
+            throw new \Exception("Please specify the table to be repaired!");
+        }
+    }
+    /**
+     * 修复表
+     * @param  String $tables 表名
+     * @return String $tables
+     */
+    public function repair($tables = null)
+    {
+        return $tables;
+        if ($tables) {
+            $db = Db::connect();
+            if (is_array($tables)) {
+                $tables = implode('`,`', $tables);
+                $list   = $db->query("REPAIR TABLE `{$tables}`");
+            } else {
+                $list = $db->query("REPAIR TABLE `{$tables}`");
+            }
+            if ($list) {
+                return $list;
+            } else {
+                throw new \Exception("data sheet'{$tables}'Repair mistakes please try again!");
+            }
+        } else {
+            throw new \Exception("Please specify the table to be repaired!");
+        }
+    }
+
+    public function test()
+    {
+        return 132;
+    }
+
+    /**
      * 析构方法，用于关闭文件资源
      */
-    public function __destruct(){
+    public function __destruct()
+    {
         $this->config['compress'] ? @gzclose($this->fp) : @fclose($this->fp);
     }
 }

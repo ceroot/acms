@@ -2,38 +2,45 @@
 {block name="title"}管理员列表{/block}
 {block name="content"}
 <div class="layui-btn-group">
-    <button class="layui-btn layui-btn-small layui-btn-normal" id="export">立即备份</button>
+    <button class="layui-btn" id="export">立即备份</button>
+    <a class="layui-btn optimize" id="optimize" href="{:url('optimize')}">优化表</a>
+    <a class="layui-btn repair" id="repair" href="{:url('repair')}">修复表</a>
 </div>
 <form id="export-form" method="post" class="layui-form" action="{:Url::build('export')}">
     <table class="layui-table" lay-skin="line">
         <thead>
         <tr>
-            <th ><input lay-skin="primary"  lay-filter="all_checkbox" checked type="checkbox"></th>
-            <th style="text-align:center;">表名</th>
+            <th ><input lay-skin="primary" lay-filter="all_checkbox" checked type="checkbox"></th>
+            <th>表名</th>
             <th>表备注</th>
             <th>储存引擎</th>
             <th>数据量</th>
             <th>数据大小</th>
             <th>创建时间</th>
             <th>备份状态</th>
+            <th>操作</th>
         </tr>
         </thead>
         <tbody>
         {notempty name="data"}
-        {volist name="data" id="vo"}
-        <tr>
-            <td><input checked type="checkbox" lay-skin="primary" name="ids[{$i-1}]" value="{$vo.name}"></td>
-            <td align="center">{$vo.name}</td>
-            <td>{$vo.comment}</td>
-            <td>{$vo.engine ?? ''}</td>
-            <td>{$vo.rows}</td>
-            <td>{$vo.data_length|format_bytes}</td>
-            <td>{$vo.create_time}</td>
-            <td class="info">未备份</td>
-        </tr>
-        {/volist}
+            {volist name="data" id="vo"}
+                <tr>
+                    <td><input checked type="checkbox" lay-skin="primary" name="ids[{$i-1}]" value="{$vo.name}"></td>
+                    <td>{$vo.name}</td>
+                    <td>{$vo.comment}</td>
+                    <td>{$vo.engine ?? ''}</td>
+                    <td>{$vo.rows}</td>
+                    <td>{$vo.data_length|format_bytes}</td>
+                    <td>{$vo.create_time}</td>
+                    <td class="info">未备份</td>
+                    <td>
+                        <a class="optimize" href="{:url('optimize',['tables'=>$vo.name])}">优化表</a>&nbsp;
+                        <a class="repair" href="{:url('repair',['tables'=>$vo.name])}">修复表</a>
+                    </td>
+                </tr>
+            {/volist}
         {else /}
-        <td colspan="6" class="text-center"> aOh! 暂时还没有内容! </td>
+            <td colspan="6" class="text-center"> aOh! 暂时还没有内容! </td>
         {/notempty}
         </tbody>
     </table>
@@ -48,39 +55,44 @@
             $export.parent().children().prop('disabled', true);
             $export.html("正在发送备份请求...");
             layui.$.post($form.attr("action"), $form.serialize(), function (data) {
-                    if (data.code==1) {
-                        tables = data.data.tables;
-                        $export.html(data.msg + "开始备份，请不要关闭本页面！");
-                        loading=layui.layer.load(2);
-                        backup(data.data.tab);
-                        window.onbeforeunload = function () {
-                            return "正在备份数据库，请不要关闭！";
-                        };
-                    } else {
-                        alert_msg(data.msg, 0);
+                if (data.code==1) {
+                    tables = data.data.tables;
+                    $export.html(data.msg + "开始备份，请不要关闭或刷新本页面！");
+                    loading=layui.layer.load(2);
+                    backup(data.data.tab);
+                    window.onbeforeunload = function () {
+                        return "正在备份数据库，请不要关闭！";
+                    };
+                } else {
+                    layer.tips(data.msg, "#export", {
+                        tips: [1, '#3595CC'],
+                        time: 1500,
+                    });
+                    setTimeout(function () {
+                        $export.parent().children().prop('disabled', false);
                         $export.html("立即备份");
-                        setTimeout(function () {
-                            $export.parent().children().prop('disabled', false);
-                        }, 1500);
-                    }
-                });
+                    }, 1500);
+                }
+            });
             return false;
         });
 
         function backup(tab, status) {
             status && showmsg(tab.id, "开始备份...(0%)");
             layui.$.get($form.attr("action"), tab, function (data) {
+                console.log(data);
                 if (data.code==1) {
                     showmsg(tab.id, data.msg);
                     if (!layui.$.isPlainObject(data.data.tab)) {
                         layui.layer.close(loading);
                         layui.layer.msg('恭喜您,备份完成!');
-                        $export.parent().children().prop('disabled', false).html("备份完成，点击重新备份");
+                        $export.prop('disabled', false).html("备份完成，点击重新备份");
                         window.onbeforeunload = function () {
                             return null;
                         };
+                    }else{
+                        backup(data.data.tab, tab.id != data.data.tab.id);
                     }
-                    backup(data.data.tab, tab.id != data.data.tab.id);
                 } else {
                     alert_msg(data.msg, 0);
                     $export.html("立即备份");
@@ -94,7 +106,47 @@
         function showmsg(id, msg) {
             $form.find("input[value=" + tables[id] + "]").closest("tr").find(".info").html(msg);
         }
-    })
+
+        //优化表
+        $(".optimize").click(function(){
+            var _self = $(this);
+            $.post(this.href, $form.serialize(), function(data) {  
+                // console.log($("#export-form").serialize());
+                        
+                layer.tips(data.msg, _self, {
+                    tips: [1, '#3595CC'],
+                    time: 4000
+                });
+      
+            }, "json");
+            return false; 
+        });
+  
+        //修复表
+        $(".repair").on("click",function(e){
+            var _self = $(this);
+            $.post(this.href, $form.serialize(), function(data) {
+                layer.tips(data.msg, _self, {
+                    tips: [1, '#3595CC'],
+                    time: 4000
+                });
+            });
+            return false;
+        });
+
+
+    });
+function alert_msg(text, icon) {
+    layui.use(['layer'], function () {
+        text = text || '提交成功，系统未返回信息';
+        icon = icon || 0;
+        layui.layer.msg(text, {
+            icon: icon,
+            offset: 70,
+            shift: 0
+        });
+    });
+}
 </script>
 
 {/block}

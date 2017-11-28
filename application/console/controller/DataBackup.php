@@ -30,7 +30,8 @@ class DataBackup extends Base
     public function initialize()
     {
         parent::initialize();
-        $this->back = new \Backup();
+        // $this->back = new \Backup();
+        // $this->back = new DataOutput();
 
     }
 
@@ -68,14 +69,14 @@ class DataBackup extends Base
     {
         if ($this->app->request->isPost() && !empty($ids) && is_array($ids)) {
             //初始化
-            $path = $this->app->config->get('admin_config.data_backup_path');
+            $path = $this->app->config->get('data_backup_path');
             is_dir($path) || mkdir($path, 0755, true);
             //读取备份配置
             $config = [
-                'path'     => realpath($path) . DIRECTORY_SEPARATOR,
-                'part'     => $this->app->config->get('admin_config.data_backup_part_size'),
-                'compress' => $this->app->config->get('admin_config.data_backup_compress'),
-                'level'    => $this->app->config->get('admin_config.data_backup_compress_level'),
+                'path'     => realpath($path) . DIRECTORY_SEPARATOR, // 数据库备份路径
+                'part'     => $this->app->config->get('data_backup_part_size'), // 数据库备份卷大小
+                'compress' => $this->app->config->get('data_backup_compress'), // 数据库备份文件是否启用压缩 0不压缩 1 压缩
+                'level'    => $this->app->config->get('data_backup_compress_level'), // 数据库备份文件压缩级别 1普通 4 一般  9最高
             ];
 
             //检查是否有正在执行的任务
@@ -142,8 +143,9 @@ class DataBackup extends Base
 
     public function import()
     {
+        // return false;
         //列出备份文件列表
-        $path_tmp = $this->app->config->get('admin_config.data_backup_path');
+        $path_tmp = $this->app->config->get('data_backup_path');
         is_dir($path_tmp) || mkdir($path_tmp, 0755, true);
         $path = realpath($path_tmp);
         $flag = \FilesystemIterator::KEY_AS_FILENAME;
@@ -170,7 +172,8 @@ class DataBackup extends Base
                 $list["{$date} {$time}"] = $info;
             }
         }
-        return $this->setView(['data' => $list, 'metaTitle' => '数据还原']);
+        $this->assign('data', $list);
+        return $this->menusView();
     }
 
     /**
@@ -182,11 +185,12 @@ class DataBackup extends Base
      */
     public function revert($time = 0, $part = null, $start = null)
     {
+        return false;
         if (is_numeric($time) && is_null($part) && is_null($start)) {
             //初始化
             //获取备份文件信息
             $name  = date('Ymd-His', $time) . '-*.sql*';
-            $path  = realpath($this->app->config->get('admin_config.data_backup_path')) . DIRECTORY_SEPARATOR . $name;
+            $path  = realpath($this->app->config->get('data_backup_path')) . DIRECTORY_SEPARATOR . $name;
             $files = glob($path);
             $list  = [];
             foreach ($files as $name) {
@@ -206,10 +210,11 @@ class DataBackup extends Base
         } elseif (is_numeric($part) && is_numeric($start)) {
             $list = $this->app->session->get('backup_list');
             $db   = new DataOutput($list[$part], [
-                'path'     => realpath($this->app->config->get('admin_config.data_backup_path')) . DIRECTORY_SEPARATOR,
+                'path'     => realpath($this->app->config->get('data_backup_path')) . DIRECTORY_SEPARATOR,
                 'compress' => $list[$part][2],
             ]);
             $start = $db->import($start);
+
             if (false === $start) {
                 return $this->error('还原数据出错！');
             } elseif (0 === $start) {
@@ -245,12 +250,118 @@ class DataBackup extends Base
     {
         empty($time) && $this->error('参数错误！');
         $name = date('Ymd-His', $time) . '-*.sql*';
-        $path = realpath($this->app->config->get('admin_config.data_backup_path')) . DIRECTORY_SEPARATOR . $name;
+        $path = realpath($this->app->config->get('data_backup_path')) . DIRECTORY_SEPARATOR . $name;
         array_map("unlink", glob($path));
         if (count(glob($path))) {
             return $this->error('备份文件删除失败，请检查权限！');
         } else {
             return $this->success('备份文件删除成功！');
+        }
+    }
+
+    /**
+     * [ optimize 优化表 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-11-28T13:22:10+0800
+     * @param    [type]                   $tables [表名]
+     * @return   [type]                           [description]
+     */
+    public function optimize($tables = null)
+    {
+        if (!$tables) {
+            $tables = $this->app->request->param('ids/a');
+        }
+
+        if (!$this->app->request->isPost() && !$tables) {
+            $this->error('非法操作');
+        }
+
+        if ($this->_optimize($tables)) {
+            $this->success("数据表优化完成！");
+        } else {
+            $this->error("数据表优化出错请重试！");
+        }
+    }
+
+    /**
+     * [ _optimize 优化表操作 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-11-28T13:21:34+0800
+     * @param    [type]                   $tables [表名]
+     * @return   [type]                           [description]
+     */
+    private function _optimize($tables = null)
+    {
+        if ($tables) {
+            $db = Db::connect();
+            if (is_array($tables)) {
+                $tables = implode('`,`', $tables);
+                $list   = $db->query("OPTIMIZE TABLE `{$tables}`");
+            } else {
+                $list = $db->query("OPTIMIZE TABLE `{$tables}`");
+            }
+            if ($list) {
+                return $tables;
+            } else {
+                throw new \Exception("data sheet'{$tables}'Repair mistakes please try again!");
+            }
+        } else {
+            throw new \Exception("Please specify the table to be repaired!");
+        }
+    }
+
+    /**
+     * [ repair 修复表 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-11-28T13:21:00+0800
+     * @param    [type]                   $tables [表名]
+     * @return   [type]                           [description]
+     */
+    public function repair($tables = null)
+    {
+        if (!$tables) {
+            $tables = $this->app->request->param('ids/a');
+        }
+
+        if (!$this->app->request->isPost() && !$tables) {
+            $this->error('非法操作');
+        }
+
+        if ($this->_repair($tables)) {
+            $this->success("数据表修复完成！");
+        } else {
+            $this->error("数据表修复出错请重试");
+        }
+    }
+
+    /**
+     * [ _repair 修复表操作 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-11-28T13:21:00+0800
+     * @param    [type]                   $tables [表名]
+     * @return   [type]                           [description]
+     */
+    private function _repair($tables = null)
+    {
+        if ($tables) {
+            $db = Db::connect();
+            if (is_array($tables)) {
+                $tables = implode('`,`', $tables);
+                $list   = $db->query("REPAIR TABLE `{$tables}`");
+            } else {
+                $list = $db->query("REPAIR TABLE `{$tables}`");
+            }
+            if ($list) {
+                return $list;
+            } else {
+                throw new \Exception("data sheet'{$tables}'Repair mistakes please try again!");
+            }
+        } else {
+            throw new \Exception("Please specify the table to be repaired!");
         }
     }
 }

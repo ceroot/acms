@@ -57,6 +57,7 @@
             };
             return false;
             function success(data) {
+                console.log(data);
                 if (data.code!=1) {
                     window.onbeforeunload = function () {return null;};
                     return alert_msg(data.msg, 0);
@@ -74,6 +75,18 @@
             }
         });
     });
+    
+function alert_msg(text, icon) {
+    layui.use(['layer'], function () {
+        text = text || '提交成功，系统未返回信息';
+        icon = icon || 0;
+        layui.layer.msg(text, {
+            icon: icon,
+            offset: 70,
+            shift: 0
+        });
+    });
+}
 </script>
 
 {/block}
