@@ -1,0 +1,20 @@
+{extend name="mould:base" /}
+{block name="title"}{/block}
+{block name="content"}
+<table class="layui-hide" id="table_list" lay-filter="#table_list" data-url="{:url('lists')}">
+  <thead>
+    <tr>
+      <th lay-data="{checkbox: true, fixed: true}"></th>
+      <th lay-data="{field:'id',title:'ID', width:70, sort: true}">ID</th>
+      <th lay-data="{field:'title',title:'标题', width:200}">标题</th>
+      <th lay-data="{field:'cid',title:'分类', width:120, sort: true}">分类</th>
+      <th lay-data="{field:'create_uid',title:'发布者', width:80}">发布者</th>
+      <th lay-data="{field:'create_time',title:'发布时间'}">发布时间</th>
+      <th lay-data="{field:'status',title:'状态', width:80, sort: true, toolbar: '#updatestatus'}"}">状态</th>
+      <th lay-data="{fixed:'right', title:'操作', width:280, align:'center', toolbar: '#toolbar'}">管理操作</th>
+    </tr>
+  </thead>
+</table>
+{:widget('Widgets/updatestatus')}
+{:widget('Widgets/tabletoolbar',['v'=>1,'e'=>1,'d'=>1])}
+{/block}

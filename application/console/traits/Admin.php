@@ -216,6 +216,21 @@ trait Admin
             $data  = $this->app->request->param();
             $scene = 'add'; // 验证场景，默认是新增
             // return $data;
+            switch (strtolower($this->app->request->controller())) {
+                case 'article':
+                    if ($data['cover']) {
+                        $data['cover'] = $this->articleCover($data['cover']);
+                    } else {
+                        unset($data['cover']);
+                    }
+                    # code...
+                    break;
+
+                default:
+                    # code...
+                    break;
+            }
+
             // 判断是新增还是更新，如果有键值就是更新，如果没有键值就是新增
             if ($this->app->request->has($this->pk)) {
                 // return $data;
@@ -236,7 +251,7 @@ trait Admin
                             $data['attribute_list'] = '';
                         }
                         break;
-                    case '':
+                    case 'Article':
                         # code...
                         break;
                     default:
@@ -265,7 +280,9 @@ trait Admin
                 }
 
                 // 数据保存
+                // return $data;
                 $status = $this->model->save($data);
+                // return 5;
 
             }
 
@@ -300,7 +317,23 @@ trait Admin
                         cache('document_model_list', null);
                         break;
                     case 'Article': // 内容管理时的数据处理
+                        $cover_temp = $data['cover'];
+                        $temp_arr   = explode('/', $cover_temp);
+                        $data_file  = './data/images/';
+                        $data_file  = $data_file . $temp_arr[0] . '/';
 
+                        if (!file_exists($data_file)) {
+                            //检查是否有该文件夹，如果没有就创建，并给予最高权限
+                            mkdir($data_file, 0700);
+                        }
+
+                        $temp_file = '../data/temp/' . $cover_temp;
+                        $image     = \think\Image::open($temp_file);
+                        // 按照原图的比例生成一个最大为150*150的缩略图并保存为thumb.png
+                        $new_file = $data_file . $temp_arr[1];
+                        $image->thumb(150, 150)->save($new_file);
+
+                        // return $data;
                         break;
                     default:
                         # code...
@@ -315,6 +348,28 @@ trait Admin
             }
         } else {
             return $this->error('数据有误');
+        }
+    }
+
+    private function articleCover($base64)
+    {
+        //匹配出图片的格式
+        if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64, $result)) {
+            $type      = $result[2];
+            $temp_file = '../data/temp/';
+            $date_file = date('Ymd', time()) . '/';
+            $new_file  = $temp_file . $date_file;
+            if (!file_exists($new_file)) {
+                //检查是否有该文件夹，如果没有就创建，并给予最高权限
+                mkdir($new_file, 0700);
+            }
+            $file_name = time() . '.' . $type;
+            $new_file  = $new_file . $file_name;
+            if (file_put_contents($new_file, base64_decode(str_replace($result[1], '', $base64)))) {
+                return $date_file . $file_name;
+            } else {
+                return 0;
+            }
         }
     }
 

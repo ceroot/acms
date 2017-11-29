@@ -1,56 +1,57 @@
 {extend name="mould:base" /}
 {block name="title"}{/block}
 {block name="content"}
-    <table class="layui-table" lay-size="sm">
-        <colgroup>
-	        <col width="60">
-	        <col width="55">
-	        <col width="220">
-	        <col>
-	        <col width="90">
-	        <col width="90">
-	        <col width="100">
-        </colgroup>
-        <thead>
-          <tr>
-          	<td>id</td>
-            <td align='center'>排序</td>
-            <td>类别标识</td>
-            <td>类别名称</td>
-            <td>状态</td>
-            <td>显示</td>
-            <td align='center'>管理操作</td>
-          </tr>
-        </thead>
-		{volist name='category' id='list'}
-        <tr>
-        	<td>
-				{$list.id}
-			</td>
-			<td align='center'>
-				<input name='sort[{$list.id}]' type='text' size='3' value='{$list.sort}' class='input'>
-			</td>
-			<td>{$list.name}</td>
-			<td>{$list._name}</td>
-			<td><a class="cy-ajax" href="{:url('updatestatus',array('id'=>$list['editid']))}" title="快捷设置状态">{$list.status}</a>
-<input type="checkbox" name="status" value="" lay-skin="switch" lay-text="正常|禁用" lay-filter="sexDemo" {if condition="$list.status eq '正常'"} checked{/if}>
-			</td>
-			<td><a class="cy-ajax" href="{:url('updatedisplay',array('id'=>$list['editid']))}" title="快捷设置是显示">{$list.display? '显示' : '隐藏'}</a></td>
-			<td align='center' >
-				<a href="{:url('edit',array('id'=>$list['editid']))}">修改</a> | 
-				<a class="cy-ajax" href="{:url('del',array('id'=>$list['id']))}" data-layer-msg="删除" data-layer-okbtn="删除" title="删除" data-layer-confirm="true">删除</a>  
-			</td>
-		</tr>
-		{/volist}
-	</table>
-    <div class="fixed-bottom">
-	    <div class="bottom-area">
-	      	<div class="btn_wrap_pd">
-	        	<button class="btn btn-sm" type="submit">排序</button>
-	      	</div>
-	      </div>
-    </div>
-
+	<form method="post" class="layui-form">
+	    <table class="layui-table" lay-size="sm">
+	        <colgroup>
+		        <col width="60">
+		        <col width="55">
+		        <col width="220">
+		        <col>
+		        <col width="90">
+		        <col width="90">
+		        <col width="100">
+	        </colgroup>
+	        <thead>
+	          <tr>
+	          	<td>id</td>
+	            <td align='center'>排序</td>
+	            <td>类别标识</td>
+	            <td>类别名称</td>
+	            <td>状态</td>
+	            <td>显示</td>
+	            <td align='center'>管理操作</td>
+	          </tr>
+	        </thead>
+			{volist name='category' id='list'}
+	        <tr>
+	        	<td>
+					{$list.id}
+				</td>
+				<td align='center'>
+					<input name='sort[{$list.id}]' type='text' size='3' value='{$list.sort}' class='input'>
+				</td>
+				<td>{$list.name}</td>
+				<td>{$list._name}</td>
+				<td>
+	<input type="checkbox" name="status" value="" data-href="{:url('updatestatus',array('id'=>$list['editid']))}" lay-skin="switch" lay-text="正常|禁用" lay-filter="sexDemo" {if condition="$list.status eq '正常'"} checked{/if}>
+				</td>
+				<td><a class="cy-ajax" href="{:url('updatedisplay',array('id'=>$list['editid']))}" title="快捷设置是显示">{$list.display? '显示' : '隐藏'}</a></td>
+				<td align='center' >
+					<a href="{:url('edit',array('id'=>$list['editid']))}">修改</a> | 
+					<a class="cy-ajax" href="{:url('del',array('id'=>$list['id']))}" data-layer-msg="删除" data-layer-okbtn="删除" title="删除" data-layer-confirm="true">删除</a>
+				</td>
+			</tr>
+			{/volist}
+		</table>
+	    <div class="fixed-bottom">
+		    <div class="bottom-area">
+		      	<div class="btn_wrap_pd">
+		        	<button class="btn btn-sm" type="submit">排序</button>
+		      	</div>
+		      </div>
+	    </div>
+	</form>
 <script type="text/html" id="switchTpl">
   <!-- 这里的 checked 的状态只是演示 -->
   <input type="checkbox" name="sex" value="{{d.id}}" lay-skin="switch" lay-text="女|男" lay-filter="sexDemo" {{ d.id == 10003 ? 'checked' : '' }}>
@@ -60,4 +61,5 @@
   <!-- 这里的 checked 的状态只是演示 -->
   <input type="checkbox" name="lock" value="{{d.id}}" title="锁定" lay-filter="lockDemo" {{ d.id == 10006 ? 'checked' : '' }}>
 </script>
+
 {/block}

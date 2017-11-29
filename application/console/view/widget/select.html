@@ -7,7 +7,7 @@
             <select name="{$wdata.name}" lay-search="">
                 <option value="">直接选择或搜索选择</option>
                 {volist name='wdata.datalist' id='selectlist'}
-                    <option value="{$selectlist.id}" 
+                    <option value="{$selectlist.id}"
                         {present name="wdata.value"}
                             {neq name="wdata.value" value="0"}
                                 {eq name="$selectlist.id" value="$wdata.value" } selected="selected"{/eq}

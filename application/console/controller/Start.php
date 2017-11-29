@@ -96,27 +96,19 @@ class Start extends Controller
     }
     public function test($id = null)
     {
-        $back = new \Backup();
+        $base64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAA1CAYAAADlE3NNAAAAX0lEQVRoge3PQQ2AMADAwG3+BeBtTviACkJu6Slo57XvZxxq/R3wpeZUzamaUzWnak7VnKo5VXOq5lTNqZpTNadqTtWcqjlVc6rmVM2pmlM1p2pO1ZyqOVVzquZUR8+9N6QD1iO5d5QAAAAASUVORK5CYII=';
 
-        $dd = $back->test();
-        dump($dd);
+        if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64, $result)) {
+            $type = $result[2];
 
-        $list = $back->dataList();
-        dump($list);
-
-        dump(User::encryptPassword(123456, 'WFPtvQMT5T'));
-        //$table = Db::connect()->query('SHOW TABLE STATUS');
-        // $table = array_map('array_change_key_case', $table);
-        // dump($table);
-        dump($this->model);
-        dump(App::model('UcenterMember')->find(1));
-        die;
-        $model = App::model('UcenterMember');
-        $data  = $model::get(1);
-        dump($data);
-        //$test = authcode();
-        //dump($test);
-        //dump(config('app_debug'));
+            $new_file = '../data/temp/' . date('Ymd', time()) . "/";
+            $new_file = $new_file . time() . ".{$type}";
+            if (file_put_contents($new_file, base64_decode(str_replace($result[1], '', $base64)))) {
+                return $new_file;
+            } else {
+                return 0;
+            }
+        }
 
     }
     public function vue()

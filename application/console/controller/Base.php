@@ -35,8 +35,7 @@ class Base extends Extend
 
     public function test()
     {
-        $value  = 1;
-        $result = $this->model->where($this->pk, $this->id)->setField('status', $value);
+        $result = model('action')->find();
         dump($result);die;
         // session('dd', null);
         dump(session('dd'));

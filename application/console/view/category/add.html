@@ -1,93 +1,22 @@
 {extend name="mould:base" /}
 {block name="title"}{/block}
 {block name="content"}
-<form action="{:url('update')}" method="post" class="form-horizontal cy-ajaxForm cy-form" role="form" data-validate="true">
-    <div class="form-group form-group-sm">
-        <label class="col-sm-12" for="title">父级：</label>
-        <div class="col-sm-12">
-            <select name="pid" class="input-sm form-cy col-xs-10 col-sm-3">
-                <option value="0">顶级</option>
-                {volist name='category' id='category'}
-                    <option value="{$category.id}" {present name="one"}{eq name="one.pid" value="0"}{eq name="category.id" value="$one.id"} selected="selected"{/eq}{else /}{eq name="category.id" value="$one.pid"} selected="selected"{/eq}{/eq}{/present}>{$category._name}</option>
-                {/volist}
-            </select>
-        </div>
-    </div>
-    <div class="form-group form-group-sm">
-        <label class="col-sm-12" for="name">类别标识：</label>
-        <div class="col-sm-12">
-            <input type="text" class="input-sm form-cy col-xs-10 col-sm-5" name="name" id="name" value="{$one.name|default=''}" placeholder="类别标识">
-        </div>
-    </div>
-    <div class="form-group form-group-sm">
-        <label class="col-sm-12" for="title">类别名称</label>
-        <div class="col-sm-12">
-            <input type="text" class="input-sm form-cy col-xs-10 col-sm-5" name="title" id="title" value="{$one.title|default=''}" placeholder="类别名称：">
-        </div>
-    </div>
-    <div class="form-group form-group-sm">
-        <label class="col-sm-12" for="status">状态：</label>
-        <div class="col-sm-12">
-            <label class="radio-inline">
-                <input type="radio" name="status" id="status" value="1" {present name="one"}{eq name='one.status' value='1'} checked="checked"{/eq}{else /} checked="checked"{/present}> 正常
-            </label>
-            <label class="radio-inline">
-                <input type="radio" name="status" id="status" value="0" {eq name='one.status' value='0'} checked="checked"{/eq}> 禁用
-            </label>
-        </div>
-    </div>
-    <div class="form-group form-group-sm">
-        <label class="col-sm-12" for="display">是否显示菜单：</label>
-        <div class="col-sm-12">
-            <label class="radio-inline">
-                <input type="radio" name="display" id="display" value="1" {present name="one"}{eq name='one.display' value='1'} checked="checked"{/eq}{else /} checked="checked"{/present}> 显示
-            </label>
-            <label class="radio-inline">
-                <input type="radio" name="display" id="display" value="0" {eq name='one.display' value='0'} checked="checked"{/eq}> 隐藏
-            </label>
-        </div>
-    </div>
-    <div class="form-group form-group-sm">
-        <label class="col-sm-12" for="url">url地址：</label>
-        <div class="col-sm-12">
-            <input type="text" class="input-sm form-cy col-xs-10 col-sm-5" name="url" id="url" value="{$one.url|default=''}" placeholder="url地址">
-        </div>
-    </div>
-    <div class="form-group form-group-sm">
-        <label class="col-sm-12" for="sort">排序：</label>
-        <div class="col-sm-12">
-            <input type="text" class="input-sm form-cy col-xs-10 col-sm-5" name="sort" id="sort" value="{$one.sort|default=''}" placeholder="排序">
-        </div>
-    </div>
-    <div class="form-group form-group-sm">
-        <label class="col-sm-12" for="remark">备注：<span class="text-muted"></span></label>
-        <div class="col-sm-12">
-            <textarea class="form-cy col-xs-10 col-sm-6" name="remark" id="remark">{$one.remark|default=''}</textarea>
-        </div>
-    </div>
-    <div class="fixed-bottom">
-        <div class="bottom-area">
-            <input type="hidden" name="id" value="{$one.id|default=''}">
-            <button class="btn btn-sm btn-default btn-post">保存</button>
-        </div>
-    </div>
+<form action="{:url('renew')}" method="post" class="layui-form">
+    {:widget('Widgets/form', ['type'=>'select','title'=>'顶级','name'=>'pid','value'=>$one.pid|$_pid,'elementid'=>'pid','datalist'=>$category])}
+    {:widget('Widgets/form', ['type'=>'text','title'=>'类别标识','name'=>'name','value'=>$one.name,'elementid'=>'name','layverify'=>'required','placeholder'=>'规则名称'])}
+    {:widget('Widgets/form', ['type'=>'text','title'=>'类别名称','name'=>'title','value'=>$one.title,'elementid'=>'title','layverify'=>'required','placeholder'=>'规则名称'])}
+    {:widget('Widgets/form', ['type'=>'radio','title'=>'状态','name'=>'status','value'=>$one.status,'elementid'=>'status','datalist'=>[1 => '启用', 0 => '禁用'],'aux'=>'（启用|禁用开关）'])}
+    {:widget('Widgets/form', ['type'=>'switch','title'=>'是否显示菜单','name'=>'display','value'=>$one.display,'elementid'=>'display','aux'=>'是否显示菜单'])}
+    {:widget('Widgets/form', ['type'=>'text','title'=>'url地址','name'=>'url','value'=>$one.url,'elementid'=>'url','placeholder'=>'url地址','inline'=>0])}
+    {:widget('Widgets/form', ['type'=>'text','title'=>'排序','name'=>'sort','value'=>$one.sort,'elementid'=>'sort','placeholder'=>'排序'])}
+    {:widget('Widgets/button', ['name'=>'id','value'=>$one.editid,'buttontext'=>'保存'])}
 </form>
-<script type="text/javascript">
 
-var userValidate = {
-    rules: {
-        'name':'required',
-        'title':{
-            required:true
-        }
-    }, 
-    messages: {
-        'name':'请填写规则标识',
-        'title':{
-            required:'请填写规则名称'
-        }
-    }
-};
+{/block}
+
+{block name="script"}
+<script type="text/javascript">
+    
 
 </script>
 {/block}
