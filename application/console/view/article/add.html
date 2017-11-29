@@ -22,7 +22,11 @@
         <label class="layui-form-label">封面</label>
         <div class="layui-input-block">
             <div class="layui-upload" style="height: 82px;">
-                <div class="cover" style="display: inline-block; width: 120px; height: 80px; border:1px solid #ccc; vertical-align: bottom;">&nbsp;</div>
+                <div class="cover" style="display: inline-block; width: 120px; height: 80px; border:1px solid #ccc; vertical-align: bottom;">
+                    {notempty name="$one.cover"}
+                        <img src="/data/images/{$one.cover}"/>
+                    {/notempty}
+                </div>
                 <div style="display: inline-block; margin-left: 15px; vertical-align: bottom;">
                     <button type="button" class="layui-btn" id="test1">选择图片</button>
                     <button type="button" class="layui-btn" id="delete" style="display: none; margin-left: 15px">移除</button>

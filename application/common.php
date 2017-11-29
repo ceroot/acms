@@ -570,3 +570,224 @@ if (!function_exists('get_visit_source')) {
         return 'pc';
     }
 }
+
+/**
+ * 处理 ueditor 富文本编辑器对图片和文件及其它的处理
+ * @param  string    $content    [表单提交过来的内容]
+ * @param  string    $title      [标题内容，用于图片的 alt 和 title 属性值，默认为 null，不执行]
+ * @return string    $content    [返回新的内容]
+ * @author SpringYang <ceroot@163.com>
+ */
+function ueditor_handle($content, $title = null)
+{
+    $pathFiles  = './data/files/'; // 文件保存路径
+    $pathImages = './data/images/'; // 图片保存路径
+    $pathVideos = './data/videos/'; // 视频保存路径
+
+    // 图片替换处理
+    // $patternImg = '<img.*?src="(.*?)">';
+    $patternImg = '/<img.*?src="(.*?)".*?>/is';
+    if (preg_match_all($patternImg, $content, $matchesImg)) {
+        foreach ($matchesImg[0] as $key => $value) {
+            $oldValue = $newValue = $value; // 临时变量
+            if (stripos($value, 'data/ueditor') !== false) {
+                $imageSrc   = $matchesImg[1][$key]; // 取得 img 里的 src
+                $imagesArr  = explode('/', $imageSrc); // 以 / 拆分 src 变为数组
+                $imagesName = end($imagesArr); // 取得数组里的最后一个值，也就是文件名
+                $datePath   = array_slice($imagesArr, -2, 1); // 取得数组里的倒数第二个值，也就是以日期命名的目录
+                $newPath    = $pathImages . $datePath[0] . '/'; // 新的文件目录
+
+                // 判断目录是否存在，如果不存在则创建
+                if (!is_dir($newPath)) {
+                    make_dir($newPath);
+                }
+
+                // 文件移动
+                $newPath  = $newPath . $imagesName; // 新路径
+                $imageSrc = '.' . $imageSrc; // 旧路径
+                if (is_file($imageSrc)) {
+                    // 取得文件信息
+                    $imageInfo = getimagesize($imageSrc);
+                    if ($imageInfo) {
+                        if ($imageInfo[0] > 800) {
+                            // 实例化图片尺寸类
+                            $newimage = new \imageresize\ImageResize();
+                            $result   = $newimage->resize($imageSrc, $newPath, 800, 500);
+                            if ($result) {
+                                unlink($imageSrc); // 删除临时文件
+                            }
+                        } else {
+                            rename($imageSrc, $newPath);
+                        }
+                    }
+                }
+
+            }
+
+            if (stripos($value, 'data/') !== false) {
+                // 如果标题存在的时候进行操作
+                if (!empty($title)) {
+                    // alt 替换
+                    $patternAlt = '/<img.*alt\=[\"|\'](.*)[\"|\'].*>/i'; // alt 规则
+                    $newAlt     = 'alt="' . $title . '"'; // 新的 alt
+
+                    $altPreg = preg_match($patternAlt, $oldValue, $matchAlt);
+                    if ($altPreg) {
+                        $newValue = preg_replace('/alt=.+?[*|\"]/i', $newAlt, $newValue);
+                    } else {
+                        $valueTemp = str_replace('/>', '', $newValue);
+                        $newValue  = $valueTemp . ' ' . $newAlt . '/>';
+                    }
+
+                    // 标题替换处理
+                    $patternTitle = '/<img.*title\=[\"|\'](.*)[\"|\'].*>/i'; // title 规则
+                    $newTitle     = 'title="' . $title . '"'; // 新的 title
+
+                    $titlePreg = preg_match($patternTitle, $oldValue, $matchTitle);
+                    if ($titlePreg) {
+                        $newValue = preg_replace('/title=.+?[*|\"]/i', $newTitle, $newValue);
+                    } else {
+                        $valueTemp = str_replace('/>', '', $newValue);
+                        $newValue  = $valueTemp . ' ' . $newTitle . '/>';
+                    }
+                }
+
+                // 样式为空替换处理
+                $stylePattern = '<img.*?style="(.*?)">'; // style 规则
+                $stylePreg    = preg_match($stylePattern, $oldValue, $styleMatch);
+                if ($stylePreg) {
+                    if (empty($styleMatch[1])) {
+                        $newValue = preg_replace('/style=.+?[*|\"]/i', '', $newValue);
+                    }
+                }
+
+                // 替换成新的图片路径
+                $newValue = str_replace('ueditor/', '', $newValue);
+
+                // 内容替换成新的值
+                $content = str_replace($oldValue, $newValue, $content);
+            }
+        }
+    }
+
+    // 文件替换处理
+    if (preg_match_all("'<\s*a\s.*?href\s*=\s*([\"\'])?(?(1)(.*?)\\1|([^\s\>]+))[^>]*>?(.*?)</a>'isx", $content, $links)) {
+        while (list($key, $val) = each($links[2])) {
+            if (!empty($val)) {
+                $match['link'][] = $val;
+            }
+        }
+        while (list($key, $val) = each($links[3])) {
+            if (!empty($val)) {
+                $match['link'][] = $val;
+            }
+        }
+        while (list($key, $val) = each($links[4])) {
+            if (!empty($val)) {
+                $match['content'][] = $val;
+            }
+        }
+        while (list($key, $val) = each($links[0])) {
+            if (!empty($val)) {
+                $match['all'][] = $val;
+            }
+
+        }
+
+        // 文件地址处理
+        foreach ($match['link'] as $value) {
+            if (stripos($value, 'data/ueditor') !== false) {
+                $oldValue = $value;
+                $linkArr  = explode('/', $value);
+                $datePath = array_slice($linkArr, -2, 1);
+                $fileName = end($linkArr);
+                $newPath  = $pathFiles . $datePath[0] . '/';
+
+                // 判断目录是否存在，如果不存在则创建
+                if (!is_dir($newPath)) {
+                    make_dir($newPath);
+                }
+
+                // 移动文件
+                $newPath = $newPath . $fileName; // 新路径
+                $value   = '.' . $value; // 旧路径
+                if (is_file($value)) {
+                    rename($value, $newPath);
+                }
+
+                // 替换成新的文件路径
+                $newvalue = str_replace('ueditor/', '', $oldValue);
+
+                // 内容替换成新的值
+                $content = str_replace($oldValue, $newvalue, $content);
+            }
+        }
+    }
+
+    // 附件小图标处理
+    if (stripos($content, 'ueditor/1.4.3.2/dialogs/attachment') !== false) {
+        $content = str_replace('ueditor/1.4.3.2/dialogs/attachment', 'images', $content);
+    }
+    return $content;
+}
+
+/**
+ * 取得关键词，分词
+ * @param  string    $str        [需要分词的字符串]
+ * @param  string    $lenght     [分文词长度，默认为5个]
+ * @param  string    $separator  [分隔符，默认为英文的逗号]
+ * @return string    $tags       [返回分词]
+ * @author SpringYang <ceroot@163.com>
+ */
+function get_keywords($str, $lenght = 10, $separator = ',')
+{
+    $str = strip_tags($str); // 去掉 html 代码
+    $str = str_replace(' ', '', $str); // 去掉空格
+    $str = str_replace('&nbsp;', '', $str); // 去掉 &nbsp;
+
+    Vendor('scws.pscws4');
+    $pscws = new \PSCWS4();
+    $pscws->set_dict(VENDOR_PATH . 'scws/lib/dict.utf8.xdb');
+    $pscws->set_rule(VENDOR_PATH . 'scws/lib/rules.utf8.ini');
+    $pscws->set_ignore(true);
+    $pscws->send_text($str);
+    $words = $pscws->get_tops($lenght);
+    $pscws->close();
+
+    $end  = end($words);
+    $tags = '';
+    foreach ($words as $val) {
+        if ($val != $end) {
+            $tags .= $val['word'] . $separator;
+        } else {
+            $tags .= $val['word'];
+        }
+    }
+    return $tags;
+}
+
+/**
+ * 取得描述
+ * @param  string    $str          [需要分词的字符串]
+ * @param  string    $lenght       [分文词长度，默认为120个]
+ * @return string    $description  [返回描述]
+ * @author SpringYang <ceroot@163.com>
+ */
+function get_description($str, $lenght = 120)
+{
+    $pattern = '/<p[^>]*>(.*?)<\/p>/'; // 因为 ueditor 是以 p 标签来做段落
+    $preg    = preg_match($pattern, $str, $matches);
+    // 当能够正常匹配的时候就使用匹配的值，当不能匹配的时候取默认值
+    if ($preg) {
+        $description = mb_substr(strip_tags($matches[1]), 0, $lenght);
+        if (empty($description)) {
+            $description = mb_substr(strip_tags($str), 0, $lenght);
+        }
+    } else {
+        $description = mb_substr(strip_tags($str), 0, $lenght);
+    }
+
+    $description = str_replace(' ', '', $description); // 去掉空格
+    $description = str_replace('&nbsp;', '', $description); // 去掉 &nbsp
+    return $description;
+}

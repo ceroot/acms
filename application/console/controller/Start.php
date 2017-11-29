@@ -117,7 +117,9 @@ class Start extends Controller
         if ($image) {
             // 按照原图的比例生成一个最大为150*150的缩略图并保存为thumb.png
             $new_file = $images_file . $time_file . $temp_arr[1];
-            $image->thumb(150, 150)->save($new_file);
+            if ($image->thumb(150, 150)->save($new_file)) {
+
+            };
 
         }
         die;
