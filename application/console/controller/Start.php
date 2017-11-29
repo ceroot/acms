@@ -96,6 +96,31 @@ class Start extends Controller
     }
     public function test($id = null)
     {
+        // dump(is_dir('../data/temp/'));
+        // dump(file_exists('../data/temp/'));
+        // make_dir('./data/temp/dd');
+        // die;
+        $cover_temp = '20171129/1511956974.jpeg';
+
+        $temp_arr    = explode('/', $cover_temp);
+        $images_file = './data/images/';
+        $time_file   = $temp_arr[0] . '/';
+        $filename    = $temp_arr[1];
+
+        if (!file_exists($images_file . $time_file)) {
+            //检查是否有该文件夹，如果没有就创建，并给予最高权限
+            make_dir($images_file . $time_file);
+        }
+
+        $temp_file = '../data/temp/' . $cover_temp;
+        $image     = \think\Image::open($temp_file);
+        if ($image) {
+            // 按照原图的比例生成一个最大为150*150的缩略图并保存为thumb.png
+            $new_file = $images_file . $time_file . $temp_arr[1];
+            $image->thumb(150, 150)->save($new_file);
+
+        }
+        die;
         $base64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAA1CAYAAADlE3NNAAAAX0lEQVRoge3PQQ2AMADAwG3+BeBtTviACkJu6Slo57XvZxxq/R3wpeZUzamaUzWnak7VnKo5VXOq5lTNqZpTNadqTtWcqjlVc6rmVM2pmlM1p2pO1ZyqOVVzquZUR8+9N6QD1iO5d5QAAAAASUVORK5CYII=';
 
         if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64, $result)) {

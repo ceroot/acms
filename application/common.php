@@ -195,6 +195,22 @@ function format_bytes($size, $delimiter = '')
     return $size . $delimiter . $units[$i];
 }
 
+// 函数make_dir()建立目录。判断要保存的图片文件目录是否存在，如果不存在则创建目录，并且将目录设置为可写权限。
+/*
+ * 参数:
+@string: $path 目录路径;
+ */
+function make_dir($path)
+{
+    if (!file_exists($path)) {
+        // 如果文件夹不存在则建立
+        make_dir(dirname($path)); // 多层创建
+        mkdir($path, 0755); // 给文件夹设置权
+        @chmod($path, 0755);
+    }
+    return true;
+}
+
 /**
  * 取得管理员昵称
  * @param  int    $uid  [用户id]

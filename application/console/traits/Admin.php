@@ -317,22 +317,26 @@ trait Admin
                         cache('document_model_list', null);
                         break;
                     case 'Article': // 内容管理时的数据处理
-                        $cover_temp = $data['cover'];
-                        $temp_arr   = explode('/', $cover_temp);
-                        $data_file  = './data/images/';
-                        $data_file  = $data_file . $temp_arr[0] . '/';
+                        $cover_temp  = $data['cover'];
+                        $temp_arr    = explode('/', $cover_temp);
+                        $images_file = './data/images/';
+                        $time_file   = $temp_arr[0] . '/';
+                        $filename    = $temp_arr[1];
 
-                        if (!file_exists($data_file)) {
+                        if (!file_exists($images_file . $time_file)) {
                             //检查是否有该文件夹，如果没有就创建，并给予最高权限
-                            mkdir($data_file, 0700);
+                            make_dir($images_file . $time_file);
                         }
 
                         $temp_file = '../data/temp/' . $cover_temp;
                         $image     = \think\Image::open($temp_file);
-                        // 按照原图的比例生成一个最大为150*150的缩略图并保存为thumb.png
-                        $new_file = $data_file . $temp_arr[1];
-                        $image->thumb(150, 150)->save($new_file);
-
+                        if ($image) {
+                            // 按照原图的比例生成一个最大为150*150的缩略图并保存为thumb.png
+                            $new_file = $images_file . $time_file . $temp_arr[1];
+                            if ($image->thumb(150, 150)->save($new_file)) {
+                                unlink($temp_file);
+                            };
+                        }
                         // return $data;
                         break;
                     default:
@@ -361,7 +365,7 @@ trait Admin
             $new_file  = $temp_file . $date_file;
             if (!file_exists($new_file)) {
                 //检查是否有该文件夹，如果没有就创建，并给予最高权限
-                mkdir($new_file, 0700);
+                make_dir($new_file);
             }
             $file_name = time() . '.' . $type;
             $new_file  = $new_file . $file_name;
