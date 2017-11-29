@@ -372,7 +372,7 @@ trait Admin
                 //检查是否有该文件夹，如果没有就创建，并给予最高权限
                 make_dir($new_file);
             }
-            $file_name = time() . '.' . $type;
+            $file_name = md5(time()) . '.' . $type;
             $new_file  = $new_file . $file_name;
             if (file_put_contents($new_file, base64_decode(str_replace($result[1], '', $base64)))) {
                 return $date_file . $file_name;
