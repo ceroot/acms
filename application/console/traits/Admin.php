@@ -217,10 +217,13 @@ trait Admin
             // return $data;
             switch (strtolower($this->app->request->controller())) {
                 case 'article':
+                    // 封面图片处理
                     if ($data['cover']) {
                         $data['cover'] = $this->articleCover($data['cover']);
+                        $old_file      = $this->model->getFieldById($this->id, 'cover');
+                        session('old_file', $old_file);
                     } else {
-                        // unset($data['cover']);
+                        unset($data['cover']);
                     }
                     // 对 ueditor 内容数据的处理
                     $data['content'] = ueditor_handle($data['content'], $data['title']);
@@ -268,6 +271,16 @@ trait Admin
                 $validate = $this->app->validate($this->app->request->controller());
                 if (!$validate->scene('edit')->check($data)) {
                     return $this->error($validate->getError());
+                }
+
+                $contentForm = $data['content'];
+                if ($contentForm) {
+                    // $contentSql = $this->model->where('id', $data[$pk])->value('content');
+                    $contentSql = $this->model->getFieldById($this->id, 'content');
+                    if (!empty($contentSql)) {
+                        // 对比判断并删除操作
+                        $del_file = del_file($contentForm, $contentSql);
+                    }
                 }
 
                 // 数据保存
@@ -320,27 +333,17 @@ trait Admin
                         cache('document_model_list', null);
                         break;
                     case 'Article': // 内容管理时的数据处理
+                        // 封面图片处理
                         if ($this->app->request->param('cover')) {
-                            $cover_temp  = $data['cover'];
-                            $temp_arr    = explode('/', $cover_temp);
-                            $images_file = './data/images/';
-                            $time_file   = $temp_arr[0] . '/';
-                            $filename    = $temp_arr[1];
+                            $this->articleCover($data['cover'], 2);
 
-                            if (!file_exists($images_file . $time_file)) {
-                                //检查是否有该文件夹，如果没有就创建，并给予最高权限
-                                make_dir($images_file . $time_file);
-                            }
+                            // 删除旧封面处理
+                            $old_file = session('old_file');
+                            session('old_file', null);
+                            $images_path   = './data/images/';
+                            $old_file_path = $images_path . $old_file;
+                            unlink($old_file_path);
 
-                            $temp_file = '../data/temp/' . $cover_temp;
-                            $image     = \think\Image::open($temp_file);
-                            if ($image) {
-                                // 按照原图的比例生成一个最大为150*150的缩略图并保存为thumb.png
-                                $new_file = $images_file . $time_file . $temp_arr[1];
-                                if ($image->thumb(150, 150)->save($new_file)) {
-                                    unlink($temp_file);
-                                };
-                            }
                         }
                         // return $data;
                         break;
@@ -360,26 +363,63 @@ trait Admin
         }
     }
 
-    private function articleCover($base64)
+    /**
+     * [ articleCover 内容管理对封面图片的处理 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-11-30T09:46:32+0800
+     * @param    string                   $coverData [封面图像数据，type为1时是base64数据，type为2时是文件路径]
+     * @param    int                      $type       [状态，1为开始（默认），2为成功之后]
+     * @return   string                               []
+     */
+    private function articleCover($coverData = null, $type = 1)
     {
-        //匹配出图片的格式
-        if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64, $result)) {
-            $type      = $result[2];
-            $temp_file = '../data/temp/';
-            $date_file = date('Ymd', time()) . '/';
-            $new_file  = $temp_file . $date_file;
-            if (!file_exists($new_file)) {
+        $pathTemp   = '../data/temp/'; // 临时文件夹路径
+        $pathImages = './data/images/'; // 图像文件文件夹路径
+
+        if ($type == 1) {
+            //匹配出图片的格式
+            if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $coverData, $result)) {
+                $type     = $result[2]; // 图像格式
+                $pathTemp = '../data/temp/'; // 临时文件夹路径
+                $dateFile = date('Ymd', time()) . '/'; // 日期目录
+
+                $allPath = $pathTemp . $dateFile; // 全部路径
+
                 //检查是否有该文件夹，如果没有就创建，并给予最高权限
-                make_dir($new_file);
+                if (!file_exists($allPath)) {
+                    make_dir($allPath);
+                }
+
+                $filename = md5(time()) . '.' . $type; // md5加密后的文件名（带后缀）
+                $filePath = $allPath . $filename; // 文件的位置
+                if (file_put_contents($filePath, base64_decode(str_replace($result[1], '', $coverData)))) {
+                    return $dateFile . $filename;
+                } else {
+                    return 0;
+                }
             }
-            $file_name = md5(time()) . '.' . $type;
-            $new_file  = $new_file . $file_name;
-            if (file_put_contents($new_file, base64_decode(str_replace($result[1], '', $base64)))) {
-                return $date_file . $file_name;
-            } else {
-                return 0;
+        } elseif ($type == 2) {
+            $tempArr  = explode('/', $coverData); // 以/拆分数据
+            $dateFile = $tempArr[0] . '/'; // 日期目录
+            $filename = $tempArr[1]; // 文件名（带后缀）
+            $allPath  = $pathImages . $dateFile; // 全部路径
+            //检查是否有该文件夹，如果没有就创建，并给予最高权限
+            if (!file_exists($allPath)) {
+                make_dir($allPath);
+            }
+
+            $tempFilePath = $pathTemp . $coverData;
+            $image        = \think\Image::open($tempFilePath);
+            if ($image) {
+                $filePath = $allPath . $filename;
+                // 按照原图的比例生成一个最大为150*150的缩略图并保存为封面图像
+                if ($image->thumb(150, 150)->save($filePath)) {
+                    unlink($tempFilePath); // 删除临时文件
+                };
             }
         }
+
     }
 
     /**

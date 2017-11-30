@@ -732,6 +732,84 @@ function ueditor_handle($content, $title = null)
 }
 
 /**
+ * 修改文章时删除原来数据库里被修改去的图片或者文件
+ * @param  string    $dataForm    [表单提交过来的数据]
+ * @param  string    $dataSql     [数据库里的数据]
+ * @return string
+ * @author SpringYang <ceroot@163.com>
+ */
+function del_file($dataForm, $dataSql)
+{
+    // 定义变量
+    $differ = [];
+    // 取得图片正则
+    $patternImage = '<img.*?src="(.*?)">';
+    // 匹配表单数据并取得数据
+    if (preg_match_all($patternImage, $dataForm, $matchesImageForm)) {
+        $imgForm = $matchesImageForm[1];
+        foreach ($imgForm as $key => $value) {
+            // 去除静态资源里的图片
+            if (stripos($value, 'statics/')) {
+                unset($imgForm[$key]);
+            }
+        }
+    }
+
+    // 匹配数据库数据并取得数据
+    if (preg_match_all($patternImage, $dataSql, $matchesImageSql)) {
+        $imgSql = $matchesImageSql[1];
+        foreach ($imgSql as $key => $value) {
+            // 去除静态资源里的图片
+            if (stripos($value, 'statics/')) {
+                unset($imgSql[$key]);
+            }
+        }
+    }
+
+    // 如果表单数据不为空的话就去和数据库作对比并删除不需要进行删除的数据;
+    if (!empty($imgForm) && !empty($imgSql)) {
+        if (is_array($imgForm) && is_array($imgSql)) {
+            $imgIntersect = array_intersect($imgForm, $imgSql); // 取得交集
+            $imgDiffer    = array_diff($imgSql, $imgIntersect); // 取得差集
+            $differ       = array_merge($differ, $imgDiffer); // 合并数组并统一赋值给 $differ
+        }
+    }
+
+    // 取得a标签正则
+    $patternHref = '<a.*?href="(.*?)">';
+    // 匹配表单数据并取得数据
+    if (preg_match_all($patternHref, $dataForm, $matchesHrefForm)) {
+        $hrefForm = $matchesHrefForm[1];
+    }
+
+    // 匹配数据库数据并取得数据
+    if (preg_match_all($patternHref, $dataSql, $matchesHrefSql)) {
+        $hrefSql = $matchesHrefSql[1];
+    }
+
+    // 如果表单数据不为空的话就去和数据库作对比并删除不需要进行删除的数据;
+    if (!empty($hrefForm) && !empty($hrefSql)) {
+        if (is_array($hrefForm) && is_array($hrefSql)) {
+            $hrefIntersect = array_intersect($hrefForm, $hrefSql); // 取得交集
+            $hrefDiffer    = array_diff($hrefSql, $hrefIntersect); // 取得差集
+            $differ        = array_merge($differ, $hrefDiffer); // 合并数组并统一赋值给 $differ
+        }
+    }
+
+    // 如果进行处理后的数据不为空则执行删除操作
+    if (!empty($differ) && is_array($differ)) {
+        foreach ($differ as $value) {
+            $urlarr = parse_url($value);
+            $path   = $urlarr['path'];
+            if (is_file('.' . $path)) {
+                unlink('.' . $path);
+            }
+        }
+    }
+
+}
+
+/**
  * 取得关键词，分词
  * @param  string    $str        [需要分词的字符串]
  * @param  string    $lenght     [分文词长度，默认为5个]
