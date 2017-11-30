@@ -39,22 +39,24 @@ if (!function_exists('ip2int')) {
  * @return string      [返回字符]
  * @author SpringYang <ceroot@163.com>
  */
-function toUnderline($str)
-{
-    $temp_array = array();
-    for ($i = 0; $i < strlen($str); $i++) {
-        $ascii_code = ord($str[$i]);
-        if ($ascii_code >= 65 && $ascii_code <= 90) {
-            if ($i == 0) {
-                $temp_array[] = chr($ascii_code + 32);
+if (!function_exists('toUnderline')) {
+    function toUnderline($str)
+    {
+        $temp_array = array();
+        for ($i = 0; $i < strlen($str); $i++) {
+            $ascii_code = ord($str[$i]);
+            if ($ascii_code >= 65 && $ascii_code <= 90) {
+                if ($i == 0) {
+                    $temp_array[] = chr($ascii_code + 32);
+                } else {
+                    $temp_array[] = '_' . chr($ascii_code + 32);
+                }
             } else {
-                $temp_array[] = '_' . chr($ascii_code + 32);
+                $temp_array[] = $str[$i];
             }
-        } else {
-            $temp_array[] = $str[$i];
         }
+        return implode('', $temp_array);
     }
-    return implode('', $temp_array);
 }
 
 /**
@@ -63,11 +65,13 @@ function toUnderline($str)
  * @return string      [返回字符]
  * @author SpringYang <ceroot@163.com>
  */
-function toCamel($str)
-{
-    $str = ucwords(str_replace('_', ' ', $str));
-    $str = str_replace(' ', '', lcfirst($str));
-    return $str;
+if (!function_exists('toCamel')) {
+    function toCamel($str)
+    {
+        $str = ucwords(str_replace('_', ' ', $str));
+        $str = str_replace(' ', '', lcfirst($str));
+        return $str;
+    }
 }
 
 /**
@@ -187,13 +191,15 @@ if (!function_exists('time_format')) {
  * @return string            格式化后的带单位的大小
  * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
-function format_bytes($size, $delimiter = '')
-{
-    $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
-    for ($i = 0; $size >= 1024 && $i < 5; $i++) {
-        $size /= 1024;
+if (!function_exists('format_bytes')) {
+    function format_bytes($size, $delimiter = '')
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+        for ($i = 0; $size >= 1024 && $i < 5; $i++) {
+            $size /= 1024;
+        }
+        return $size . $delimiter . $units[$i];
     }
-    return $size . $delimiter . $units[$i];
 }
 
 // 函数make_dir()建立目录。判断要保存的图片文件目录是否存在，如果不存在则创建目录，并且将目录设置为可写权限。
@@ -201,15 +207,17 @@ function format_bytes($size, $delimiter = '')
  * 参数:
 @string: $path 目录路径;
  */
-function make_dir($path)
-{
-    if (!file_exists($path)) {
-        // 如果文件夹不存在则建立
-        make_dir(dirname($path)); // 多层创建
-        mkdir($path, 0755); // 给文件夹设置权
-        @chmod($path, 0755);
+if (!function_exists('make_dir')) {
+    function make_dir($path)
+    {
+        if (!file_exists($path)) {
+            // 如果文件夹不存在则建立
+            make_dir(dirname($path)); // 多层创建
+            mkdir($path, 0755); // 给文件夹设置权
+            @chmod($path, 0755);
+        }
+        return true;
     }
-    return true;
 }
 
 /**
@@ -353,19 +361,21 @@ if (!function_exists('getrandom')) {
  * @param  string  $pid   传入父id
  * @return array   $arr   返回数组
  */
-function getCateTreeArr($cate, $pid)
-{
-    $arr = [];
-    foreach ($cate as $k => $v) {
-        if ($v['pid'] == $pid) {
-            $child = getCateTreeArr($cate, $v['id']);
-            if ($child) {
-                $v['items'] = $child;
+if (!function_exists('get_cate_tree_arr')) {
+    function get_cate_tree_arr($cate, $pid)
+    {
+        $arr = [];
+        foreach ($cate as $k => $v) {
+            if ($v['pid'] == $pid) {
+                $child = get_cate_tree_arr($cate, $v['id']);
+                if ($child) {
+                    $v['items'] = $child;
+                }
+                $arr[] = $v;
             }
-            $arr[] = $v;
         }
+        return $arr;
     }
-    return $arr;
 }
 
 /**
@@ -374,52 +384,60 @@ function getCateTreeArr($cate, $pid)
  * @param string  $pid   传入id
  * @return array  $arr   返回数组
  */
-function getParents($cate, $id)
-{
-    $arr = [];
-    foreach ($cate as $v) {
-        if ($v['id'] == $id) {
-            $arr[] = $v;
-            $arr   = array_merge(getParents($cate, $v['pid']), $arr);
+if (!function_exists('get_parents')) {
+    function get_parents($cate, $id)
+    {
+        $arr = [];
+        foreach ($cate as $v) {
+            if ($v['id'] == $id) {
+                $arr[] = $v;
+                $arr   = array_merge(get_parents($cate, $v['pid']), $arr);
+            }
         }
+        return $arr;
     }
-    return $arr;
 }
+
 /**
  * 传递一个父级ID返回所有子级分类
  * @param array     $cate   传入数组
  * @param string    $pid    传入id
  * @return array    $arr    返回数组
  */
-function getChiIds($cate, $pid, $str = 0)
-{
-    $arr           = array();
-    static $strarr = array();
-    foreach ($cate as $v) {
-        if ($v['pid'] == $pid) {
-            $arr[]    = $v;
-            $strarr[] = $v['id'];
-            $arr      = array_merge($arr, getChiIds($cate, $v['id']));
+if (!function_exists('get_chi_ids')) {
+    function get_chi_ids($cate, $pid, $str = 0)
+    {
+        $arr           = [];
+        static $strarr = [];
+        foreach ($cate as $v) {
+            if ($v['pid'] == $pid) {
+                $arr[]    = $v;
+                $strarr[] = $v['id'];
+                $arr      = array_merge($arr, get_chi_ids($cate, $v['id']));
+            }
         }
+        return $str == 1 ? $strarr : $arr;
     }
-    return $str == 1 ? $strarr : $arr;
 }
+
 /**
  * 传递一个子级返回父级id 例如:首页>>服装>>女装>>裙子
  * @param array     $cate   传入数组
  * @param string    $pid    传入id
  * @return array    $arr    返回数组
  */
-function getCateByPid($cate, $pid = 0)
-{
-    $arr = array();
-    foreach ($cate as $v) {
-        if ($v['pid'] == $pid) {
-            // $arr[] = array('id'=>$v['id'],'name'=>$v['name']);
-            $arr[] = $v;
+if (!function_exists('get_cate_by_pid')) {
+    function get_cate_by_pid($cate, $pid = 0)
+    {
+        $arr = [];
+        foreach ($cate as $v) {
+            if ($v['pid'] == $pid) {
+                // $arr[] = array('id'=>$v['id'],'name'=>$v['name']);
+                $arr[] = $v;
+            }
         }
+        return $arr;
     }
-    return $arr;
 }
 
 /**
@@ -579,157 +597,159 @@ if (!function_exists('get_visit_source')) {
  * @return string    $content    [返回新的内容]
  * @author SpringYang <ceroot@163.com>
  */
-function ueditor_handle($content, $title = null)
-{
-    $pathFiles  = './data/files/'; // 文件保存路径
-    $pathImages = './data/images/'; // 图片保存路径
-    $pathVideos = './data/videos/'; // 视频保存路径
+if (!function_exists('ueditor_handle')) {
+    function ueditor_handle($content, $title = null)
+    {
+        $pathFiles  = './data/files/'; // 文件保存路径
+        $pathImages = './data/images/'; // 图片保存路径
+        $pathVideos = './data/videos/'; // 视频保存路径
 
-    // 图片替换处理
-    // $patternImg = '<img.*?src="(.*?)">';
-    $patternImg = '/<img.*?src="(.*?)".*?>/is';
-    if (preg_match_all($patternImg, $content, $matchesImg)) {
-        foreach ($matchesImg[0] as $key => $value) {
-            $oldValue = $newValue = $value; // 临时变量
-            if (stripos($value, 'data/ueditor') !== false) {
-                $imageSrc   = $matchesImg[1][$key]; // 取得 img 里的 src
-                $imagesArr  = explode('/', $imageSrc); // 以 / 拆分 src 变为数组
-                $imagesName = end($imagesArr); // 取得数组里的最后一个值，也就是文件名
-                $datePath   = array_slice($imagesArr, -2, 1); // 取得数组里的倒数第二个值，也就是以日期命名的目录
-                $newPath    = $pathImages . $datePath[0] . '/'; // 新的文件目录
+        // 图片替换处理
+        // $patternImg = '<img.*?src="(.*?)">';
+        $patternImg = '/<img.*?src="(.*?)".*?>/is';
+        if (preg_match_all($patternImg, $content, $matchesImg)) {
+            foreach ($matchesImg[0] as $key => $value) {
+                $oldValue = $newValue = $value; // 临时变量
+                if (stripos($value, 'data/ueditor') !== false) {
+                    $imageSrc   = $matchesImg[1][$key]; // 取得 img 里的 src
+                    $imagesArr  = explode('/', $imageSrc); // 以 / 拆分 src 变为数组
+                    $imagesName = end($imagesArr); // 取得数组里的最后一个值，也就是文件名
+                    $datePath   = array_slice($imagesArr, -2, 1); // 取得数组里的倒数第二个值，也就是以日期命名的目录
+                    $newPath    = $pathImages . $datePath[0] . '/'; // 新的文件目录
 
-                // 判断目录是否存在，如果不存在则创建
-                if (!is_dir($newPath)) {
-                    make_dir($newPath);
-                }
+                    // 判断目录是否存在，如果不存在则创建
+                    if (!is_dir($newPath)) {
+                        make_dir($newPath);
+                    }
 
-                // 文件移动
-                $newPath  = $newPath . $imagesName; // 新路径
-                $imageSrc = '.' . $imageSrc; // 旧路径
-                if (is_file($imageSrc)) {
-                    // 取得文件信息
-                    $imageInfo = getimagesize($imageSrc);
-                    if ($imageInfo) {
-                        if ($imageInfo[0] > 800) {
-                            // 实例化图片尺寸类
-                            $newimage = new \imageresize\ImageResize();
-                            $result   = $newimage->resize($imageSrc, $newPath, 800, 500);
-                            if ($result) {
-                                unlink($imageSrc); // 删除临时文件
+                    // 文件移动
+                    $newPath  = $newPath . $imagesName; // 新路径
+                    $imageSrc = '.' . $imageSrc; // 旧路径
+                    if (is_file($imageSrc)) {
+                        // 取得文件信息
+                        $imageInfo = getimagesize($imageSrc);
+                        if ($imageInfo) {
+                            if ($imageInfo[0] > 800) {
+                                // 实例化图片尺寸类
+                                $newimage = new \imageresize\ImageResize();
+                                $result   = $newimage->resize($imageSrc, $newPath, 800, 500);
+                                if ($result) {
+                                    unlink($imageSrc); // 删除临时文件
+                                }
+                            } else {
+                                rename($imageSrc, $newPath);
                             }
-                        } else {
-                            rename($imageSrc, $newPath);
                         }
                     }
+
                 }
 
-            }
+                if (stripos($value, 'data/') !== false) {
+                    // 如果标题存在的时候进行操作
+                    if (!empty($title)) {
+                        // alt 替换
+                        $patternAlt = '/<img.*alt\=[\"|\'](.*)[\"|\'].*>/i'; // alt 规则
+                        $newAlt     = 'alt="' . $title . '"'; // 新的 alt
 
-            if (stripos($value, 'data/') !== false) {
-                // 如果标题存在的时候进行操作
-                if (!empty($title)) {
-                    // alt 替换
-                    $patternAlt = '/<img.*alt\=[\"|\'](.*)[\"|\'].*>/i'; // alt 规则
-                    $newAlt     = 'alt="' . $title . '"'; // 新的 alt
+                        $altPreg = preg_match($patternAlt, $oldValue, $matchAlt);
+                        if ($altPreg) {
+                            $newValue = preg_replace('/alt=.+?[*|\"]/i', $newAlt, $newValue);
+                        } else {
+                            $valueTemp = str_replace('/>', '', $newValue);
+                            $newValue  = $valueTemp . ' ' . $newAlt . '/>';
+                        }
 
-                    $altPreg = preg_match($patternAlt, $oldValue, $matchAlt);
-                    if ($altPreg) {
-                        $newValue = preg_replace('/alt=.+?[*|\"]/i', $newAlt, $newValue);
-                    } else {
-                        $valueTemp = str_replace('/>', '', $newValue);
-                        $newValue  = $valueTemp . ' ' . $newAlt . '/>';
+                        // 标题替换处理
+                        $patternTitle = '/<img.*title\=[\"|\'](.*)[\"|\'].*>/i'; // title 规则
+                        $newTitle     = 'title="' . $title . '"'; // 新的 title
+
+                        $titlePreg = preg_match($patternTitle, $oldValue, $matchTitle);
+                        if ($titlePreg) {
+                            $newValue = preg_replace('/title=.+?[*|\"]/i', $newTitle, $newValue);
+                        } else {
+                            $valueTemp = str_replace('/>', '', $newValue);
+                            $newValue  = $valueTemp . ' ' . $newTitle . '/>';
+                        }
                     }
 
-                    // 标题替换处理
-                    $patternTitle = '/<img.*title\=[\"|\'](.*)[\"|\'].*>/i'; // title 规则
-                    $newTitle     = 'title="' . $title . '"'; // 新的 title
-
-                    $titlePreg = preg_match($patternTitle, $oldValue, $matchTitle);
-                    if ($titlePreg) {
-                        $newValue = preg_replace('/title=.+?[*|\"]/i', $newTitle, $newValue);
-                    } else {
-                        $valueTemp = str_replace('/>', '', $newValue);
-                        $newValue  = $valueTemp . ' ' . $newTitle . '/>';
+                    // 样式为空替换处理
+                    $stylePattern = '<img.*?style="(.*?)">'; // style 规则
+                    $stylePreg    = preg_match($stylePattern, $oldValue, $styleMatch);
+                    if ($stylePreg) {
+                        if (empty($styleMatch[1])) {
+                            $newValue = preg_replace('/style=.+?[*|\"]/i', '', $newValue);
+                        }
                     }
+
+                    // 替换成新的图片路径
+                    $newValue = str_replace('ueditor/', '', $newValue);
+
+                    // 内容替换成新的值
+                    $content = str_replace($oldValue, $newValue, $content);
+                }
+            }
+        }
+
+        // 文件替换处理
+        if (preg_match_all("'<\s*a\s.*?href\s*=\s*([\"\'])?(?(1)(.*?)\\1|([^\s\>]+))[^>]*>?(.*?)</a>'isx", $content, $links)) {
+            while (list($key, $val) = each($links[2])) {
+                if (!empty($val)) {
+                    $match['link'][] = $val;
+                }
+            }
+            while (list($key, $val) = each($links[3])) {
+                if (!empty($val)) {
+                    $match['link'][] = $val;
+                }
+            }
+            while (list($key, $val) = each($links[4])) {
+                if (!empty($val)) {
+                    $match['content'][] = $val;
+                }
+            }
+            while (list($key, $val) = each($links[0])) {
+                if (!empty($val)) {
+                    $match['all'][] = $val;
                 }
 
-                // 样式为空替换处理
-                $stylePattern = '<img.*?style="(.*?)">'; // style 规则
-                $stylePreg    = preg_match($stylePattern, $oldValue, $styleMatch);
-                if ($stylePreg) {
-                    if (empty($styleMatch[1])) {
-                        $newValue = preg_replace('/style=.+?[*|\"]/i', '', $newValue);
+            }
+
+            // 文件地址处理
+            foreach ($match['link'] as $value) {
+                if (stripos($value, 'data/ueditor') !== false) {
+                    $oldValue = $value;
+                    $linkArr  = explode('/', $value);
+                    $datePath = array_slice($linkArr, -2, 1);
+                    $fileName = end($linkArr);
+                    $newPath  = $pathFiles . $datePath[0] . '/';
+
+                    // 判断目录是否存在，如果不存在则创建
+                    if (!is_dir($newPath)) {
+                        make_dir($newPath);
                     }
+
+                    // 移动文件
+                    $newPath = $newPath . $fileName; // 新路径
+                    $value   = '.' . $value; // 旧路径
+                    if (is_file($value)) {
+                        rename($value, $newPath);
+                    }
+
+                    // 替换成新的文件路径
+                    $newvalue = str_replace('ueditor/', '', $oldValue);
+
+                    // 内容替换成新的值
+                    $content = str_replace($oldValue, $newvalue, $content);
                 }
-
-                // 替换成新的图片路径
-                $newValue = str_replace('ueditor/', '', $newValue);
-
-                // 内容替换成新的值
-                $content = str_replace($oldValue, $newValue, $content);
             }
         }
+
+        // 附件小图标处理
+        if (stripos($content, 'ueditor/1.4.3.2/dialogs/attachment') !== false) {
+            $content = str_replace('ueditor/1.4.3.2/dialogs/attachment', 'images', $content);
+        }
+        return $content;
     }
-
-    // 文件替换处理
-    if (preg_match_all("'<\s*a\s.*?href\s*=\s*([\"\'])?(?(1)(.*?)\\1|([^\s\>]+))[^>]*>?(.*?)</a>'isx", $content, $links)) {
-        while (list($key, $val) = each($links[2])) {
-            if (!empty($val)) {
-                $match['link'][] = $val;
-            }
-        }
-        while (list($key, $val) = each($links[3])) {
-            if (!empty($val)) {
-                $match['link'][] = $val;
-            }
-        }
-        while (list($key, $val) = each($links[4])) {
-            if (!empty($val)) {
-                $match['content'][] = $val;
-            }
-        }
-        while (list($key, $val) = each($links[0])) {
-            if (!empty($val)) {
-                $match['all'][] = $val;
-            }
-
-        }
-
-        // 文件地址处理
-        foreach ($match['link'] as $value) {
-            if (stripos($value, 'data/ueditor') !== false) {
-                $oldValue = $value;
-                $linkArr  = explode('/', $value);
-                $datePath = array_slice($linkArr, -2, 1);
-                $fileName = end($linkArr);
-                $newPath  = $pathFiles . $datePath[0] . '/';
-
-                // 判断目录是否存在，如果不存在则创建
-                if (!is_dir($newPath)) {
-                    make_dir($newPath);
-                }
-
-                // 移动文件
-                $newPath = $newPath . $fileName; // 新路径
-                $value   = '.' . $value; // 旧路径
-                if (is_file($value)) {
-                    rename($value, $newPath);
-                }
-
-                // 替换成新的文件路径
-                $newvalue = str_replace('ueditor/', '', $oldValue);
-
-                // 内容替换成新的值
-                $content = str_replace($oldValue, $newvalue, $content);
-            }
-        }
-    }
-
-    // 附件小图标处理
-    if (stripos($content, 'ueditor/1.4.3.2/dialogs/attachment') !== false) {
-        $content = str_replace('ueditor/1.4.3.2/dialogs/attachment', 'images', $content);
-    }
-    return $content;
 }
 
 /**
@@ -739,75 +759,77 @@ function ueditor_handle($content, $title = null)
  * @return string
  * @author SpringYang <ceroot@163.com>
  */
-function del_file($dataForm, $dataSql)
-{
-    // 定义变量
-    $differ = [];
-    // 取得图片正则
-    $patternImage = '<img.*?src="(.*?)">';
-    // 匹配表单数据并取得数据
-    if (preg_match_all($patternImage, $dataForm, $matchesImageForm)) {
-        $imgForm = $matchesImageForm[1];
-        foreach ($imgForm as $key => $value) {
-            // 去除静态资源里的图片
-            if (stripos($value, 'statics/')) {
-                unset($imgForm[$key]);
+if (!function_exists('del_file')) {
+    function del_file($dataForm, $dataSql)
+    {
+        // 定义变量
+        $differ = [];
+        // 取得图片正则
+        $patternImage = '<img.*?src="(.*?)">';
+        // 匹配表单数据并取得数据
+        if (preg_match_all($patternImage, $dataForm, $matchesImageForm)) {
+            $imgForm = $matchesImageForm[1];
+            foreach ($imgForm as $key => $value) {
+                // 去除静态资源里的图片
+                if (stripos($value, 'statics/')) {
+                    unset($imgForm[$key]);
+                }
             }
         }
-    }
 
-    // 匹配数据库数据并取得数据
-    if (preg_match_all($patternImage, $dataSql, $matchesImageSql)) {
-        $imgSql = $matchesImageSql[1];
-        foreach ($imgSql as $key => $value) {
-            // 去除静态资源里的图片
-            if (stripos($value, 'statics/')) {
-                unset($imgSql[$key]);
+        // 匹配数据库数据并取得数据
+        if (preg_match_all($patternImage, $dataSql, $matchesImageSql)) {
+            $imgSql = $matchesImageSql[1];
+            foreach ($imgSql as $key => $value) {
+                // 去除静态资源里的图片
+                if (stripos($value, 'statics/')) {
+                    unset($imgSql[$key]);
+                }
             }
         }
-    }
 
-    // 如果表单数据不为空的话就去和数据库作对比并删除不需要进行删除的数据;
-    if (!empty($imgForm) && !empty($imgSql)) {
-        if (is_array($imgForm) && is_array($imgSql)) {
-            $imgIntersect = array_intersect($imgForm, $imgSql); // 取得交集
-            $imgDiffer    = array_diff($imgSql, $imgIntersect); // 取得差集
-            $differ       = array_merge($differ, $imgDiffer); // 合并数组并统一赋值给 $differ
-        }
-    }
-
-    // 取得a标签正则
-    $patternHref = '<a.*?href="(.*?)">';
-    // 匹配表单数据并取得数据
-    if (preg_match_all($patternHref, $dataForm, $matchesHrefForm)) {
-        $hrefForm = $matchesHrefForm[1];
-    }
-
-    // 匹配数据库数据并取得数据
-    if (preg_match_all($patternHref, $dataSql, $matchesHrefSql)) {
-        $hrefSql = $matchesHrefSql[1];
-    }
-
-    // 如果表单数据不为空的话就去和数据库作对比并删除不需要进行删除的数据;
-    if (!empty($hrefForm) && !empty($hrefSql)) {
-        if (is_array($hrefForm) && is_array($hrefSql)) {
-            $hrefIntersect = array_intersect($hrefForm, $hrefSql); // 取得交集
-            $hrefDiffer    = array_diff($hrefSql, $hrefIntersect); // 取得差集
-            $differ        = array_merge($differ, $hrefDiffer); // 合并数组并统一赋值给 $differ
-        }
-    }
-
-    // 如果进行处理后的数据不为空则执行删除操作
-    if (!empty($differ) && is_array($differ)) {
-        foreach ($differ as $value) {
-            $urlarr = parse_url($value);
-            $path   = $urlarr['path'];
-            if (is_file('.' . $path)) {
-                unlink('.' . $path);
+        // 如果表单数据不为空的话就去和数据库作对比并删除不需要进行删除的数据;
+        if (!empty($imgForm) && !empty($imgSql)) {
+            if (is_array($imgForm) && is_array($imgSql)) {
+                $imgIntersect = array_intersect($imgForm, $imgSql); // 取得交集
+                $imgDiffer    = array_diff($imgSql, $imgIntersect); // 取得差集
+                $differ       = array_merge($differ, $imgDiffer); // 合并数组并统一赋值给 $differ
             }
         }
-    }
 
+        // 取得a标签正则
+        $patternHref = '<a.*?href="(.*?)">';
+        // 匹配表单数据并取得数据
+        if (preg_match_all($patternHref, $dataForm, $matchesHrefForm)) {
+            $hrefForm = $matchesHrefForm[1];
+        }
+
+        // 匹配数据库数据并取得数据
+        if (preg_match_all($patternHref, $dataSql, $matchesHrefSql)) {
+            $hrefSql = $matchesHrefSql[1];
+        }
+
+        // 如果表单数据不为空的话就去和数据库作对比并删除不需要进行删除的数据;
+        if (!empty($hrefForm) && !empty($hrefSql)) {
+            if (is_array($hrefForm) && is_array($hrefSql)) {
+                $hrefIntersect = array_intersect($hrefForm, $hrefSql); // 取得交集
+                $hrefDiffer    = array_diff($hrefSql, $hrefIntersect); // 取得差集
+                $differ        = array_merge($differ, $hrefDiffer); // 合并数组并统一赋值给 $differ
+            }
+        }
+
+        // 如果进行处理后的数据不为空则执行删除操作
+        if (!empty($differ) && is_array($differ)) {
+            foreach ($differ as $value) {
+                $urlarr = parse_url($value);
+                $path   = $urlarr['path'];
+                if (is_file('.' . $path)) {
+                    unlink('.' . $path);
+                }
+            }
+        }
+
+    }
 }
 
 /**
@@ -818,32 +840,34 @@ function del_file($dataForm, $dataSql)
  * @return string    $tags       [返回分词]
  * @author SpringYang <ceroot@163.com>
  */
-function get_keywords($str, $lenght = 10, $separator = ',')
-{
-    $str = strip_tags($str); // 去掉 html 代码
-    $str = preg_replace('/[ ]/', '', $str);
-    $str = str_replace('&nbsp;', '', $str); // 去掉 &nbsp;
+if (!function_exists('get_keywords')) {
+    function get_keywords($str, $lenght = 10, $separator = ',')
+    {
+        $str = strip_tags($str); // 去掉 html 代码
+        $str = preg_replace('/[ ]/', '', $str);
+        $str = str_replace('&nbsp;', '', $str); // 去掉 &nbsp;
 
-    $pscws      = new \scws\Pscws();
-    $extendPath = Env::get('extend_path');
+        $pscws      = new \scws\Pscws();
+        $extendPath = Env::get('extend_path');
 
-    $pscws->set_dict($extendPath . 'scws/lib/dict.utf8.xdb');
-    $pscws->set_rule($extendPath . 'scws/lib/rules.utf8.ini');
-    $pscws->set_ignore(true);
-    $pscws->send_text($str);
-    $words = $pscws->get_tops($lenght);
-    $pscws->close();
+        $pscws->set_dict($extendPath . 'scws/lib/dict.utf8.xdb');
+        $pscws->set_rule($extendPath . 'scws/lib/rules.utf8.ini');
+        $pscws->set_ignore(true);
+        $pscws->send_text($str);
+        $words = $pscws->get_tops($lenght);
+        $pscws->close();
 
-    $end  = end($words);
-    $tags = '';
-    foreach ($words as $val) {
-        if ($val != $end) {
-            $tags .= $val['word'] . $separator;
-        } else {
-            $tags .= $val['word'];
+        $end  = end($words);
+        $tags = '';
+        foreach ($words as $val) {
+            if ($val != $end) {
+                $tags .= $val['word'] . $separator;
+            } else {
+                $tags .= $val['word'];
+            }
         }
+        return $tags;
     }
-    return $tags;
 }
 
 /**
@@ -853,21 +877,23 @@ function get_keywords($str, $lenght = 10, $separator = ',')
  * @return string    $description  [返回描述]
  * @author SpringYang <ceroot@163.com>
  */
-function get_description($str, $lenght = 120)
-{
-    $pattern = '/<p[^>]*>(.*?)<\/p>/'; // 因为 ueditor 是以 p 标签来做段落
-    $preg    = preg_match($pattern, $str, $matches);
-    // 当能够正常匹配的时候就使用匹配的值，当不能匹配的时候取默认值
-    if ($preg) {
-        $description = mb_substr(strip_tags($matches[1]), 0, $lenght);
-        if (empty($description)) {
+if (!function_exists('get_description')) {
+    function get_description($str, $lenght = 120)
+    {
+        $pattern = '/<p[^>]*>(.*?)<\/p>/'; // 因为 ueditor 是以 p 标签来做段落
+        $preg    = preg_match($pattern, $str, $matches);
+        // 当能够正常匹配的时候就使用匹配的值，当不能匹配的时候取默认值
+        if ($preg) {
+            $description = mb_substr(strip_tags($matches[1]), 0, $lenght);
+            if (empty($description)) {
+                $description = mb_substr(strip_tags($str), 0, $lenght);
+            }
+        } else {
             $description = mb_substr(strip_tags($str), 0, $lenght);
         }
-    } else {
-        $description = mb_substr(strip_tags($str), 0, $lenght);
-    }
 
-    $description = str_replace(' ', '', $description); // 去掉空格
-    $description = str_replace('&nbsp;', '', $description); // 去掉 &nbsp
-    return $description;
+        $description = str_replace(' ', '', $description); // 去掉空格
+        $description = str_replace('&nbsp;', '', $description); // 去掉 &nbsp
+        return $description;
+    }
 }

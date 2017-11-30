@@ -160,7 +160,7 @@ class AuthRule extends Extend
 
         // 处理当前高亮标记
         // 子级返回父级数组
-        $bread = getParents($navdata, $currentData['action_id']);
+        $bread = get_parents($navdata, $currentData['action_id']);
 
         // 只取id组成数组
         $activeidarr = array();
@@ -185,7 +185,7 @@ class AuthRule extends Extend
                 }
             }
             $second['title'] = $producttitle;
-            $second['data']  = getCateByPid($activedata, $currentData['controller_id']);
+            $second['data']  = get_cate_by_pid($activedata, $currentData['controller_id']);
         } else {
             foreach ($activedata as $value) {
                 if ($currentData['action_id'] == $value['id']) {
@@ -194,7 +194,7 @@ class AuthRule extends Extend
                 }
             }
             $second['title'] = $producttitle;
-            $second['data']  = getChiIds($navdata, $currentData['action_id']);
+            $second['data']  = get_chi_ids($navdata, $currentData['action_id']);
         }
         $treeArray['second']    = $second; // 二级菜单数据
         $treeArray['bread']     = $bread; // 面包萱
@@ -208,7 +208,7 @@ class AuthRule extends Extend
             }
         }
         // dump($showData);
-        $treeArray['menu'] = getCateTreeArr($showData, 0); // 生成树形结构$showData
+        $treeArray['menu'] = get_cate_tree_arr($showData, 0); // 生成树形结构$showData
 
         return $treeArray;
     }
