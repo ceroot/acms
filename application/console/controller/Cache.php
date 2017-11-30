@@ -69,7 +69,7 @@ class Cache extends Base
                         $msg = '数据表缓存更新成功...';
                         break;
                     case 'rule':
-                        model('authRule')->updateCache();
+                        $this->app->model('authRule')->updateCache();
                         $msg = '规则表缓存更新成功...';
                         break;
                     case 'ueditor':

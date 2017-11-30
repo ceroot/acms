@@ -3,9 +3,13 @@
 {block name="css"}
 <style type="text/css">
 	.layui-input-block {
-    margin-left: 50px;
-    min-height:auto;
-}
+	    margin-left: 50px;
+	    min-height:auto;
+	}
+
+	.status{ display: inline-block; vertical-align: bottom; color: #5FB878;}
+	.status i{ display: none; }
+
 </style>
 {/block}
 {block name="content"}
@@ -25,7 +29,7 @@
 	{:widget('Widgets/form', ['type'=>'checkbox','name'=>'action','value'=>'Config','datalist'=>['other'=>'其它项']])}
 	<div class="layui-form-item" pane="">
         <div class="layui-input-block">
-        	<div class="showstatus"><i class="layui-icon" style="color: #5FB878">&#xe63d;&#xe605;</i></div>
+        	<div class="showstatus"></div>
         </div>
         <div class="layui-form-mid layui-word-aux"></div>
     </div>
@@ -42,8 +46,12 @@
 <script type="text/javascript">
 
 $(function(){
+	$('body').find('input[type="checkbox"]').each(function(index, el) {
+		var _html = '<div class="status"><i class="layui-icon">&#xe63d;</i><i class="layui-icon status-ok">&#xe605;</i></div>';
+		$(this).closest('.layui-input-block').append(_html);
+	});
+
 	$('form button').on('click',function(e){
-		// alert(1);
 		e.preventDefault();
 		var _self  = $(this);
 		var _form  = _self.closest('form');
@@ -51,7 +59,7 @@ $(function(){
 		var _data  = _form.serialize();
 		var showstatus  = $('.showstatus');
 
-		//_form.find('input').first().closest('.layui-input-block').append('<i class="layui-icon" style="color: #5FB878">&#xe63d;</i>');
+		// _form.find('input[type="checkbox"]').siblings('div.status').find('i.status-ok').hide();
 
 		$.ajax({
 			type:'post',
@@ -66,7 +74,7 @@ $(function(){
 				if(data.code){
 					_self.click();
 					var _html  = '<p>'+data.msg+'</p>';
-					//$('body').find('input[value="' + data.data.type + '"]').siblings('i.layui-icon').text('&#xe605;');
+					$('body').find('input[value="' + data.data.type + '"]').siblings('div.status').find('i.status-ok').show();
 					showstatus.html(_html);
 				}else{
 					var _html  = '<p>'+data.msg+'</p>';
