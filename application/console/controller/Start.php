@@ -100,7 +100,7 @@ class Start extends Controller
         // dump(file_exists('../data/temp/'));
         // make_dir('./data/temp/dd');
         // die;
-        $ddd = get_keywords('中国  共  产   党你 好贵阳黄  平吃饭睡觉打   灰魂牵梦萦  朝秦暮楚  夺需 要硒鼓');
+        $ddd = get_keywords('根据《省教育厅省财政厅 省人力资源和社会保障厅 省机构编制委员会办公室关于印发〈贵州省2014年农村义务教育阶段学校教师特设岗位计划实施方案〉的通知》（黔教师发〔2014〕113号）、《州人社局 州教育局关于办理“特岗教师”聘用手续有关问题的通知》（黔南人社通〔2012〕75号）文件精神和县人民政府《惠水县2014年特岗计划承诺书》的相关承诺，经审核，目前有赵成妹等251名“特岗教师”符合服务期满接转到当地任教的条件，经惠水县人民政府常务会议研究，同意将赵成妹等251名“特岗教师”接转为我县正式教师。现进行公示，公示期自发布之日起七个工作日。');
         dump($ddd);
 
     }
@@ -186,7 +186,7 @@ class Start extends Controller
 
     public function ttt()
     {
-        $data = QueryList::get('http://www.163gz.com/js/163.html')->rules([
+        $data = QueryList::get('http://www.163gz.com/gzzp8/zkxx/20171130/182443.shtml')->rules([
             'link' => ['.STYLE4>a', 'href', '', function ($content) {
                 //利用回调函数补全相对链接
                 $baseUrl = 'http://cms.querylist.cc';
@@ -243,7 +243,7 @@ class Start extends Controller
         //     'text' => ['#zoom', 'text'],
         // ])->get('http://www.163gz.com/gzzp8/zkxx/20171108/195941.shtml')->encoding('UTF-8', 'GB2312')->query()->getData();
         //打印结果
-        $data = QueryList::get('http://www.163gz.com/gzzp8/zkxx/20171108/195941.shtml')->rules([
+        $data = QueryList::get('http://www.163gz.com/gzzp8/zkxx/20171130/182443.shtml')->rules([
             'title' => ['#zoom h3', 'text'],
             'text'  => ['#zoom', 'text', 'p', function ($content) {
                 $content = strtolower($content);
