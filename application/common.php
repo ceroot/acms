@@ -821,11 +821,9 @@ function del_file($dataForm, $dataSql)
 function get_keywords($str, $lenght = 10, $separator = ',')
 {
     $str = strip_tags($str); // 去掉 html 代码
-    $str = str_replace(' ', '', $str); // 去掉空格
+    $str = preg_replace('/[ ]/', '', $str);
     $str = str_replace('&nbsp;', '', $str); // 去掉 &nbsp;
 
-    //Vendor('scws.pscws4');
-    //$pscws = new \PSCWS4();
     $pscws      = new \scws\Pscws();
     $extendPath = Env::get('extend_path');
 

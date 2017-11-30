@@ -100,7 +100,7 @@ class Start extends Controller
         // dump(file_exists('../data/temp/'));
         // make_dir('./data/temp/dd');
         // die;
-        $ddd = get_keywords('中国共产党你好贵阳黄平吃饭睡觉打灰魂牵梦萦朝秦暮楚夺需要硒鼓');
+        $ddd = get_keywords('中国  共  产   党你 好贵阳黄  平吃饭睡觉打   灰魂牵梦萦  朝秦暮楚  夺需 要硒鼓');
         dump($ddd);
 
     }
