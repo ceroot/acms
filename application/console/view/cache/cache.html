@@ -1,73 +1,47 @@
 {extend name="mould:base" /}
 {block name="title"}{/block}
+{block name="css"}
+<style type="text/css">
+	.layui-input-block {
+    margin-left: 50px;
+    min-height:auto;
+}
+</style>
+{/block}
 {block name="content"}
 
-<form action="{:url('cache')}" method="post" >
-	<div class="row">
-		<div class="col-xs-2 col-md-2 text-xs-right">选择更新</div>
-		<div class="col-xs-10 col-md-10">
-			<div class="form-group form-inline">
-		        <label>
-					<input class="magic-checkbox" type="checkbox" name="action[]" value="Config" checked='checked'/>网站配置
-				</label>
-		    </div>
-		    <div class="form-group form-inline">
-		        <label>
-					<input class="magic-checkbox" type="checkbox" name="action[]" value="Category" checked='checked'/>
-					栏目缓存
-				</label>
-		    </div>
-		    <div class="form-group form-inline">
-		        <label>
-					<input class="magic-checkbox" type="checkbox" name="action[]" value="Table" checked='checked'/>
-					数据表缓存
-				</label>
-		    </div>
-		    <div class="form-group form-inline">
-		        <label>
-					<input class="magic-checkbox" type="checkbox" name="action[]" value="rule" checked='checked'/>
-					规则表缓存
-				</label>
-		    </div>
-		    <div class="form-group form-inline">
-		        <label>
-					<input class="magic-checkbox" type="checkbox" name="action[]" value="ueditor"/>
-					ueditor 暂存目录
-				</label>
-		    </div>
-		    <div class="form-group form-inline">
-		        <label>
-					<input class="magic-checkbox" type="checkbox" name="action[]" value="sdk_config" checked='checked'/>
-					第三方登录缓存
-				</label>
-		    </div>
-		    <div class="form-group form-inline">
-		        <label>
-					<input class="magic-checkbox" type="checkbox" name="action[]" value="other" checked='checked'/>
-					其它项
-				</label>
-		    </div>
-		    <div class="showstatus"></div>
-		</div>
-	</div>
-	<div class="fixed-bottom">
-		<div class="bottom-area">
-			<input type="hidden" name="action[]" value="end" checked='checked'>
-			<button class="btn btn-sm btn-danger" type="submit">更新缓存</button>
-		</div>
-	</div>
+<form action="{:url('cache')}" method="post" class="layui-form">
+	<div class="layui-form-item" pane="">
+        <div class="layui-input-block">选择更新</div>
+        <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+	{:widget('Widgets/form', ['type'=>'checkbox','name'=>'action','value'=>'Config','datalist'=>['Config'=>'网站配置']])}
+	{:widget('Widgets/form', ['type'=>'checkbox','name'=>'action','value'=>'Config','datalist'=>['Category'=>'栏目缓存']])}
+	{:widget('Widgets/form', ['type'=>'checkbox','name'=>'action','value'=>'Config','datalist'=>['Table'=>'数据表缓存']])}
+	{:widget('Widgets/form', ['type'=>'checkbox','name'=>'action','value'=>'Config','datalist'=>['rule'=>'规则表缓存']])}
+	{:widget('Widgets/form', ['type'=>'checkbox','name'=>'action','value'=>'Config','datalist'=>['ueditor'=>'ueditor 暂存目录']])}
+	{:widget('Widgets/form', ['type'=>'checkbox','name'=>'action','value'=>'Config','datalist'=>['temp'=>'临时目录']])}
+	{:widget('Widgets/form', ['type'=>'checkbox','name'=>'action','value'=>'Config','datalist'=>['sdk_config'=>'第三方登录缓存']])}
+	{:widget('Widgets/form', ['type'=>'checkbox','name'=>'action','value'=>'Config','datalist'=>['other'=>'其它项']])}
+	<div class="layui-form-item" pane="">
+        <div class="layui-input-block">
+        	<div class="showstatus"><i class="layui-icon" style="color: #5FB878">&#xe63d;&#xe605;</i></div>
+        </div>
+        <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+    <div class="layui-form-item" pane="">
+        <div class="layui-input-block">
+        	<input type="hidden" name="action[]" value="end" checked='checked'>
+			<button class="layui-btn layui-btn-sm" type="submit">更新缓存</button>
+        </div>
+        <div class="layui-form-mid layui-word-aux"></div>
+    </div>
 </form>
 {/block}
 {block name="script"}
 <script type="text/javascript">
 
 $(function(){
-	// $('input').iCheck({
- //        checkboxClass: 'icheckbox_square-blue',
- //        radioClass: 'iradio_square-blue',
- //        increaseArea: '20%' // optional
- //    });
-
 	$('form button').on('click',function(e){
 		// alert(1);
 		e.preventDefault();
@@ -76,6 +50,8 @@ $(function(){
 		var _url   = _form.prop('action');
 		var _data  = _form.serialize();
 		var showstatus  = $('.showstatus');
+
+		//_form.find('input').first().closest('.layui-input-block').append('<i class="layui-icon" style="color: #5FB878">&#xe63d;</i>');
 
 		$.ajax({
 			type:'post',
@@ -90,10 +66,11 @@ $(function(){
 				if(data.code){
 					_self.click();
 					var _html  = '<p>'+data.msg+'</p>';
-					showstatus.append(_html);
+					//$('body').find('input[value="' + data.data.type + '"]').siblings('i.layui-icon').text('&#xe605;');
+					showstatus.html(_html);
 				}else{
 					var _html  = '<p>'+data.msg+'</p>';
-					showstatus.append(_html);
+					showstatus.html(_html);
 				}
 			}
 		});

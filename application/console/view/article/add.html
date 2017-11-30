@@ -12,7 +12,7 @@
 {/block}
 {block name="content"}
 
-<form action="{:url('renew')}" method="post" class="layui-form" role="form">
+<form action="{:url('renew')}" method="post" class="layui-form">
     {:widget('Widgets/form', ['type'=>'select','title'=>'所属分类','name'=>'cid','value'=>$one.cid,'datalist'=>$category])}
     {:widget('Widgets/form', ['type'=>'text','title'=>'内容标题','name'=>'title','value'=>$one.title,'elementid'=>'title','placeholder'=>'内容标题','layverify'=>'required','inline'=>0])}
     {:widget('Widgets/form', ['type'=>'text','title'=>'内容关键字','name'=>'keywords','value'=>$one.keywords,'elementid'=>'keywords','placeholder'=>'内容关键字','aux'=>'（以英文逗号隔开，如果不填，系统自动获取）','inline'=>0])}

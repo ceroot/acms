@@ -19,6 +19,8 @@
 namespace app\console\controller;
 
 use app\console\controller\Base;
+use Dir;
+use think\facade\Env;
 
 class Cache extends Base
 {
@@ -28,19 +30,22 @@ class Cache extends Base
 
     }
 
+    /**
+     * [ cache 更新缓存 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-11-30T15:27:14+0800
+     * @return   [type]                   [description]
+     */
     public function cache()
     {
-        // $action = input('post.');
-        // cache('action', $action['action']);
-        // return $this->success('准备更新...', url('cache/update'));
+        $runTimePath = Env::get('runtime_path'); // 运行目录
 
-        // die;
         if ($this->app->request->isAjax()) {
-            if (!$this->app->cache->has('action')) {
-                $action = $this->app->request->param();
-                $action = $action['action'];
-                $this->app->cache->set('action', $action);
 
+            if (!$this->app->cache->has('action')) {
+                $action = $this->app->request->param('action/a');
+                $this->app->cache->set('action', $action);
             } else {
                 $action = $this->app->cache->get('action');
             }
@@ -64,16 +69,26 @@ class Cache extends Base
                         $msg = '数据表缓存更新成功...';
                         break;
                     case 'rule':
-                        //Dir::del(RUNTIME_PATH . 'cache');
                         model('authRule')->updateCache();
                         $msg = '规则表缓存更新成功...';
                         break;
                     case 'ueditor':
-                        //Dir::del(RUNTIME_PATH . 'cache');
-                        Dir::del('./data/ueditor/file');
-                        Dir::del('./data/ueditor/images');
-                        Dir::del('./data/ueditor/video');
+                        $ueditorPath = './data/ueditor/';
+
+                        Dir::del($ueditorPath . 'file');
+                        Dir::del($ueditorPath . 'images');
+                        Dir::del($ueditorPath . 'video');
+
+                        Dir::create($ueditorPath . 'file');
+                        Dir::create($ueditorPath . 'images');
+                        Dir::create($ueditorPath . 'video');
                         $msg = 'ueditor 暂存目录更新成功...';
+                        break;
+                    case 'temp':
+                        $tempPath = '../data/temp';
+                        Dir::del($tempPath);
+                        Dir::create($tempPath);
+                        $msg = '临时目录更新成功...';
                         break;
                     case 'sdk_config':
                         cache('oauth_sdk_config', null);
@@ -87,7 +102,10 @@ class Cache extends Base
                         //Dir::del(RUNTIME_PATH . 'temp');
                         //Dir::del(RUNTIME_PATH . 'data');
                         //Dir::del(RUNTIME_PATH . 'logs');
-                        Dir::del(RUNTIME_PATH . 'temp');
+                        //Dir::del($runTimePath . 'cache');
+                        //Dir::create($runTimePath . 'cache');
+                        Dir::del($runTimePath . 'temp');
+                        Dir::create($runTimePath . 'temp');
                         $msg = '其它项更新成功';
                         break;
                     default:
@@ -95,10 +113,12 @@ class Cache extends Base
                         # code...
                         break;
                 }
-                return $this->success($msg);
+
+                $data['type'] = $current;
+                return $this->success($msg, '', $data);
             } else {
                 $msg = '缓存更新成功...';
-                $this->app->cache->set('action', null);
+                $this->app->cache->rm('action'); // 删除 action 缓存
 
                 // 日志记录
                 //action_log(1);
