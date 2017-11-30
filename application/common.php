@@ -14,6 +14,7 @@
 
 use app\facade\Tools;
 use app\facade\User;
+use think\facade\Env;
 use think\facade\Request;
 
 /**
@@ -823,10 +824,13 @@ function get_keywords($str, $lenght = 10, $separator = ',')
     $str = str_replace(' ', '', $str); // 去掉空格
     $str = str_replace('&nbsp;', '', $str); // 去掉 &nbsp;
 
-    Vendor('scws.pscws4');
-    $pscws = new \PSCWS4();
-    $pscws->set_dict(VENDOR_PATH . 'scws/lib/dict.utf8.xdb');
-    $pscws->set_rule(VENDOR_PATH . 'scws/lib/rules.utf8.ini');
+    //Vendor('scws.pscws4');
+    //$pscws = new \PSCWS4();
+    $pscws      = new \scws\Pscws();
+    $extendPath = Env::get('extend_path');
+
+    $pscws->set_dict($extendPath . 'scws/lib/dict.utf8.xdb');
+    $pscws->set_rule($extendPath . 'scws/lib/rules.utf8.ini');
     $pscws->set_ignore(true);
     $pscws->send_text($str);
     $words = $pscws->get_tops($lenght);

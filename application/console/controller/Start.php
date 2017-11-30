@@ -100,42 +100,8 @@ class Start extends Controller
         // dump(file_exists('../data/temp/'));
         // make_dir('./data/temp/dd');
         // die;
-        $cover_temp = '20171129/1511956974.jpeg';
-
-        $temp_arr    = explode('/', $cover_temp);
-        $images_file = './data/images/';
-        $time_file   = $temp_arr[0] . '/';
-        $filename    = $temp_arr[1];
-
-        if (!file_exists($images_file . $time_file)) {
-            //检查是否有该文件夹，如果没有就创建，并给予最高权限
-            make_dir($images_file . $time_file);
-        }
-
-        $temp_file = '../data/temp/' . $cover_temp;
-        $image     = \think\Image::open($temp_file);
-        if ($image) {
-            // 按照原图的比例生成一个最大为150*150的缩略图并保存为thumb.png
-            $new_file = $images_file . $time_file . $temp_arr[1];
-            if ($image->thumb(150, 150)->save($new_file)) {
-
-            };
-
-        }
-        die;
-        $base64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAA1CAYAAADlE3NNAAAAX0lEQVRoge3PQQ2AMADAwG3+BeBtTviACkJu6Slo57XvZxxq/R3wpeZUzamaUzWnak7VnKo5VXOq5lTNqZpTNadqTtWcqjlVc6rmVM2pmlM1p2pO1ZyqOVVzquZUR8+9N6QD1iO5d5QAAAAASUVORK5CYII=';
-
-        if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64, $result)) {
-            $type = $result[2];
-
-            $new_file = '../data/temp/' . date('Ymd', time()) . "/";
-            $new_file = $new_file . time() . ".{$type}";
-            if (file_put_contents($new_file, base64_decode(str_replace($result[1], '', $base64)))) {
-                return $new_file;
-            } else {
-                return 0;
-            }
-        }
+        $ddd = get_keywords('中国共产党你好贵阳黄平吃饭睡觉打灰魂牵梦萦朝秦暮楚夺需要硒鼓');
+        dump($ddd);
 
     }
     public function vue()

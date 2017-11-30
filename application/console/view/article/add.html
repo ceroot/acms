@@ -15,7 +15,7 @@
 <form action="{:url('renew')}" method="post" class="layui-form" role="form">
     {:widget('Widgets/form', ['type'=>'select','title'=>'所属分类','name'=>'cid','value'=>$one.cid,'datalist'=>$category])}
     {:widget('Widgets/form', ['type'=>'text','title'=>'内容标题','name'=>'title','value'=>$one.title,'elementid'=>'title','placeholder'=>'内容标题','layverify'=>'required','inline'=>0])}
-    {:widget('Widgets/form', ['type'=>'text','title'=>'内容关键字','name'=>'title','value'=>$one.title,'elementid'=>'keywords','placeholder'=>'内容关键字','aux'=>'（以英文逗号隔开，如果不填，系统自动获取）','inline'=>0])}
+    {:widget('Widgets/form', ['type'=>'text','title'=>'内容关键字','name'=>'keywords','value'=>$one.keywords,'elementid'=>'keywords','placeholder'=>'内容关键字','aux'=>'（以英文逗号隔开，如果不填，系统自动获取）','inline'=>0])}
     {:widget('Widgets/form', ['type'=>'textarea','title'=>'内容描述','name'=>'description','value'=>$one.description,'elementid'=>'description','placeholder'=>'内容关键字','aux'=>'（内容简介，如果不填，系统自动获取，限制在120个字以内）'])}
 
     <div class="layui-form-item layui-form-text form-group-sm">

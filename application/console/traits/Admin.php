@@ -220,13 +220,18 @@ trait Admin
                     // 封面图片处理
                     if ($data['cover']) {
                         $data['cover'] = $this->articleCover($data['cover']);
-                        $old_file      = $this->model->getFieldById($this->id, 'cover');
-                        session('old_file', $old_file);
+
                     } else {
                         unset($data['cover']);
                     }
                     // 对 ueditor 内容数据的处理
                     $data['content'] = ueditor_handle($data['content'], $data['title']);
+                    if (!$data['description']) {
+                        $data['description'] = get_description($data['content']);
+                    }
+                    if (!$data['keywords']) {
+                        $data['keywords'] = get_keywords($data['content']);
+                    }
                     # code...
                     break;
 
@@ -258,7 +263,10 @@ trait Admin
                         }
                         break;
                     case 'Article':
-                        # code...
+                        $old_file = $this->model->getFieldById($this->id, 'cover');
+                        if ($old_file) {
+                            $this->app->session->set('old_file', $old_file);
+                        }
                         break;
                     default:
                         # code...
@@ -338,11 +346,14 @@ trait Admin
                             $this->articleCover($data['cover'], 2);
 
                             // 删除旧封面处理
-                            $old_file = session('old_file');
-                            session('old_file', null);
-                            $images_path   = './data/images/';
-                            $old_file_path = $images_path . $old_file;
-                            unlink($old_file_path);
+                            if ($this->app->session->has('old_file')) {
+                                $old_file      = $this->app->session->pull('old_file');
+                                $images_path   = './data/images/';
+                                $old_file_path = $images_path . $old_file;
+                                if (file_exists($old_file_path)) {
+                                    unlink($old_file_path);
+                                }
+                            }
 
                         }
                         // return $data;
@@ -409,14 +420,18 @@ trait Admin
                 make_dir($allPath);
             }
 
-            $tempFilePath = $pathTemp . $coverData;
-            $image        = \think\Image::open($tempFilePath);
-            if ($image) {
-                $filePath = $allPath . $filename;
-                // 按照原图的比例生成一个最大为150*150的缩略图并保存为封面图像
-                if ($image->thumb(150, 150)->save($filePath)) {
-                    unlink($tempFilePath); // 删除临时文件
-                };
+            $tempFilePath = $pathTemp . $coverData; // 临时文件位置
+
+            // 检查文件是否存在
+            if (file_exists($tempFilePath)) {
+                $image = \think\Image::open($tempFilePath);
+                if ($image) {
+                    $filePath = $allPath . $filename;
+                    // 按照原图的比例生成一个最大为150*150的缩略图并保存为封面图像
+                    if ($image->thumb(150, 150)->save($filePath)) {
+                        unlink($tempFilePath); // 删除临时文件
+                    };
+                }
             }
         }
 
