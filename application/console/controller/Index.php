@@ -25,6 +25,7 @@ class Index extends Base
         $this->assign('info', $this->serverInfo());
         $this->assign('extensionsList', $this->extensionsList());
 
+        $this->assign('articleCount', App::model('Article')->count());
         $this->assign('userCount', App::model('UcenterMember')->count());
         $this->assign('actionCount', App::model('ActionLog')->count());
 
