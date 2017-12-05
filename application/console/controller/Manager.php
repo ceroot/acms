@@ -114,10 +114,24 @@ class Manager extends Base
                 return $this->error('参数错误');
             }
 
-            $uid = $this->model->getFieldById($this->id, 'uid'); // 取得用户 id
+            if (!$data['oldpassword']) {
+                return $this->error('请先输入旧密码');
+            }
 
+            $uid = $this->model->getFieldById($this->id, 'uid'); // 取得用户 id
             if (!$uid) {
                 return $this->error('数据有误');
+            }
+
+            $user = $this->model::get($uid, 'UcenterMember');
+            // return $user;
+
+            // $password = $this->md5sha1($data['oldpassword'], $user['salt']);
+            $password = md5(sha1($data['oldpassword']) . sha1($user['salt']));
+            // User::checkPassword($password, $user['password']);
+            return $password;
+            if (!User::checkPassword($password, $user['password'])) {
+                return $this->error('旧密码错误');
             }
 
             $result = $this->validate($data, 'app\common\validate\UcenterMember.password'); // 数据验证
