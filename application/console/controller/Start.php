@@ -20,6 +20,7 @@ use app\facade\User;
 use QL\QueryList;
 use think\Controller;
 use think\facade\App;
+use think\facade\Config;
 use think\facade\Hook;
 use think\facade\Request;
 use think\facade\Session;
@@ -100,6 +101,11 @@ class Start extends Controller
         // dump(file_exists('../data/temp/'));
         // make_dir('./data/temp/dd');
         // die;
+        dump(User::encryptPassword(123));
+        $v = 0;
+        $d = $passwordType = Config::get('passwordhash.password_type') ?: PASSWORD_DEFAULT;
+        dump($d);
+
         $ddd = get_keywords('根据《省教育厅省财政厅 省人力资源和社会保障厅 省机构编制委员会办公室关于印发〈贵州省2014年农村义务教育阶段学校教师特设岗位计划实施方案〉的通知》（黔教师发〔2014〕113号）、《州人社局 州教育局关于办理“特岗教师”聘用手续有关问题的通知》（黔南人社通〔2012〕75号）文件精神和县人民政府《惠水县2014年特岗计划承诺书》的相关承诺，经审核，目前有赵成妹等251名“特岗教师”符合服务期满接转到当地任教的条件，经惠水县人民政府常务会议研究，同意将赵成妹等251名“特岗教师”接转为我县正式教师。现进行公示，公示期自发布之日起七个工作日。');
         dump($ddd);
 

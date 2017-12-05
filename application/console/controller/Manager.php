@@ -20,6 +20,7 @@ namespace app\console\controller;
 
 use app\console\controller\Base;
 use app\facade\User;
+use think\facade\Log;
 
 class Manager extends Base
 {
@@ -115,6 +116,7 @@ class Manager extends Base
             }
 
             if (!$data['oldpassword']) {
+
                 return $this->error('请先输入旧密码');
             }
 
@@ -123,15 +125,13 @@ class Manager extends Base
                 return $this->error('数据有误');
             }
 
-            $user = $this->model::get($uid, 'UcenterMember');
-            // return $user;
+            $user         = $this->model::get($uid, 'UcenterMember');
+            $userPassword = $this->ucenterMember->getFieldById($uid, 'password');
 
-            // $password = $this->md5sha1($data['oldpassword'], $user['salt']);
-            $password = md5(sha1($data['oldpassword']) . sha1($user['salt']));
-            // User::checkPassword($password, $user['password']);
-            return $password;
-            if (!User::checkPassword($password, $user['password'])) {
+            if (!password_verify($data['oldpassword'], $userPassword)) {
+                Log::record('[修改密码 ]：旧密码错误');
                 return $this->error('旧密码错误');
+
             }
 
             $result = $this->validate($data, 'app\common\validate\UcenterMember.password'); // 数据验证
@@ -195,8 +195,7 @@ class Manager extends Base
                         $salt = getrandom(10, 1);
                     }
                     $data['salt']     = $salt;
-                    $data['password'] = User::encryptPassword($data['password'], $salt); // 密码加密
-
+                    $data['password'] = User::encryptPassword($data['password']); // 密码加密
                 } else {
                     unset($data['password']);
                 }
@@ -222,7 +221,7 @@ class Manager extends Base
                 }
 
                 $salt             = getrandom(10, 1);
-                $data['password'] = User::encryptPassword($data['password'], $salt);
+                $data['password'] = User::encryptPassword($data['password']); // 密码加密
                 $data['salt']     = $salt; // 增加 salt
 
                 $status = $this->ucenterMember->save($data); // 数据保存

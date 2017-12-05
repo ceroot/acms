@@ -20,6 +20,7 @@ namespace app\common\structure;
 
 use app\common\traits\Models;
 use think\facade\App;
+use think\facade\Config;
 use think\facade\Log;
 use think\facade\Session;
 
@@ -73,8 +74,7 @@ class User
                 return false;
             }
 
-            $password = $this->md5sha1($password, $user['salt']);
-            if (!$this->checkPassword($password, $user['password'])) {
+            if (!password_verify($password, $user['password'])) {
                 $this->error = '密码错误';
                 Log::record('[登录错误记录 ]：' . $this->error);
                 return false;
@@ -158,9 +158,8 @@ class User
      */
     public function modifyPassword($id, $password)
     {
-        // $salt = $this->UcenterMember->getFieldById($id, 'salt');
         $data             = $this->UcenterMember->get($id);
-        $data['password'] = $this->encryptPassword($password, $data['salt']);
+        $data['password'] = $this->encryptPassword($password);
         $status           = $data->save($data);
         return $status ? true : false;
     }
@@ -241,38 +240,18 @@ class User
     }
 
     /**
-     * [ encryptPassword 密码加密 ]
+     * [ encryptPassword 密码加密 ] 弃用
      * @Author   SpringYang
      * @Email    ceroot@163.com
      * @DateTime 2017-10-24T17:35:25+0800
      * @param    string                   $password [description]
-     * @param    string                   $salt     [description]
      * @return   string                             [description]
      */
-    public function encryptPassword($password, $salt)
+    public function encryptPassword($password)
     {
-        $password = $this->md5sha1($password, $salt);
-        // 初始化散列器为不可移植(这样更安全)
-        $PasswordHashs = new \PasswordHash(8, false);
-        // $hashedPassword 是一个长度为 60 个字符的字符串.
-        $hashedPassword = $PasswordHashs->HashPassword($password);
-        return $hashedPassword;
-    }
-
-    /**
-     *[ checkPassword 检测密码 ]
-     *
-     */
-    public function checkPassword($password, $hashedPassword)
-    {
-        $PasswordHashs = new \PasswordHash(8, false);
-        $status        = $PasswordHashs->CheckPassword($password, $hashedPassword);
-        return $status ? true : false;
-    }
-
-    private function md5sha1($password, $salt)
-    {
-        return md5(sha1($password) . sha1($salt));
+        $passwordType = Config::get('passwordhash.password_type') ?: PASSWORD_DEFAULT;
+        $cost         = Config::get('passwordhash.cost') ?: 12;
+        return password_hash($password, $passwordType, ['cost' => $cost]);
     }
 
     /**
