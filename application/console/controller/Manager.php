@@ -116,7 +116,6 @@ class Manager extends Base
             }
 
             if (!$data['oldpassword']) {
-
                 return $this->error('请先输入旧密码');
             }
 
