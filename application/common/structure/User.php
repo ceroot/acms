@@ -60,7 +60,6 @@ class User
             ];
 
             $user = $this->UcenterMember->where($map)->field($field)->find();
-            $user = $user->getData();
 
             if (!$user) {
                 $this->error = '用户不存在';
@@ -68,7 +67,7 @@ class User
                 return false;
             }
 
-            if (!$user['status']) {
+            if (!$user->getData('status')) {
                 $this->error = '用户锁定中，请联系管理员';
                 Log::record('[ 登录错误记录 ]：' . $this->error);
                 return false;
