@@ -68,7 +68,7 @@ class Start extends Controller
                 }
             }
             $user = User::login($username, $password); // 用户登录验证
-            // return $user;
+
             // 验证不成功时
             if (!$user) {
                 Session::set('error_num', $error_num + 1); // 错误次数加 1

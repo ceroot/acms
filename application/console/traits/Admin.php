@@ -263,10 +263,21 @@ trait Admin
                         }
                         break;
                     case 'Article':
-                        $old_file = $this->model->getFieldById($this->id, 'cover');
-                        if ($old_file) {
-                            $this->app->session->set('old_file', $old_file);
+                        $old_file_cover = $this->model->getFieldById($this->id, 'cover');
+                        if ($old_file_cover) {
+                            $this->app->session->set('old_file', $old_file_cover);
                         }
+
+                        $contentForm = $data['content'];
+                        if ($contentForm) {
+                            // $contentSql = $this->model->where('id', $data[$pk])->value('content');
+                            $contentSql = $this->model->getFieldById($this->id, 'content');
+                            if (!empty($contentSql)) {
+                                // 对比判断并删除操作
+                                $del_file = del_file($contentForm, $contentSql);
+                            }
+                        }
+
                         break;
                     default:
                         # code...
@@ -279,16 +290,6 @@ trait Admin
                 $validate = $this->app->validate($this->app->request->controller());
                 if (!$validate->scene('edit')->check($data)) {
                     return $this->error($validate->getError());
-                }
-
-                $contentForm = $data['content'];
-                if ($contentForm) {
-                    // $contentSql = $this->model->where('id', $data[$pk])->value('content');
-                    $contentSql = $this->model->getFieldById($this->id, 'content');
-                    if (!empty($contentSql)) {
-                        // 对比判断并删除操作
-                        $del_file = del_file($contentForm, $contentSql);
-                    }
                 }
 
                 // 数据保存
@@ -347,9 +348,9 @@ trait Admin
 
                             // 删除旧封面处理
                             if ($this->app->session->has('old_file')) {
-                                $old_file      = $this->app->session->pull('old_file');
-                                $images_path   = './data/images/';
-                                $old_file_path = $images_path . $old_file;
+                                $old_file_cover = $this->app->session->pull('old_file');
+                                $images_path    = './data/images/';
+                                $old_file_path  = $images_path . $old_file_cover;
                                 if (file_exists($old_file_path)) {
                                     unlink($old_file_path);
                                 }
