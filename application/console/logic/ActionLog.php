@@ -32,10 +32,11 @@ class ActionLog extends Model
      * @param  string   $model      [触发行为的模型名]
      * @param  int      $record_id  [触发行为的记录id]
      * @param  int      $user_id    [执行行为的用户id]
+     * @param  string   $actioninfo [记录信息]
      * @return Array
      * @author SpringYang <ceroot@163.com>
      */
-    public function actionLogRun($record_id = null, $action = null, $model = null, $user_id = null)
+    public function actionLogRun($record_id = null, $action = null, $model = null, $user_id = null, $actioninfo = null)
     {
 
         // 参数检查
@@ -72,41 +73,46 @@ class ActionLog extends Model
             return '该行为被禁用或删除';
         }
 
-        // 取得日志规则
-        $action_log = $action_info['log'];
+        if (!$actioninfo) {
 
-        // 解析日志规则,生成日志备注
-        if (!empty($action_log)) {
+            // 取得日志规则
+            $action_log = $action_info['log'];
 
-            if (preg_match_all('/\[(\S+?)\]/', $action_log, $match)) {
-                $log['user_id']  = $user_id;
-                $log['record']   = $record_id;
-                $log['model']    = $model;
-                $log['time']     = time();
-                $log['table_id'] = $model . '|' . $record_id;
-                $log['type']     = Session::get('log_text');
-                $log['data']     = array('user_id' => $user_id, 'model' => $model, 'record' => $record_id, 'time' => time());
+            // 解析日志规则,生成日志备注
+            if (!empty($action_log)) {
 
-                foreach ($match[1] as $key => $value) {
-                    //dump($value);
-                    $param = explode('|', $value);
+                if (preg_match_all('/\[(\S+?)\]/', $action_log, $match)) {
+                    $log['user_id']  = $user_id;
+                    $log['record']   = $record_id;
+                    $log['model']    = $model;
+                    $log['time']     = time();
+                    $log['table_id'] = $model . '|' . $record_id;
+                    $log['type']     = Session::get('log_text');
+                    $log['data']     = array('user_id' => $user_id, 'model' => $model, 'record' => $record_id, 'time' => time());
 
-                    if (isset($param[1])) {
-                        $replace[] = call_user_func($param[1], $log[$param[0]]);
+                    foreach ($match[1] as $key => $value) {
+                        //dump($value);
+                        $param = explode('|', $value);
 
-                    } else {
-                        $replace[] = $log[$param[0]];
+                        if (isset($param[1])) {
+                            $replace[] = call_user_func($param[1], $log[$param[0]]);
+
+                        } else {
+                            $replace[] = $log[$param[0]];
+                        }
+
                     }
-
+                    // return $replace;
+                    $data['remark'] = str_replace($match[0], $replace, $action_log);
+                } else {
+                    $data['remark'] = $action_log;
                 }
-                // return $replace;
-                $data['remark'] = str_replace($match[0], $replace, $action_log);
             } else {
-                $data['remark'] = $action_log;
+                // 未定义日志规则，记录操作url
+                $data['remark'] = '操作url：' . $_SERVER['REQUEST_URI'];
             }
         } else {
-            // 未定义日志规则，记录操作url
-            $data['remark'] = '操作url：' . $_SERVER['REQUEST_URI'];
+            $data['remark'] = $actioninfo;
         }
 
         // 数据组合

@@ -43,8 +43,6 @@ class Start extends Controller
      */
     public function index()
     {
-        // dump(input('backurl'));die;
-        // session(null);
         if (Request::isPost()) {
             /******接收数据******/
             $username = Request::param('username'); // 用户名
@@ -70,13 +68,16 @@ class Start extends Controller
                 }
             }
             $user = User::login($username, $password); // 用户登录验证
-            $uid  = $user['id'];
-
+            // return $user;
             // 验证不成功时
             if (!$user) {
                 Session::set('error_num', $error_num + 1); // 错误次数加 1
+                $actioninfo = '用户' . $username . '登录失败，失败原因：' . User::getError();
+                Hook::listen('action_log', ['action' => 'login', 'record_id' => 0, 'model' => 'manager', 'actioninfo' => $actioninfo]); // 行为日志记录
                 return $this->error(User::getError(), '', array('error_num' => $error_num, 'verifyhtml' => $this->verifyhtml()));
             }
+
+            $uid = $user['id'];
 
             $manager = $this->model->login($uid); // 管理员用户验证并返回管理用户信息
             $manager || $this->error($this->model->getError(), '', array('error_num' => $error_num)); // 用户不存在返回提示
@@ -94,15 +95,45 @@ class Start extends Controller
             return $this->fetch();
         }
     }
-    public function test($id = null)
+    public function test()
     {
+
         // dump(is_dir('../data/temp/'));
         // dump(file_exists('../data/temp/'));
         // make_dir('./data/temp/dd');
         // die;
-        $ddd = get_keywords('根据《省教育厅省财政厅 省人力资源和社会保障厅 省机构编制委员会办公室关于印发〈贵州省2014年农村义务教育阶段学校教师特设岗位计划实施方案〉的通知》（黔教师发〔2014〕113号）、《州人社局 州教育局关于办理“特岗教师”聘用手续有关问题的通知》（黔南人社通〔2012〕75号）文件精神和县人民政府《惠水县2014年特岗计划承诺书》的相关承诺，经审核，目前有赵成妹等251名“特岗教师”符合服务期满接转到当地任教的条件，经惠水县人民政府常务会议研究，同意将赵成妹等251名“特岗教师”接转为我县正式教师。现进行公示，公示期自发布之日起七个工作日。');
-        dump($ddd);
+        $array = [1];
+        $dd    = $this->dd($array);
 
+    }
+
+    public function dd( ? array $array = [])
+    {
+        dump($array);
+    }
+    public function get_linux_runningTime()
+    {
+        if (false === ($str = @file("/proc/uptime"))) {
+            return false;
+        }
+
+        $str   = explode(" ", implode("", $str));
+        $str   = trim($str[0]);
+        $min   = $str / 60;
+        $hours = $min / 60;
+        $days  = floor($hours / 24);
+        $hours = floor($hours - ($days * 24));
+        $min   = floor($min - ($days * 60 * 24) - ($hours * 60));
+        if ($days !== 0) {
+            $res['uptime'] = $days . "天";
+        }
+
+        if ($hours !== 0) {
+            $res['uptime'] .= $hours . "小时";
+        }
+
+        $res['uptime'] .= $min . "分钟";
+        return $res;
     }
     public function vue()
     {

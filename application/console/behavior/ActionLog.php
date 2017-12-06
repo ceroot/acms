@@ -29,14 +29,16 @@ class ActionLog
     {
         // 先判断要不要执行
         if (Config::get('action_log') && Session::get('manager_id')) {
+
             $this->initialization();
 
-            array_key_exists('model', $params) || $params['model']         = null;
-            array_key_exists('action', $params) || $params['action']       = null;
-            array_key_exists('record_id', $params) || $params['record_id'] = 0;
-            array_key_exists('user_id', $params) || $params['user_id']     = 0;
+            array_key_exists('model', $params) || $params['model']           = null;
+            array_key_exists('action', $params) || $params['action']         = null;
+            array_key_exists('record_id', $params) || $params['record_id']   = 0;
+            array_key_exists('user_id', $params) || $params['user_id']       = 0;
+            array_key_exists('actioninfo', $params) || $params['actioninfo'] = null;
 
-            return $this->actionLog($record_id = $params['record_id'], $action = $params['action'], $model = $params['model'], $user_id = $params['user_id']);
+            return $this->actionLog($record_id = $params['record_id'], $action = $params['action'], $model = $params['model'], $user_id = $params['user_id'], $actioninfo = $params['actioninfo']);
 
         }
 
@@ -60,9 +62,9 @@ class ActionLog
      * @param    integer                   $id [description]
      * @return   [type]                        [description]
      */
-    private function actionLog($record_id = null, $action = null, $model = null, $user_id = null)
+    private function actionLog($record_id = null, $action = null, $model = null, $user_id = null, $actioninfo = null)
     {
-        $result = App::model('ActionLog')->actionLogRun($record_id, $action, $model, $user_id);
+        $result = App::model('ActionLog')->actionLogRun($record_id, $action, $model, $user_id, $actioninfo);
         if ($result) {
             Log::record('[ 行为日志 ]：行为记录执行成功');
         } else {

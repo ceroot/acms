@@ -35,11 +35,12 @@ class ActionLog extends Extend
      * @param  string   $model      [触发行为的模型名]
      * @param  int      $record_id  [触发行为的记录id]
      * @param  int      $user_id    [执行行为的用户id]
+     * @param  string   $actioninfo [记录信息]
      * @return boolean
      */
-    public function actionLogRun($record_id = null, $action = null, $model = null, $user_id = null)
+    public function actionLogRun($record_id = null, $action = null, $model = null, $user_id = null, $actioninfo = null)
     {
-        $data = App::model('ActionLog', 'logic')->actionLogRun($record_id, $action, $model, $user_id);
+        $data = App::model('ActionLog', 'logic')->actionLogRun($record_id, $action, $model, $user_id, $actioninfo);
         if (is_array($data)) {
             if ($this->data($data)->save()) {
                 return true;
