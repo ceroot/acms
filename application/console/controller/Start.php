@@ -102,15 +102,9 @@ class Start extends Controller
         // dump(file_exists('../data/temp/'));
         // make_dir('./data/temp/dd');
         // die;
-        $array = [1];
-        $dd    = $this->dd($array);
 
     }
 
-    public function dd( ? array $array = [])
-    {
-        dump($array);
-    }
     public function get_linux_runningTime()
     {
         if (false === ($str = @file("/proc/uptime"))) {

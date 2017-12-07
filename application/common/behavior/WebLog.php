@@ -59,6 +59,11 @@ class WebLog
             return true;
         }
 
+        // 搜索引擎蜘蛛判断
+        if ($this->checkrobot()) {
+            return true;
+        }
+
         // 不需要记录的请求方式 string
         $not_log_method_default = [];
         $not_log_method_config  = Config::get('weblog.not_log_method') ?: [];
@@ -141,6 +146,37 @@ class WebLog
             Log::record("[ 网站日志记录 ]：网站日志数据记录失败");
         };
 
+    }
+
+    private function checkrobot($useragent = '')
+    {
+        static $kw_spiders  = array('bot', 'crawl', 'spider', 'slurp', 'sohu-search', 'lycos', 'robozilla');
+        static $kw_browsers = array('msie', 'netscape', 'opera', 'konqueror', 'mozilla');
+
+        $useragent = strtolower(empty($useragent) ? $_SERVER['HTTP_USER_AGENT'] : $useragent);
+        if (strpos($useragent, 'http://') === false && $this->dstrpos($useragent, $kw_browsers)) {
+            return false;
+        }
+
+        if ($this->dstrpos($useragent, $kw_spiders)) {
+            return true;
+        }
+
+        return false;
+    }
+    private function dstrpos($string, $arr, $returnvalue = false)
+    {
+        if (empty($string)) {
+            return false;
+        }
+
+        foreach ((array) $arr as $v) {
+            if (strpos($string, $v) !== false) {
+                $return = $returnvalue ? $v : true;
+                return $return;
+            }
+        }
+        return false;
     }
 
 }
