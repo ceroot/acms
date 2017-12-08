@@ -28,9 +28,17 @@ class WebLog extends Extend
     protected $deleteTime = 'delete_time';
 
     // 取得来自地区，待完善
-    public function getFromAttr($value)
+    public function getFromAttr($value, $data)
     {
-        return '贵州';
+        $ip     = long2ip($data['create_ip']);
+        $url    = 'http://ip.taobao.com/service/getIpInfo.php?ip=' . $ip;
+        $result = file_get_contents($url);
+        $result = json_decode($result, true);
+        if ($result['code'] !== 0 || !is_array($result['data'])) {
+            return false;
+        }
+        $ipInfo = $result['data'];
+        return $ipInfo['region'] . $ipInfo['city'] . ' | ' . $ipInfo['isp'];
     }
 
 }

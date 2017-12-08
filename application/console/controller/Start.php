@@ -97,7 +97,27 @@ class Start extends Controller
     }
     public function test()
     {
+        // $url = 'http://ip.taobao.com/service/getIpInfo.php?ip=1.204.54.195';
+        // $ch  = curl_init();
+        // curl_setopt($ch, CURLOPT_URL, $url);
+        // curl_setopt($ch, CURLOPT_HEADER, true);
+        // curl_setopt($ch, CURLOPT_NOBODY, true); // remove body
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // $head     = curl_exec($ch);
+        // $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        // curl_close($ch);
 
+        $url    = 'http://ip.taobao.com/service/getIpInfo.php?ip=1.204.54.195';
+        $result = file_get_contents($url);
+        $result = json_decode($result, true);
+        if ($result['code'] !== 0 || !is_array($result['data'])) {
+            return false;
+        }
+
+        $data = $result['data'];
+
+        dump($data);
+        dump($data['region'] . $data['city'] . '|' . $data['isp']);
         // dump(is_dir('../data/temp/'));
         // dump(file_exists('../data/temp/'));
         // make_dir('./data/temp/dd');
