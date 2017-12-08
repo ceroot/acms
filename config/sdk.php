@@ -29,4 +29,9 @@ return [
         'app_secret' => 'app_secret', //应用注册成功后分配的KEY
         'callback'   => '',
     ],
+    'sina'   => [
+        'app_key'    => '1667660948', // 应用注册成功后分配的 APP ID
+        'app_secret' => 'fb01aa84fd0d5ca15c9121366ae22518', //应用注册成功后分配的KEY
+        'callback'   => URL_CALLBACK . 'sina',
+    ],
 ];
