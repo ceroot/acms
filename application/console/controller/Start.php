@@ -97,6 +97,10 @@ class Start extends Controller
     }
     public function test()
     {
+        $date = 20171203;
+        $dd   = strtotime($date);
+        dump($dd);
+        die;
         // $url = 'http://ip.taobao.com/service/getIpInfo.php?ip=1.204.54.195';
         // $ch  = curl_init();
         // curl_setopt($ch, CURLOPT_URL, $url);

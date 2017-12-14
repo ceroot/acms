@@ -101,38 +101,48 @@ class Bing
         if (!$type) {
             $this->error('参数错误');
         }
+        $wallpaperdata = $this->getWallpaperData();
+        dump($wallpaperdata);
+        $scenicData = $this->getScenicData();
 
+        dump($scenicData);
+        die;
+
+        Db::name('bingwallpaper')->insert($data);
+
+    }
+
+    private function getWallpaperData($type = 0)
+    {
         $sourcecode = file_get_contents('http://cn.bing.com/HPImageArchive.aspx?idx=0&n=1'); // 采集网址
 
+        $oldurl    = '';
+        $oldurlbig = '';
+
         if (preg_match("/<url>(.+?)<\/url>/ies", $sourcecode, $matchesurl)) {
-            $oldurl = 'http://cn.bing.com' . $matchesurl[1];
-            echo 'oldurl：' . $oldurl; // 原 url
-            echo '<br/><br/>';
+            $oldurl    = 'http://cn.bing.com' . $matchesurl[1];
             $oldurlbig = str_ireplace('1366x768', '1920x1080', $oldurl);
-            echo 'oldurl：' . $oldurlbig; // 原 url
-            echo '<br/><br/>';
         }
 
         $oldname = str_replace("/az/hprichbg/rb/", "", $matchesurl[1]);
-        echo 'oldname：' . $oldname; // 原名称
-        echo '<br/><br/>';
 
         //$picformat    = strstr($oldname,'.');    // 图片格式
         $picformat = '.' . pathinfo($oldurl, PATHINFO_EXTENSION); // 图片格式
-        echo 'picformat：' . $picformat;
-        echo '<br/><br/>';
 
+        $remark = '';
         if (preg_match("/<copyright>(.+?)<\/copyright>/ies", $sourcecode, $matchesremark)) {
             $remark = $matchesremark[1]; // 图片标题（有作者）
-            echo 'remark：' . $remark;
-            echo '<br/><br/>';
+        }
+
+        $author = '';
+        if (preg_match('/\((.+?)\)/', $remark, $matcheauthor)) {
+            $authorArr = explode('©', $matcheauthor[1]);
+            $author    = trim($authorArr[1]);
         }
 
         $title = trim(preg_replace("/\((.*)\)/", "", $remark)); // 去掉小括号里的内容和前后的空格
-        echo 'title：' . $title; // 图片标题
-        echo '<br/><br/>';
 
-        $desc = '';
+        $description = '';
         if (preg_match_all("/<hotspot>(.+?)<\/hotspot>/ies", $sourcecode, $matcheshotspot)) {
             $hotspot = $matcheshotspot[1];
             $count   = count($hotspot);
@@ -140,37 +150,25 @@ class Bing
             for ($i = 0; $i < $count; $i++) {
                 if (preg_match_all("/<desc>(.+?)<\/desc>/ies", $hotspot[$i], $matchesdesc)) {
                     $descArr = $matchesdesc[1];
-                    $desc .= $descArr[0];
+                    $description .= $descArr[0];
                 }
                 if (preg_match_all("/<query>(.+?)<\/query>/ies", $hotspot[$i], $matchesquery)) {
                     $queryArr = $matchesquery[1];
                     $desc .= $queryArr[0];
                 }
             }
-            echo 'desc：' . $desc; // 图片描述
-            echo '<br/><br/>';
+
         }
 
-        $year = date('Y'); // 年
-        echo 'year：' . $year;
-        echo '<br/><br/>';
-        $month = date('m'); // 月
-        echo 'month：' . $month;
-        echo '<br/><br/>';
-        $country = 'CN'; // 国别
-        echo 'country：' . $country;
-        echo '<br/><br/>';
-        $addtime = date('Y-m-d H:m:s'); // 取得当前时间
-
-        echo 'addtime：' . $addtime;
-        echo '<br/><br/>';
-        $addtime = strtotime($addtime);
-        echo 'strtotime：' . $addtime;
-        echo '<br/><br/>';
+        $year       = date('Y'); // 年
+        $month      = date('m'); // 月
+        $country    = 'CN'; // 国别
+        $createtime = date('Y-m-d H:m:s'); // 取得当前时间
+        $createtime = strtotime($createtime);
+        $datesign   = $year . $month . date('d');
 
         // $basepath       = '/home/wwwroot/ceroot/domain/bing/web/wallpaper/' . $year . $month . '/';
-        $basepath = 'D:/www/bingwallpaper/' . $year . $month . '/';
-
+        $basepath      = 'D:/www/bingwallpaper/' . $year . $month . '/';
         $savepath      = $basepath; // 保存路径
         $savepathbig   = $basepath . '1920X1080/'; // 保存路径
         $savepathcn    = $basepath . 'cn/'; // 保存路径
@@ -187,14 +185,45 @@ class Bing
         $newnamecn    = mb_convert_encoding($filenamecn, "GB2312", "auto"); // 文件名编码转换
         $newnamecnbig = mb_convert_encoding($filenamecnbig, "GB2312", "auto"); // 文件名编码转换
 
-        echo 'newname：' . $newname;
-        echo '<br/><br/>';
-        echo 'newnamebig：' . $newnamebig;
-        echo '<br/><br/>';
-        echo 'newnamecn：' . $newnamecn;
-        echo '<br/><br/>';
-        echo 'newnamecnbig：' . $newnamecnbig;
-        echo '<br/><br/>';
+        if ($type) {
+            echo 'oldurl：' . $oldurl; // 原 url
+            echo '<br/><br/>';
+            echo 'oldurl：' . $oldurlbig; // 原 url
+            echo '<br/><br/>';
+            echo 'oldname：' . $oldname; // 原名称
+            echo '<br/><br/>';
+            echo 'picformat：' . $picformat;
+            echo '<br/><br/>';
+            echo 'remark：' . $remark;
+            echo '<br/><br/>';
+            echo 'author：' . $author;
+            echo '<br/><br/>';
+            echo 'title：' . $title; // 图片标题
+            echo '<br/><br/>';
+            echo 'description' . $description; // 图片描述
+            echo '<br/><br/>';
+            echo 'year：' . $year;
+            echo '<br/><br/>';
+            echo 'month：' . $month;
+            echo '<br/><br/>';
+            echo 'country：' . $country;
+            echo '<br/><br/>';
+            echo 'createtime：' . $createtime;
+            echo '<br/><br/>';
+            echo 'strtotime：' . $createtime;
+            echo '<br/><br/>';
+            echo 'datesign：' . $datesign;
+            echo '<br/><br/>';
+            echo 'newname：' . $newname;
+            echo '<br/><br/>';
+            echo 'newnamebig：' . $newnamebig;
+            echo '<br/><br/>';
+            echo 'newnamecn：' . $newnamecn;
+            echo '<br/><br/>';
+            echo 'newnamecnbig：' . $newnamecnbig;
+            echo '<br/><br/>';
+        }
+
         // die;
         // 执行保存
         $this->get_pic($oldurl, $newname, $savepath);
@@ -271,18 +300,96 @@ class Bing
             }
         }
 
-        $data['oldname'] = $oldname;
-        $data['newname'] = $newname;
-        $data['title']   = $title;
-        $data['remark']  = $remark;
-        $data['desc']    = $desc;
-        $data['oldurl']  = $oldurl;
-        $data['year']    = $year;
-        $data['month']   = $month;
-        $data['addtime'] = $addtime;
-        $data['country'] = $country;
+        $data['datesign']    = $datesign;
+        $data['oldname']     = $oldname;
+        $data['newname']     = $newname;
+        $data['title']       = $title;
+        $data['remark']      = $remark;
+        $data['author']      = $author;
+        $data['description'] = $description;
+        $data['oldurl']      = $oldurl;
+        $data['year']        = $year;
+        $data['month']       = $month;
+        $data['createtime']  = $createtime;
+        $data['country']     = $country;
 
-        Db::name('bingwallpaper')->insert($data);
+        return $data;
+    }
+
+    private function getScenicData($type = 0)
+    {
+        $data = QueryList::get('http://cn.bing.com/cnhp/life')->rules([
+            'title'                => ['.hplaDMLink .hplaTtl', 'text'],
+            'country'              => ['.hplaDMLink .hplaAttr', 'text'],
+            'hplatt'               => ['.hplaCata .hplatt', 'text'],
+            'hplats'               => ['.hplaCata .hplats', 'text'],
+            'desc'                 => ['.hplaCata #hplaSnippet', 'text'],
+
+            'brief0_title'         => ['.hplaCata .hplac:eq(0) .hplactt', 'text'],
+            'brief0_description'   => ['.hplaCata .hplac:eq(0) .hplactc', 'text'],
+            'brief1_title'         => ['.hplaCata .hplac:eq(1) .hplactt', 'text'],
+            'brief1_description'   => ['.hplaCata .hplac:eq(1) .hplactc', 'text'],
+            'brief2_title'         => ['.hplaCata .hplac:eq(2) .hplactt', 'text'],
+            'brief2_description'   => ['.hplaCata .hplac:eq(2) .hplactc', 'text'],
+            'brief3_title'         => ['.hplaCata .hplac:eq(3) .hplactt', 'text'],
+            'brief3_description'   => ['.hplaCata .hplac:eq(3) .hplactc', 'text'],
+
+            'details0_title'       => ['.hplaCard:eq(0) .hplatt span', 'text'],
+            'details0_description' => ['.hplaCard:eq(0) .hplats', 'text'],
+            'details0_img'         => ['.hplaCard:eq(0) .rms_img', 'src'],
+            'details0_content'     => ['.hplaCard:eq(0) .hplatxt', 'text'],
+            'details1_title'       => ['.hplaCard:eq(1) .hplatt span', 'text'],
+            'details1_description' => ['.hplaCard:eq(1) .hplats', 'text'],
+            'details1_img'         => ['.hplaCard:eq(1) .rms_img', 'src'],
+            'details1_content'     => ['.hplaCard:eq(1) .hplatxt', 'text'],
+
+        ])->query()->getData();
+
+        $scenic = $data->all();
+
+        dump($scenic);
+
+        $brief[0]['title']       = $scenic[0]['brief0_title'];
+        $brief[0]['description'] = $scenic[0]['brief0_description'];
+        $brief[1]['title']       = $scenic[0]['brief1_title'];
+        $brief[1]['description'] = $scenic[0]['brief1_description'];
+        $brief[2]['title']       = $scenic[0]['brief2_title'];
+        $brief[2]['description'] = $scenic[0]['brief2_description'];
+        $brief[3]['title']       = $scenic[0]['brief3_title'];
+        $brief[3]['description'] = $scenic[0]['brief3_description'];
+
+        $year     = date('Y'); // 年
+        $month    = date('m'); // 月
+        $basepath = 'D:/www/bingwallpaper/' . $year . $month . '/';
+        $savepath = $basepath . 'scenic/';
+
+        $imgOld1 = $scenic[1]['details0_img'];
+        $imgOld2 = $scenic[1]['details1_img'];
+
+        $detailsName1 = md5(microtime() . $this->getSuffix($imgOld1)) . '.jpg';
+        $detailsName2 = md5(microtime() . $this->getSuffix($imgOld2)) . '.jpg';
+
+        $this->get_pic($imgOld1, $detailsName1, $savepath);
+        $this->get_pic($imgOld2, $detailsName2, $savepath);
+
+        $details[0]['title']       = $scenic[0]['details0_title'];
+        $details[0]['description'] = $scenic[0]['details0_description'];
+        $details[0]['img']         = $detailsName1;
+        $details[0]['imgold']      = $scenic[1]['details0_img'];
+        $details[0]['content']     = $scenic[0]['details0_content'];
+        $details[1]['title']       = $scenic[0]['details1_title'];
+        $details[1]['description'] = $scenic[0]['details1_description'];
+        $details[1]['img']         = $detailsName2;
+        $details[1]['imgold']      = $scenic[1]['details1_img'];
+        $details[1]['content']     = $scenic[0]['details1_content'];
+
+        $scenicData['brief']   = $brief;
+        $scenicData['details'] = $details;
+
+        if ($type) {
+            dump($scenicData);
+        }
+        return $scenicData;
 
     }
 
