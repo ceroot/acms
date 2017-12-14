@@ -162,8 +162,6 @@ class Bing {
 		$year = date('Y'); // 年
 		$month = date('m'); // 月
 		$country = 'CN'; // 国别
-		$createtime = date('Y-m-d H:m:s'); // 取得当前时间
-		$createtime = strtotime($createtime);
 		$datesign = $year . $month . date('d');
 
 		// $basepath       = '/home/wwwroot/ceroot/domain/bing/web/wallpaper/' . $year . $month . '/';
@@ -206,10 +204,6 @@ class Bing {
 			echo 'month：' . $month;
 			echo '<br/><br/>';
 			echo 'country：' . $country;
-			echo '<br/><br/>';
-			echo 'createtime：' . $createtime;
-			echo '<br/><br/>';
-			echo 'strtotime：' . $createtime;
 			echo '<br/><br/>';
 			echo 'datesign：' . $datesign;
 			echo '<br/><br/>';
@@ -309,7 +303,6 @@ class Bing {
 		$data['oldurl'] = $oldurl;
 		$data['year'] = $year;
 		$data['month'] = $month;
-		$data['createtime'] = $createtime;
 		$data['country'] = $country;
 
 		return $data;
