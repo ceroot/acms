@@ -38,8 +38,8 @@ class Bing
         // $sourcecode = file_get_contents('http://cn.bing.com'); // 采集网址
         // dump($sourcecode);
         $data = QueryList::get('http://cn.bing.com/cnhp/life')->rules([
-            'title'           => ['.hplaDMLink .hplaTtl', 'text'],
-            'country'         => ['.hplaDMLink .hplaAttr', 'text'],
+            'title'           => ['.hplaT .hplaTtl', 'text'],
+            'country'         => ['.hplaT .hplaAttr', 'text'],
             'hplatt'          => ['.hplaCata .hplatt', 'text'],
             'hplats'          => ['.hplaCata .hplats', 'text'],
             'desc'            => ['.hplaCata #hplaSnippet', 'text'],
@@ -101,11 +101,15 @@ class Bing
         if (!$type) {
             $this->error('参数错误');
         }
-        $wallpaperdata = $this->getWallpaperData();
-        dump($wallpaperdata);
-        $scenicData = $this->getScenicData();
+        $wallpaperData = $this->getWallpaperData();
+        // dump($wallpaperData);
 
-        dump($scenicData);
+        $scenicData = $this->getScenicData();
+        dump($scenicData['brief']);
+        dump($scenicData['details']);
+
+        $wallpaperData = array_merge($wallpaperData, $scenicData['bing']);
+        dump($wallpaperData);
         die;
 
         Db::name('bingwallpaper')->insert($data);
@@ -129,18 +133,18 @@ class Bing
         //$picformat    = strstr($oldname,'.');    // 图片格式
         $picformat = '.' . pathinfo($oldurl, PATHINFO_EXTENSION); // 图片格式
 
-        $remark = '';
+        $titlelong = '';
         if (preg_match("/<copyright>(.+?)<\/copyright>/ies", $sourcecode, $matchesremark)) {
-            $remark = $matchesremark[1]; // 图片标题（有作者）
+            $titlelong = $matchesremark[1]; // 图片标题（有作者）
         }
 
         $author = '';
-        if (preg_match('/\((.+?)\)/', $remark, $matcheauthor)) {
+        if (preg_match('/\((.+?)\)/', $titlelong, $matcheauthor)) {
             $authorArr = explode('©', $matcheauthor[1]);
             $author    = trim($authorArr[1]);
         }
 
-        $title = trim(preg_replace("/\((.*)\)/", "", $remark)); // 去掉小括号里的内容和前后的空格
+        $title = trim(preg_replace("/\((.*)\)/", "", $titlelong)); // 去掉小括号里的内容和前后的空格
 
         $description = '';
         if (preg_match_all("/<hotspot>(.+?)<\/hotspot>/ies", $sourcecode, $matcheshotspot)) {
@@ -194,7 +198,7 @@ class Bing
             echo '<br/><br/>';
             echo 'picformat：' . $picformat;
             echo '<br/><br/>';
-            echo 'remark：' . $remark;
+            echo 'titlelong：' . $titlelong;
             echo '<br/><br/>';
             echo 'author：' . $author;
             echo '<br/><br/>';
@@ -304,7 +308,7 @@ class Bing
         $data['oldname']     = $oldname;
         $data['newname']     = $newname;
         $data['title']       = $title;
-        $data['remark']      = $remark;
+        $data['titlelong']   = $titlelong;
         $data['author']      = $author;
         $data['description'] = $description;
         $data['oldurl']      = $oldurl;
@@ -319,11 +323,12 @@ class Bing
     private function getScenicData($type = 0)
     {
         $data = QueryList::get('http://cn.bing.com/cnhp/life')->rules([
-            'title'                => ['.hplaDMLink .hplaTtl', 'text'],
-            'country'              => ['.hplaDMLink .hplaAttr', 'text'],
+            'hplaTtl'              => ['#hplaT .hplaTtl', 'text'],
+            'hplaAttr'             => ['#hplaT .hplaAttr', 'text'],
             'hplatt'               => ['.hplaCata .hplatt', 'text'],
             'hplats'               => ['.hplaCata .hplats', 'text'],
-            'desc'                 => ['.hplaCata #hplaSnippet', 'text'],
+
+            'description'          => ['.hplaCata #hplaSnippet', 'text'],
 
             'brief0_title'         => ['.hplaCata .hplac:eq(0) .hplactt', 'text'],
             'brief0_description'   => ['.hplaCata .hplac:eq(0) .hplactc', 'text'],
@@ -335,26 +340,37 @@ class Bing
             'brief3_description'   => ['.hplaCata .hplac:eq(3) .hplactc', 'text'],
 
             'details0_title'       => ['.hplaCard:eq(0) .hplatt span', 'text'],
-            'details0_description' => ['.hplaCard:eq(0) .hplats', 'text'],
+            'details0_resume'      => ['.hplaCard:eq(0) .hplats', 'text'],
             'details0_img'         => ['.hplaCard:eq(0) .rms_img', 'src'],
-            'details0_content'     => ['.hplaCard:eq(0) .hplatxt', 'text'],
+            'details0_description' => ['.hplaCard:eq(0) .hplatxt', 'text'],
             'details1_title'       => ['.hplaCard:eq(1) .hplatt span', 'text'],
-            'details1_description' => ['.hplaCard:eq(1) .hplats', 'text'],
+            'details1_resume'      => ['.hplaCard:eq(1) .hplats', 'text'],
             'details1_img'         => ['.hplaCard:eq(1) .rms_img', 'src'],
-            'details1_content'     => ['.hplaCard:eq(1) .hplatxt', 'text'],
+            'details1_description' => ['.hplaCard:eq(1) .hplatxt', 'text'],
 
         ])->query()->getData();
 
-        $scenic = $data->all();
+        $scenic   = $data->all();
+        $datesign = date('Y') . date('m') . date('d');
 
-        dump($scenic);
+        // dump($scenic);
 
+        $bing['item_ttl']    = $scenic[0]['hplaTtl'];
+        $bing['item_attr']   = $scenic[0]['hplaAttr'];
+        $bing['item_tt']     = $scenic[0]['hplatt'];
+        $bing['item_ts']     = $scenic[0]['hplats'];
+        $bing['description'] = $scenic[0]['description'];
+
+        $brief[0]['datesign']    = $datesign;
         $brief[0]['title']       = $scenic[0]['brief0_title'];
         $brief[0]['description'] = $scenic[0]['brief0_description'];
+        $brief[1]['datesign']    = $datesign;
         $brief[1]['title']       = $scenic[0]['brief1_title'];
         $brief[1]['description'] = $scenic[0]['brief1_description'];
+        $brief[2]['datesign']    = $datesign;
         $brief[2]['title']       = $scenic[0]['brief2_title'];
         $brief[2]['description'] = $scenic[0]['brief2_description'];
+        $brief[3]['datesign']    = $datesign;
         $brief[3]['title']       = $scenic[0]['brief3_title'];
         $brief[3]['description'] = $scenic[0]['brief3_description'];
 
@@ -372,17 +388,20 @@ class Bing
         $this->get_pic($imgOld1, $detailsName1, $savepath);
         $this->get_pic($imgOld2, $detailsName2, $savepath);
 
+        $details[0]['datesign']    = $datesign;
         $details[0]['title']       = $scenic[0]['details0_title'];
-        $details[0]['description'] = $scenic[0]['details0_description'];
+        $details[0]['resume']      = $scenic[0]['details0_resume'];
         $details[0]['img']         = $detailsName1;
         $details[0]['imgold']      = $scenic[1]['details0_img'];
-        $details[0]['content']     = $scenic[0]['details0_content'];
+        $details[0]['description'] = $scenic[0]['details0_description'];
+        $details[1]['datesign']    = $datesign;
         $details[1]['title']       = $scenic[0]['details1_title'];
-        $details[1]['description'] = $scenic[0]['details1_description'];
+        $details[1]['resume']      = $scenic[0]['details1_resume'];
         $details[1]['img']         = $detailsName2;
         $details[1]['imgold']      = $scenic[1]['details1_img'];
-        $details[1]['content']     = $scenic[0]['details1_content'];
+        $details[1]['description'] = $scenic[0]['details1_description'];
 
+        $scenicData['bing']    = $bing;
         $scenicData['brief']   = $brief;
         $scenicData['details'] = $details;
 
