@@ -58,7 +58,8 @@ class Bing extends Controller {
 
 	public function test() {
 		$data = model('BingWallpaper')->select();
-		dump($data);
+        // $datesign = $data['datesign'];
+		dump($datesign);
 	}
 
 	/**
