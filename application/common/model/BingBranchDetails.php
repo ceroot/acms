@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------+
 /**
  *
- * @filename  BingScenicDetails.php
+ * @filename  BingBranchDetails.php
  * @authors   SpringYang
  * @email     ceroo@163.com
  * @QQ        525566309
@@ -21,6 +21,7 @@ namespace app\common\model;
 
 use app\common\model\Extend;
 
-class BingScenicDetails extends Extend {
+class BingBranchDetails extends Extend
+{
 
 }

@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------+
 /**
  *
- * @filename  BingScenicBrief.php
+ * @filename  BingWallpaper.php
  * @authors   SpringYang
  * @email     ceroo@163.com
  * @QQ        525566309
@@ -17,10 +17,18 @@
  * @version   $Id$
  */
 
-namespace app\common\model;
+namespace app\common\validate;
 
-use app\common\model\Extend;
+use think\Validate;
 
-class BingScenicBrief extends Extend {
+class BingWallpaper extends Validate
+{
+    protected $rule = [
+        'title' => 'require|unique:BingWallpaper',
+    ];
 
+    protected $message = [
+        'title.require' => '标题必须',
+        'title.unique'  => '标题已经存在',
+    ];
 }
