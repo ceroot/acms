@@ -56,67 +56,9 @@ class Bing extends Controller {
 		dump('bing');
 	}
 
-	public function test($type) {
-		// 34a7TXEMBPE1Xj1tsVDsQPy2yAhTpNHhdlpoZRl4yPCOMc7z
-
-		dump(authcode('getBing'));
-		// deauthcode();
-		// die;
-		// // 判断参数
-		// $type || $this->error('参数错误');
-
-		if (deauthcode($type) != 'getBing') {
-			$this->error('参数值错误');
-		}
-	}
-
-	/**
-	 * [ getbingwallpapertest function_description ]
-	 * @author SpringYang
-	 * @email    ceroot@163.com
-	 * @dateTime 2017-12-15T13:35:09+0800
-	 * @return   [type]                   [description]
-	 */
-	public function getbingwallpapertest() {
-		$data = QueryList::get('http://cn.bing.com/cnhp/life')->rules([
-			'title' => ['.hplaT .hplaTtl', 'text'],
-			'country' => ['.hplaT .hplaAttr', 'text'],
-			'hplatt' => ['.hplaCata .hplatt', 'text'],
-			'hplats' => ['.hplaCata .hplats', 'text'],
-			'desc' => ['.hplaCata #hplaSnippet', 'text'],
-
-			'scenic0_title' => ['.hplaCata .hplac:eq(0) .hplactt', 'text'],
-			'scenic0_content' => ['.hplaCata .hplac:eq(0) .hplactc', 'text'],
-			'scenic1_title' => ['.hplaCata .hplac:eq(1) .hplactt', 'text'],
-			'scenic1_content' => ['.hplaCata .hplac:eq(1) .hplactc', 'text'],
-			'scenic2_title' => ['.hplaCata .hplac:eq(2) .hplactt', 'text'],
-			'scenic2_content' => ['.hplaCata .hplac:eq(2) .hplactc', 'text'],
-			'scenic3_title' => ['.hplaCata .hplac:eq(3) .hplactt', 'text'],
-			'scenic3_content' => ['.hplaCata .hplac:eq(3) .hplactc', 'text'],
-
-			'scenic4_title' => ['.hplaCard:eq(0) .hplatt span', 'text'],
-			'scenic4_desc' => ['.hplaCard:eq(0) .hplats', 'text'],
-			'scenic4_img' => ['.hplaCard:eq(0) .rms_img', 'src'],
-			'scenic4_content' => ['.hplaCard:eq(0) .hplatxt', 'text'],
-
-			'scenic5_title' => ['.hplaCard:eq(1) .hplatt span', 'text'],
-			'scenic5_desc' => ['.hplaCard:eq(1) .hplats', 'text'],
-			'scenic5_img' => ['.hplaCard:eq(1) .rms_img', 'src'],
-			'scenic5_content' => ['.hplaCard:eq(1) .hplatxt', 'text'],
-		])->query()->getData();
-
-		$ddd = $data->all();
-		// $ddd = $ddd[0];
-		dump($ddd);
-
-		die;
-		$path = 'C:\\Users\\veroo\\Desktop\\test\\' . time() . '.txt';
-		file_put_contents($path, $ddd['text']);
-		if (file_exists($path)) {
-			echo 'ok';
-		} else {
-			echo 'ng';
-		}
+	public function test() {
+		$data = model('BingWallpaper')->select();
+		dump($data);
 	}
 
 	/**
