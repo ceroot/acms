@@ -14,6 +14,10 @@ Route::get('think', function () {
 });
 
 Route::get('hello/:name', 'index/hello');
+// Route::rule('my', 'Member/myinfo'); // 静态地址路由
+Route::rule('bing', 'index/Bing/index');
+// Route::rule('bingdetails/:id','index/Bing/details');
+Route::rule('new/:id','index/News/read');
 
 return [
 
