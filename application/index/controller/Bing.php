@@ -34,30 +34,32 @@ class Bing extends Controller
     protected $tempPath; // 临时目录
     protected $basePath; // 基本目录，到月
     protected $savePath; // 保存目录，到天
+    protected $bingwallpaperPath; // bing 目录
 
     /**
      * [initialize 控制器初始化]
      */
     public function initialize()
-    {
-        $bingwallpaperPath = './data/bingwallpaper/'; // bing 目录
+    { 
         $this->year        = date('Y');
         $this->month       = date('m');
         $this->day         = date('d');
         $this->datesign    = $this->year . $this->month . $this->day; // 日期标记赋值
 
-        $this->tempPath = $bingwallpaperPath . 'temp/'; // 临时目录赋值
-        $this->basePath = $bingwallpaperPath . $this->year . '/' . $this->month . '/'; // 基本目录赋值
+        $this->bingwallpaperPath = './data/bingwallpaper/'; // bing 目录
+        $this->tempPath = $this->bingwallpaperPath . 'temp/'; // 临时目录赋值
+        $this->basePath = $this->bingwallpaperPath . $this->year . '/' . $this->month . '/'; // 基本目录赋值
         $this->savePath = $this->basePath . $this->day . '/'; // 保存目录赋值
 
         make_dir($this->basePath); // 创建保存目录
         make_dir($this->savePath); // 创建保存目录
 
     }
+
     public function index()
     {
         // dump('bing');
-        $data    = model('BingWallpaper')->paginate(10);
+        $data    = model('BingWallpaper')->order('datesign', 'desc')->paginate(10);
         $newdata = [];
         foreach ($data as $value) {
             $datesign         = $value['datesign'];
@@ -67,7 +69,10 @@ class Bing extends Controller
             $newdata[]        = $value;
         }
 
+        $page = $data->render();
+
         $this->assign('list', $newdata);
+        $this->assign('page', $page);
         return $this->fetch();
     }
 
@@ -94,7 +99,9 @@ class Bing extends Controller
 
     public function test()
     {
-        $html = file_get_contents('https://www.4ui.cn/bing/15.html'); // 采集网址
+        set_time_limit(0);
+
+        $html = file_get_contents('https://www.4ui.cn/bing/1.html'); // 采集网址
         //采集规则
         $rules = [
             //采集a标签的href属性
@@ -117,7 +124,23 @@ class Bing extends Controller
             $rules = [
                 //采集a标签的href属性
                 'title'                => ['.page-header p', 'text'],
-                'small'                => ['.page-header small', 'html'],
+                'datesign'             => ['.page-header small', 'html','',function($small){
+                    $arr   = preg_split("/<i class=(.*?)><\/i>/", $small);
+                    $strtotime = strtotime(trim($arr[1]));
+                    $datesign     = date('Ymd',$strtotime);
+                    return $datesign;
+                }],
+                'small'                => ['.page-header small', 'html','',function($small){
+                    $small = trim(str_replace('Images（图片来源于必应搜索）', '', $small));
+                    $small = trim(str_replace('（图片来源于必应搜索）', '', $small));
+                    $arr   = preg_split("/<i class=(.*?)><\/i>/", $small);
+
+                    $redata = [];
+                    // $redata['date']     = trim($arr[1]);
+                    $redata['item_ttl'] = trim($arr[3]);
+                    $redata['author']   = trim($arr[5]);
+                    return $redata;
+                }],
                 'description'          => ['.bing-box .container .row p:eq(2)', 'text'],
                 'brief0_title'         => ['.bing-box .container .row h3:eq(0)', 'text'],
                 'brief0_description'   => ['.bing-box .container .row p:eq(3)', 'text'],
@@ -147,33 +170,127 @@ class Bing extends Controller
             $newarr[] = $data;
 
         }
+        // dump($newarr);
 
-        $temparr = [];
+        $sortArr = [];
         foreach ($newarr as $value) {
-            $small    = $value[0]['small'];
-            $small    = trim(str_replace('Images（图片来源于必应搜索）', '', $small));
-            $small    = trim(str_replace('（图片来源于必应搜索）', '', $small));
-            $arr      = preg_split("/<i class=(.*?)><\/i>/", $small);
-            $date     = trim($arr[1]);
-            $item_ttl = trim($arr[3]);
-            $author   = trim($arr[5]);
+            $sortArr[] = $value[0];
+            // dump($value[0]);
+        }
 
-            $value[0]['date']     = $date;
-            $value[0]['item_ttl'] = $item_ttl;
-            $value[0]['author']   = $author;
+        // unset($sortArr[8]);
+        // unset($sortArr[9]);
+        // unset($sortArr[10]);
+        // unset($sortArr[11]);
+        $sortArr = $this->f_order($sortArr,'datesign',1);
+        //cache('data', $newarr);
+        // die;
+        // dump($sortArr);die;
 
-            $temparr[] = $value;
+        $bingData    = [];
+        $briefData   = [];
+        $detailsData = [];
+
+        foreach ($sortArr as $value) {
+            $small = $value['small'];
+            $author   = $small['author'];
+        
+            $datesign = $value['datesign'];
+            $dateTemp = strtotime($datesign);
+
+            $bing['title']       = trim($value['title']);
+            $bing['titlelong']   = trim($value['title']) . ' (© ' . $author . ')';
+            $bing['description'] = trim($value['description']);
+            $bing['author']      = $author;
+            $bing['item_ttl']    = $small['item_ttl'];
+            $bing['year']        = date('Y', $dateTemp);
+            $bing['month']       = date('m', $dateTemp);
+            $bing['datesign']    = $datesign;
+
+            $bingData[] = $bing;
+
+            $brief['datesign']     = $datesign;
+            $brief['title0']       = $value['brief0_title'];
+            $brief['description0'] = $value['brief0_description'];
+            $brief['title1']       = $value['brief1_title'];
+            $brief['description1'] = $value['brief1_description'];
+            $brief['title2']       = $value['brief2_title'];
+            $brief['description2'] = $value['brief2_description'];
+            $brief['title3']       = $value['brief3_title'];
+            $brief['description3'] = $value['brief3_description'];
+
+            $briefData[] = $brief;
+
+            $details['datesign']     = $datesign;
+            $details['resume0']      = $value['details0_resume'];
+            $details['title0']       = $value['details0_title'];
+            $details['description0'] = $value['details0_description'];
+            $details['img0']         = $value['details0_img'];
+            $details['resume1']      = $value['details1_resume'];
+            $details['title1']       = $value['details1_title'];
+            $details['description1'] = $value['details1_description'];
+            $details['img1']         = $value['details1_img'];
+
+            $detailsData[] = $details;
 
         }
-        dump($temparr);
-        cache('data', $newarr);
+
+        dump($bingData);
+        // die;
+
+        $briefTemp = [];
+        foreach ($briefData as $value) {
+            $_t = [];
+            for ($i=0; $i < 4; $i++) { 
+                $v['datesign'] = $value['datesign'];
+                $v['title'] = $value['title'.$i];
+                $v['description'] = $value['description'.$i];
+                $briefTemp[] = $v;   
+            }
+        }
+        dump($briefTemp);
+        // die;
+
+        $detailsTemp = [];
+        foreach ($detailsData as $value) {
+            $datesign = $value['datesign'];
+            $strtotime = strtotime($datesign);
+            $_t = [];
+            for ($i=0; $i < 2; $i++) { 
+                $v['datesign'] = $datesign;
+                $v['title'] = $value['title'.$i];
+                $v['resume'] = $value['resume'.$i];
+                $v['description'] = $value['description'.$i];
+                
+                $imgUrl = 'https://www.4ui.cn'.$value['img'.$i];
+                $imgName = md5(microtime().$imgUrl).'.jpg';
+                $imgPath = $this->save_pic($imgUrl, $imgName, $this->tempPath); // 执行临时文件保存操作
+                
+                // 图片1迁移
+                if (is_file($imgPath)) {
+                    $_savepath = $this->bingwallpaperPath.'/'.date('Y',$strtotime).'/'.date('m',$strtotime).'/'.date('d',$strtotime).'/';
+                    make_dir($_savepath);
+                    $image = \think\Image::open($imgPath);
+                    $image->save($_savepath . $imgName);
+                    unlink($imgPath);
+                }
+                $v['img'] = $imgName;
+                $detailsTemp[] = $v;   
+            }
+        }
+        dump($detailsTemp);
+        // die;
+
+        model('BingWallpaper')->saveAll($bingData);
+        model('BingBranchBrief')->saveAll($briefTemp);
+        model('BingBranchDetails')->saveAll($detailsTemp);
 
     }
 
     public function test1()
     {
         $newarr  = cache('data');
-        $temparr = [];
+
         unset($newarr[8]);
         unset($newarr[9]);
         unset($newarr[10]);
@@ -194,7 +311,6 @@ class Bing extends Controller
             $item_ttl = trim($arr[3]);
             $author   = trim($arr[5]);
 
-            // $temparr[] = $value;
             $dateTemp = strtotime($date);
             $datesign = date('Y', $dateTemp) . date('m', $dateTemp) . date('d', $dateTemp);
 
@@ -234,47 +350,68 @@ class Bing extends Controller
             $detailsData[] = $details;
 
         }
-        dump($detailsData);
-        // dump($temparr);
-        die;
+        $bingData = $this->f_order($bingData,'datesign',1);
+        // dump($bingData);
+        // die;
 
-        $small = '<i class="fa fa-clock-o fa-fw" title="发布日期"></i> 2017-07-03         <i class="fa fa-eye fa-fw" title="点击次数"></i> 47         <i class="fa fa-map-marker fa-fw" title="地理位置"></i> 小巧玲珑 活泼可人           <i class="fa fa-download fa-fw" title="下载次数"></i> 0         <i class="fa fa-copyright fa-fw" title="版权"></i> H. Schmidbauer/Offset（图片来源于必应搜索）';
-        $small = trim(str_replace('Images（图片来源于必应搜索）', '', $small));
-        $small = trim(str_replace('（图片来源于必应搜索）', '', $small));
-        //<i class="fa fa-clock-o fa-fw" title="发布日期"></i>
-        dump($small);
-        $arr      = preg_split("/<i class=(.*?)><\/i>/", $small);
-        $date     = trim($arr[1]);
-        $item_ttl = trim($arr[3]);
-        $author   = trim($arr[5]);
-        dump($date);
-        dump($item_ttl);
-        dump($author);
-        dump($arr);die;
-        $data = cache('data');
-        foreach ($data as $value) {
-            $small = $value['small'];
-            $small = trim(str_replace('Images（图片来源于必应搜索）', '', $small));
-            $small = trim(str_replace('（图片来源于必应搜索）', '', $small));
-            dump($small);
-            $small = $this->make_semiangle($small);
-            dump($small);
-            $arr = preg_split("/[\s,]+/", $small);
-            dump($arr);
-            die;
-            $arr      = explode(' ', $small);
-            $date     = trim($arr[0]);
-            $item_ttl = trim($arr[2]);
-            dump($date);
-            dump($item_ttl);
-            unset($arr[0]);
-            unset($arr[1]);
-            unset($arr[2]);
-            unset($arr[3]);
-            dump($arr);
-            dump(implode(" ", $arr));
-
+        $briefTemp = [];
+        foreach ($briefData as $value) {
+            $_t = [];
+            for ($i=0; $i < 4; $i++) { 
+                $v['datesign'] = $value['datesign'];
+                $v['title'] = $value['title'.$i];
+                $v['description'] = $value['description'.$i];
+                $briefTemp[] = $v;   
+            }
         }
+        $briefTemp = $this->f_order($briefTemp,'datesign',1);
+        dump($briefTemp);
+
+        $detailsTemp = [];
+        foreach ($detailsData as $value) {
+            $datesign = $value['datesign'];
+            $strtotime = strtotime($datesign);
+            $_t = [];
+            for ($i=0; $i < 2; $i++) { 
+                $v['datesign'] = $datesign;
+                $v['title'] = $value['title'.$i];
+                $v['resume'] = $value['resume'.$i];
+                $v['description'] = $value['description'.$i];
+                
+                $imgUrl = 'https://www.4ui.cn'.$value['img'.$i];
+                $imgName = md5(microtime().$imgUrl).'.jpg';
+                $imgPath = $this->save_pic($imgUrl, $imgName, $this->tempPath); // 执行临时文件保存操作
+                
+                // 图片1迁移
+                if (is_file($imgPath)) {
+                    $_savepath = $this->bingwallpaperPath.'/'.date('Y',$strtotime).'/'.date('m',$strtotime).'/'.date('d',$strtotime).'/';
+                    make_dir($_savepath);
+                    $image = \think\Image::open($imgPath);
+                    $image->save($_savepath . $imgName);
+                    unlink($imgPath);
+                }
+                $v['img'] = $imgName;
+                $detailsTemp[] = $v;   
+            }
+        }
+        $detailsTemp = $this->f_order($detailsTemp,'datesign',1);
+        dump($detailsTemp);
+
+        // dump($temparr);
+        
+    }
+
+    public function f_order($arr,$field,$sort){
+        $order = array();
+        foreach($arr as $kay => $value){
+            $order[] = $value[$field];
+        }
+        if($sort==1){
+            array_multisort($order,SORT_ASC,$arr);
+        }else{
+            array_multisort($order,SORT_DESC,$arr);
+        }
+        return $arr;
     }
 
     public function make_semiangle($str)
@@ -600,6 +737,7 @@ class Bing extends Controller
 
         if (empty($string)) {
             //echo '读取不了文件';exit;
+            return 0;
         }
 
         //文件名

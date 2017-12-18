@@ -20,7 +20,7 @@
 			{$data.year}-{$data.month}-{$data.datesign|strtotime|date='d'}&nbsp;&nbsp;{$data.viewcount}&nbsp;&nbsp;{$data.downcount}&nbsp;&nbsp;{$data.item_ttl}&nbsp;&nbsp;{$data.author}
 		</div>
 		<div style="padding-top: 20px; padding-bottom: 10px;">
-			<img class="big" src="/data/bingwallpaper/{$data.year}/{$data.month}/{$data.datesign|strtotime|date='d'}/{$data.newname}" alt="{$data.title}">
+			<img class="big" src="/data/bingwallpaper/{$data.datesign|strtotime|date='Y/m/d'}/{$data.newname}" alt="{$data.title}">
 		</div>
 		<div>{$data.description}</div>
 		{notempty name="$data.brief"}
@@ -32,7 +32,7 @@
 		{notempty name="$data.details"}
 			{foreach name="$data.details" item="brief"}
 				<h3>{$brief.title}&nbsp;<small style="color: #333; font-weight: normal; font-size: 12px;">{$brief.resume}</small></h3>
-				<div style="text-align: center;"><img src="/data/bingwallpaper/{$data.year}/{$data.month}/{$brief.datesign|strtotime|date='d'}/{$brief.img}" alt="{$brief.title}|{$brief.resume}"></div>
+				<div style="text-align: center;"><img src="/data/bingwallpaper/{$data.datesign|strtotime|date='Y/m/d'}/{$brief.img}" alt="{$brief.title}|{$brief.resume}"></div>
 				<p>{$brief.description}</p>
 			{/foreach}
 		{/notempty}
