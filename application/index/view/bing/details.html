@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>{$data.title}-Bing每日图片欣赏</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<style type="text/css">
+	.area{ width: 1200px; margin:0 auto; }
+	.area img.big{ width: 1200px; }
+	p{ color: #222 }
+</style>
+</head>
+<body>
+	<div class="area">
+		<h2 style="text-align: center;">{$data.title}</h2>
+		<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; text-align: center; font-size: 14px; color: #444">
+			{$data.year}-{$data.month}-{$data.datesign|strtotime|date='d'}&nbsp;&nbsp;{$data.viewcount}&nbsp;&nbsp;{$data.downcount}&nbsp;&nbsp;{$data.item_ttl}&nbsp;&nbsp;{$data.author}
+		</div>
+		<div style="padding-top: 20px; padding-bottom: 10px;">
+			<img class="big" src="/data/bingwallpaper/{$data.year}/{$data.month}/{$data.datesign|strtotime|date='d'}/{$data.newname}" alt="{$data.title}">
+		</div>
+		<div>{$data.description}</div>
+		{notempty name="$data.brief"}
+			{foreach name="$data.brief" item="brief"}
+				<h3>{$brief.title}</h3>
+				<p>{$brief.description}</p>
+			{/foreach}
+		{/notempty}
+		{notempty name="$data.details"}
+			{foreach name="$data.details" item="brief"}
+				<h3>{$brief.title}&nbsp;<small style="color: #333; font-weight: normal; font-size: 12px;">{$brief.resume}</small></h3>
+				<div style="text-align: center;"><img src="/data/bingwallpaper/{$data.year}/{$data.month}/{$brief.datesign|strtotime|date='d'}/{$brief.img}" alt="{$brief.title}|{$brief.resume}"></div>
+				<p>{$brief.description}</p>
+			{/foreach}
+		{/notempty}
+	</div>
+</body>
+</html>

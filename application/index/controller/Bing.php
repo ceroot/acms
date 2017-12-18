@@ -56,14 +56,231 @@ class Bing extends Controller
     }
     public function index()
     {
-        dump('bing');
+        // dump('bing');
+        $data    = model('BingWallpaper')->paginate(10);
+        $newdata = [];
+        foreach ($data as $value) {
+            $datesign         = $value['datesign'];
+            $value['brief']   = model('BingBranchBrief')->where('datesign', $datesign)->select();
+            $value['details'] = model('BingBranchDetails')->where('datesign', $datesign)->select();
+            $value['id']      = authcode($value['id']);
+            $newdata[]        = $value;
+        }
+
+        $this->assign('list', $newdata);
+        return $this->fetch();
+    }
+
+    public function details($id)
+    {
+        // dump('details');
+        $id || $this->error('参数错误');
+        $id = deauthcode($id);
+        $id || $this->error('参数值错误');
+
+        $model = model('BingWallpaper');
+        $model->where('id', $id)->setInc('viewcount');
+
+        $data            = $model->find($id);
+        $datesign        = $data['datesign'];
+        $data['brief']   = model('BingBranchBrief')->where('datesign', $datesign)->select();
+        $data['details'] = model('BingBranchDetails')->where('datesign', $datesign)->select();
+
+        // dump($data);
+        $this->assign('data', $data);
+        return $this->fetch();
+
     }
 
     public function test()
     {
-        $data = model('BingWallpaper')->select();
-        // $datesign = $data['datesign'];
-        dump($datesign);
+        $html = file_get_contents('https://www.4ui.cn/bing/15.html'); // 采集网址
+        //采集规则
+        $rules = [
+            //采集a标签的href属性
+            'link'      => ['.list-wallpaper .caption a', 'href'],
+            //采集a标签的text文本
+            'link_text' => ['.list-wallpaper .caption a', 'text'],
+        ];
+        $ql   = QueryList::html($html)->rules($rules)->query();
+        $data = $ql->getData();
+        $data = $data->all();
+
+        $newarr = [];
+        foreach ($data as $value) {
+            # code...
+            $link = $value['link'];
+            $link = 'https://www.4ui.cn' . $link;
+
+            $html = file_get_contents($link);
+
+            $rules = [
+                //采集a标签的href属性
+                'title'                => ['.page-header p', 'text'],
+                'small'                => ['.page-header small', 'html'],
+                'description'          => ['.bing-box .container .row p:eq(2)', 'text'],
+                'brief0_title'         => ['.bing-box .container .row h3:eq(0)', 'text'],
+                'brief0_description'   => ['.bing-box .container .row p:eq(3)', 'text'],
+                'brief1_title'         => ['.bing-box .container .row h3:eq(1)', 'text'],
+                'brief1_description'   => ['.bing-box .container .row p:eq(4)', 'text'],
+                'brief2_title'         => ['.bing-box .container .row h3:eq(2)', 'text'],
+                'brief2_description'   => ['.bing-box .container .row p:eq(5)', 'text'],
+                'brief3_title'         => ['.bing-box .container .row h3:eq(3)', 'text'],
+                'brief3_description'   => ['.bing-box .container .row p:eq(6)', 'text'],
+
+                'details0_title'       => ['.bing-box .container .row h3:eq(4)', 'text', '-small'],
+                'details0_resume'      => ['.bing-box .container .row h3:eq(4) small', 'text'],
+                'details0_img'         => ['.bing-box .container .row p:eq(7) img', 'src'],
+                'details0_description' => ['.bing-box .container .row p:eq(8)', 'text'],
+                'details1_title'       => ['.bing-box .container .row h3:eq(5)', 'text', '-small'],
+                'details1_resume'      => ['.bing-box .container .row h3:eq(5) small', 'text'],
+                'details1_img'         => ['.bing-box .container .row p:eq(9) img', 'src'],
+                'details1_description' => ['.bing-box .container .row p:eq(10)', 'text'],
+
+            ];
+
+            $ql = QueryList::html($html)->rules($rules)->query();
+
+            $data = $ql->getData();
+            $data = $data->all();
+
+            $newarr[] = $data;
+
+        }
+
+        $temparr = [];
+        foreach ($newarr as $value) {
+            $small    = $value[0]['small'];
+            $small    = trim(str_replace('Images（图片来源于必应搜索）', '', $small));
+            $small    = trim(str_replace('（图片来源于必应搜索）', '', $small));
+            $arr      = preg_split("/<i class=(.*?)><\/i>/", $small);
+            $date     = trim($arr[1]);
+            $item_ttl = trim($arr[3]);
+            $author   = trim($arr[5]);
+
+            $value[0]['date']     = $date;
+            $value[0]['item_ttl'] = $item_ttl;
+            $value[0]['author']   = $author;
+
+            $temparr[] = $value;
+
+        }
+        dump($temparr);
+        cache('data', $newarr);
+
+    }
+
+    public function test1()
+    {
+        $newarr  = cache('data');
+        $temparr = [];
+        unset($newarr[8]);
+        unset($newarr[9]);
+        unset($newarr[10]);
+        unset($newarr[11]);
+        // dump($newarr);die;
+
+        $bingData    = [];
+        $briefData   = [];
+        $detailsData = [];
+
+        foreach ($newarr as $value) {
+            $small = $value[0]['small'];
+            $small = trim(str_replace('Images（图片来源于必应搜索）', '', $small));
+            $small = trim(str_replace('（图片来源于必应搜索）', '', $small));
+            $arr   = preg_split("/<i class=(.*?)><\/i>/", $small);
+
+            $date     = trim($arr[1]);
+            $item_ttl = trim($arr[3]);
+            $author   = trim($arr[5]);
+
+            // $temparr[] = $value;
+            $dateTemp = strtotime($date);
+            $datesign = date('Y', $dateTemp) . date('m', $dateTemp) . date('d', $dateTemp);
+
+            $bing['title']       = trim($value[0]['title']);
+            $bing['titlelong']   = trim($value[0]['title']) . ' (© ' . $author . ')';
+            $bing['description'] = trim($value[0]['description']);
+            $bing['author']      = $author;
+            $bing['item_ttl']    = $item_ttl;
+            $bing['year']        = date('Y', $dateTemp);
+            $bing['month']       = date('m', $dateTemp);
+            $bing['datesign']    = $datesign;
+
+            $bingData[] = $bing;
+
+            $brief['datesign']     = $datesign;
+            $brief['title0']       = $value[0]['brief0_title'];
+            $brief['description0'] = $value[0]['brief0_description'];
+            $brief['title1']       = $value[0]['brief1_title'];
+            $brief['description1'] = $value[0]['brief1_description'];
+            $brief['title2']       = $value[0]['brief2_title'];
+            $brief['description2'] = $value[0]['brief2_description'];
+            $brief['title3']       = $value[0]['brief3_title'];
+            $brief['description3'] = $value[0]['brief3_description'];
+
+            $briefData[] = $brief;
+
+            $details['datesign']     = $datesign;
+            $details['resume0']      = $value[0]['details0_resume'];
+            $details['title0']       = $value[0]['details0_title'];
+            $details['description0'] = $value[0]['details0_description'];
+            $details['img0']         = $value[0]['details0_img'];
+            $details['resume1']      = $value[0]['details1_resume'];
+            $details['title1']       = $value[0]['details1_title'];
+            $details['description1'] = $value[0]['details1_description'];
+            $details['img1']         = $value[0]['details1_img'];
+
+            $detailsData[] = $details;
+
+        }
+        dump($detailsData);
+        // dump($temparr);
+        die;
+
+        $small = '<i class="fa fa-clock-o fa-fw" title="发布日期"></i> 2017-07-03         <i class="fa fa-eye fa-fw" title="点击次数"></i> 47         <i class="fa fa-map-marker fa-fw" title="地理位置"></i> 小巧玲珑 活泼可人           <i class="fa fa-download fa-fw" title="下载次数"></i> 0         <i class="fa fa-copyright fa-fw" title="版权"></i> H. Schmidbauer/Offset（图片来源于必应搜索）';
+        $small = trim(str_replace('Images（图片来源于必应搜索）', '', $small));
+        $small = trim(str_replace('（图片来源于必应搜索）', '', $small));
+        //<i class="fa fa-clock-o fa-fw" title="发布日期"></i>
+        dump($small);
+        $arr      = preg_split("/<i class=(.*?)><\/i>/", $small);
+        $date     = trim($arr[1]);
+        $item_ttl = trim($arr[3]);
+        $author   = trim($arr[5]);
+        dump($date);
+        dump($item_ttl);
+        dump($author);
+        dump($arr);die;
+        $data = cache('data');
+        foreach ($data as $value) {
+            $small = $value['small'];
+            $small = trim(str_replace('Images（图片来源于必应搜索）', '', $small));
+            $small = trim(str_replace('（图片来源于必应搜索）', '', $small));
+            dump($small);
+            $small = $this->make_semiangle($small);
+            dump($small);
+            $arr = preg_split("/[\s,]+/", $small);
+            dump($arr);
+            die;
+            $arr      = explode(' ', $small);
+            $date     = trim($arr[0]);
+            $item_ttl = trim($arr[2]);
+            dump($date);
+            dump($item_ttl);
+            unset($arr[0]);
+            unset($arr[1]);
+            unset($arr[2]);
+            unset($arr[3]);
+            dump($arr);
+            dump(implode(" ", $arr));
+
+        }
+    }
+
+    public function make_semiangle($str)
+    {
+        $arr = array('  ' => ' ');
+        return strtr($str, $arr);
     }
 
     /**
