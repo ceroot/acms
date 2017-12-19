@@ -1,0 +1,182 @@
+@charset "UTF-8";
+/**
+ * 
+ * @authors SpringYang (ceroot@163.com)
+ * @date    2017-01-18 10:00:06
+ * @version $Id$
+ */
+
+html, body {
+    height: 100%;
+}
+
+body{
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#cfd8dc+0,607d8b+100,b0bec5+100 */
+    background: #aac4bc; /* Old browsers #d2d6de*/
+    background: -moz-linear-gradient(-45deg,  #aac4bc 0%, #eca8a8 100%, #eed5a9 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(-45deg,  #aac4bc 0%,#eca8a8 100%,#eed5a9 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(135deg, #aac4bc 0%,#eca8a8 100%,#eed5a9 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cfd8dc', endColorstr='#b0bec5',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+.login-page{
+    /*position: absolute;
+    width: 100%;
+    height: 100%;*/
+}
+
+#particles-js{
+    width: 100%;
+    height: 98%;
+    position: absolute;
+    z-index: 0;
+}
+
+.wrapper {
+    min-height: 100%;
+    height: 100%;
+    /*height: auto !important;*/
+    /*margin: 0 auto -26px;*/
+    /*padding-bottom: 26px;*/
+    /*position: relative;*/
+}
+
+.color-line {
+    background: #f7f9fa;
+    height: 3px;
+    background-image: -webkit-linear-gradient(left, #34495e, #34495e 25%, #9b59b6 25%, #9b59b6 35%, #3498db 35%, #3498db 45%, #62cb31 45%, #62cb31 55%, #ffb606 55%, #ffb606 65%, #e67e22 65%, #e67e22 75%, #e74c3c 85%, #e74c3c 85%, #c0392b 85%, #c0392b 100%);
+    background-image: -moz-linear-gradient(left, #34495e, #34495e 25%, #9b59b6 25%, #9b59b6 35%, #3498db 35%, #3498db 45%, #62cb31 45%, #62cb31 55%, #ffb606 55%, #ffb606 65%, #e67e22 65%, #e67e22 75%, #e74c3c 85%, #e74c3c 85%, #c0392b 85%, #c0392b 100%);
+    background-image: -ms-linear-gradient(left, #34495e, #34495e 25%, #9b59b6 25%, #9b59b6 35%, #3498db 35%, #3498db 45%, #62cb31 45%, #62cb31 55%, #ffb606 55%, #ffb606 65%, #e67e22 65%, #e67e22 75%, #e74c3c 85%, #e74c3c 85%, #c0392b 85%, #c0392b 100%);
+    background-image: linear-gradient(to right, #34495e, #34495e 25%, #9b59b6 25%, #9b59b6 35%, #3498db 35%, #3498db 45%, #62cb31 45%, #62cb31 55%, #ffb606 55%, #ffb606 65%, #e67e22 65%, #e67e22 75%, #e74c3c 85%, #e74c3c 85%, #c0392b 85%, #c0392b 100%);
+    background-size: 100% 6px;
+    background-position: 50% 100%;
+    background-repeat: no-repeat;
+}
+
+
+.login-logo{
+    font-size: 35px;
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 300;
+    color: #009688;/*#666*/
+}
+
+.login-logo a,{
+    color: #444;
+}
+
+.login-box{
+    width: 360px;
+    /*margin: 7% auto;*/
+    z-index: 1;
+    position: relative;
+    top: 40%;
+    margin-top: -140px;
+    left: 50%;
+    margin-left: -180px;
+}
+
+.login-box .layui-form-checkbox[lay-skin="primary"] span{ color: #009688 }
+
+@media (max-width: 768px) {
+  .login-box{
+    width: 90%;
+    top: 15%;
+    left: 0;
+    margin: 0 auto;
+  }
+}
+.login-box-body{
+    /*background: #fff;*/
+    padding: 20px;
+    color: #777;
+    padding-bottom: 15px ; 
+    /*box-shadow: 1px 10px 30px -10px rgba(0,0,0,0.5);*/
+    position: relative;
+    overflow: hidden;
+    border-radius: 5px
+}
+
+.login-box-content{
+    position: relative;
+    z-index: 1;
+}
+
+.login-box-msg{
+    margin: 0;
+    text-align: center;
+    padding: 0 20px 20px 20px;
+    color: #009688;
+    font-size: 16px;
+}
+
+.captcha-area{
+	/*display: none;*/
+	vertical-align: top;
+}
+.captcha-area input{
+    width: 35%;
+	display: inline-block;
+	vertical-align: top;
+    margin-right: 10px;
+}
+.captcha-area img{
+    height: 38px;
+	cursor: pointer;
+	vertical-align: top;
+    border:1px solid #e6e6e6;
+}
+
+
+@-webkit-keyframes animar_fondo {
+	from {
+		-webkit-transform: scale(1) translate(0px);
+		-moz-transform: scale(1) translate(0px);
+		-ms-transform: scale(1) translate(0px);
+		-o-transform: scale(1) translate(0px);
+		transform: scale(1) translate(0px);
+	}
+  	to {
+  		-webkit-transform: scale(1.5) translate(50px);
+		-moz-transform: scale(1.5) translate(50px);
+		-ms-transform: scale(1.5) translate(50px);
+		-o-transform: scale(1.5) translate(50px);
+		transform: scale(1.5) translate(50px);
+	}
+}
+.btn-area{}
+.btn-area small{
+    color: #009688;
+    font-size: 10px;
+}
+
+.bw-feedback {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 2;
+    display: block;
+    width: 38px;
+    height: 38px;
+    line-height: 38px;
+    text-align: center;
+    pointer-events: none;
+    font-size: 18px
+}
+
+.copyright{
+    font-size: 10px;
+    color: #010101;
+    border-top: 1px solid #d9d9d9;
+    width: 100%;
+    margin-top: -26px;
+    height: 26px;
+    line-height: 26px;
+    /*background: #d2d6de;210,214,222*/
+    background-color:rgba(210,214,222,0.4);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
