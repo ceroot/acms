@@ -2,40 +2,77 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="renderer" content="webkit">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>bing每日图片欣赏</title>
 <meta name="description" content="">
 <meta name="keywords" content="">
-<link href="" rel="stylesheet">
+<!-- LayUi -->
+<link rel="stylesheet" type="text/css" href="__LIBS__/{$Think.config.static.layui_version}/css/layui.css" media="all">
 <style type="text/css">
 	p,h4{ margin:0; padding:0; }
 	a{ color: #23527c; text-decoration: none; }
-	.bing-area{ width: 1200px; margin:0 auto; }
-	.bing-area ul{}
-	.bing-area ul li{ list-style: none; border:1px solid #ddd; border-radius: 5px; display: inline-block; padding: 5px; }
-	.bing-area ul li:hover{ border:1px solid #23527c;}
-	.bing-area ul li img{ width: 300px; }
+	.bing-area{}
+	.bing-area .bing-box{ list-style: none; border:1px solid #ddd; border-radius: 5px; display: inline-block; padding: 5px; }
+	.bing-area .bing-box:hover{ border:1px solid #23527c;}
+	.bing-area .bing-box .item{ color: #666 }
+	.bing-area .bing-box h4{ padding-bottom: 5px}
+	.bing-area .bing-box h4 a{ font-weight: 600; }
+	.bing-area img{ width: 100%; }
+	.text-align-r{ text-align: right; }
+
+	@media screen and (max-width: 575.99px) {
+	  .bing-area .bing-box{border: 0; border-radius: 0; border-bottom:1px solid #ddd; display:block; padding:0; }
+	}
 </style>
 </head>
 <body>
     
 </body>
-<div class="bing-area">
-	<ul>
-	{volist name='list' id='lists'}
-	    <li>
-	    	<a href="{:url('details',['id'=>$lists.id])}" target="_blank">
-	    		<img src="/data/bingwallpaper/{$lists.year}/{$lists.month}/{$lists.datesign|strtotime|date='d'}/thumb-{$lists.newname}">
-	    	</a>
-	    	<p>{$lists.item_ttl}</p>
-	    	<h4>
-	    		<a href="{:url('details',['id'=>$lists.id])}" target="_blank">{$lists.title}</a>
-	    	</h4>
-	    	<div>{$lists.viewcount}{$lists.downcount}</div>
-	    	<div>{$lists.year}-{$lists.month}-{$lists.datesign|strtotime|date='d'}</div>
-	    </li>
-	{/volist}
-	</ul>
-	<div>{$page|raw}</div>
+<div class="layui-container">
+  	<div class="layui-row layui-col-space20 bing-area">
+  		{volist name='list' id='lists'}
+	    	<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
+	    		<div class="bing-box">
+		    	  	<a href="{:url('details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">
+			    		<img src="/data/bingwallpaper/{$lists.year}/{$lists.month}/{$lists.datesign|strtotime|date='d'}/thumb-{$lists.newname}">
+			    	</a>
+			    	<p>{$lists.item_ttl}</p>
+			    	<h4>
+			    		<a href="{:url('details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">{$lists.title}</a>
+			    	</h4>
+			    	<div class="layui-row class item">
+			    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">{$lists.viewcount}{$lists.downcount}</div>
+			    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+			    			<div class="text-align-r">{$lists.year}-{$lists.month}-{$lists.datesign|strtotime|date='d'}</div>
+			    		</div>
+			    	</div>
+			    </div>
+	    	</div>
+    	{/volist}
+    	{volist name='list' id='lists'}
+	    	<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
+	    		<div class="bing-box">
+		    	  	<a href="{:url('details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">
+			    		<img src="/data/bingwallpaper/{$lists.year}/{$lists.month}/{$lists.datesign|strtotime|date='d'}/thumb-{$lists.newname}">
+			    	</a>
+			    	<p>{$lists.item_ttl}</p>
+			    	<h4>
+			    		<a href="{:url('details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">{$lists.title}</a>
+			    	</h4>
+			    	<div class="layui-row class item">
+			    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">{$lists.viewcount}{$lists.downcount}</div>
+			    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+			    			<div class="text-align-r">{$lists.year}-{$lists.month}-{$lists.datesign|strtotime|date='d'}</div>
+			    		</div>
+			    	</div>
+			    </div>
+	    	</div>
+    	{/volist}
+  	</div>
+  	<div>{$page|raw}</div>
 </div>
+<!-- LayUi -->
+<script type="text/javascript" src="__LIBS__/{$Think.config.static.layui_version}/layui.js"></script>
 </html>

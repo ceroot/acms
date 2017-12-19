@@ -2,27 +2,36 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="renderer" content="webkit">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>{$data.title}-Bing每日图片欣赏</title>
 <meta name="description" content="">
 <meta name="keywords" content="">
-<link href="" rel="stylesheet">
+<!-- LayUi -->
+<link rel="stylesheet" type="text/css" href="__LIBS__/{$Think.config.static.layui_version}/css/layui.css" media="all">
+
 <style type="text/css">
-	.area{ width: 1200px; margin:0 auto; }
-	.area img.big{ width: 1200px; }
-	p{ color: #222 }
+	.area img.big{ width: 100%; }
+	.area h2{ font-weight: 700; }
+	.area h3{ font-weight: 700; margin-bottom: 8px; }
+	.area p{ margin-bottom: 15px; }
+	@media screen and (max-width: 575.99px) {
+	  .area p img{ width: 100%; }  
+	}
 </style>
 </head>
 <body>
-	<div class="area">
+
+	<div class="layui-container area">
 		<h2 style="text-align: center;">{$data.title}</h2>
-		<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; text-align: center; font-size: 14px; color: #444">
+		<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; text-align: center; font-size: 12px; color: #444">
 			{$data.year}-{$data.month}-{$data.datesign|strtotime|date='d'}&nbsp;&nbsp;{$data.viewcount}&nbsp;&nbsp;{$data.downcount}&nbsp;&nbsp;{$data.item_ttl}&nbsp;&nbsp;{$data.author}
 		</div>
-		<div style="padding-top: 20px; padding-bottom: 10px;">
+		<div style="padding-top: 15px; padding-bottom: 10px;">
 			<img class="big" src="/data/bingwallpaper/{$data.datesign|strtotime|date='Y/m/d'}/{$data.newname}" alt="{$data.title}">
 		</div>
-		<div>{$data.description}</div>
+		<p>{$data.description}</p>
 		{notempty name="$data.brief"}
 			{foreach name="$data.brief" item="brief"}
 				<h3>{$brief.title}</h3>
@@ -32,7 +41,7 @@
 		{notempty name="$data.details"}
 			{foreach name="$data.details" item="brief"}
 				<h3>{$brief.title}&nbsp;<small style="color: #333; font-weight: normal; font-size: 12px;">{$brief.resume}</small></h3>
-				<div style="text-align: center;"><img src="/data/bingwallpaper/{$data.datesign|strtotime|date='Y/m/d'}/{$brief.img}" alt="{$brief.title}|{$brief.resume}"></div>
+				<p style="text-align: center;"><img src="/data/bingwallpaper/{$data.datesign|strtotime|date='Y/m/d'}/{$brief.img}" alt="{$brief.title}|{$brief.resume}"></p>
 				<p>{$brief.description}</p>
 			{/foreach}
 		{/notempty}
