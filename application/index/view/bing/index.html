@@ -43,26 +43,7 @@
 			    		<a href="{:url('details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">{$lists.title}</a>
 			    	</h4>
 			    	<div class="layui-row class item">
-			    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">{$lists.viewcount}{$lists.downcount}</div>
-			    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-			    			<div class="text-align-r">{$lists.year}-{$lists.month}-{$lists.datesign|strtotime|date='d'}</div>
-			    		</div>
-			    	</div>
-			    </div>
-	    	</div>
-    	{/volist}
-    	{volist name='list' id='lists'}
-	    	<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
-	    		<div class="bing-box">
-		    	  	<a href="{:url('details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">
-			    		<img src="/data/bingwallpaper/{$lists.year}/{$lists.month}/{$lists.datesign|strtotime|date='d'}/thumb-{$lists.newname}">
-			    	</a>
-			    	<p>{$lists.item_ttl}</p>
-			    	<h4>
-			    		<a href="{:url('details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">{$lists.title}</a>
-			    	</h4>
-			    	<div class="layui-row class item">
-			    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">{$lists.viewcount}{$lists.downcount}</div>
+			    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">{$lists.viewcount}</div>
 			    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
 			    			<div class="text-align-r">{$lists.year}-{$lists.month}-{$lists.datesign|strtotime|date='d'}</div>
 			    		</div>
