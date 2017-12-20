@@ -17,12 +17,12 @@ return [
     ],
     // 应用开始
     'app_begin'    => [
-        //'app\\common\\behavior\\AppBegin',
+        'app\\common\\behavior\\AppBegin',
     ],
     // 模块初始化
     'module_init'  => [
-        //'app\\common\\behavior\\WebLog',
-        //'app\\common\\behavior\\ModuleInit',
+        'app\\common\\behavior\\WebLog',
+        'app\\common\\behavior\\ModuleInit',
     ],
     // 操作开始执行
     'action_begin' => [],

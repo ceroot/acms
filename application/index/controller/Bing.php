@@ -60,6 +60,17 @@ class Bing extends Controller
 
     public function test()
     {
+<<<<<<< HEAD
+=======
+        $url = 'http://cn.bing.com/az/hprichbg/rb/PowysCounty_ZH-CN11115693548_1366x768.jpg';
+        dump(parse_url($url, PHP_URL_PATH));
+        dump(pathinfo(parse_url($url, PHP_URL_PATH)));
+        echo pathinfo(parse_url($url)['path'])['extension'];
+
+        echo pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION);
+
+        die;
+>>>>>>> 9df55d4d210c8c798c86348d62f62e2267382d90
 
         // $file_url = 'http://cn.bing.com/az/hprichbg/rb/PowysCounty_ZH-CN11115693548_1366x768.jpg';
         $file_url = 'http://s3.cn.bing.net/th?id=OJ.MJ0SSZdeuqnfpw&pid=MSNJVFeeds';
@@ -115,6 +126,10 @@ class Bing extends Controller
         $curl = curl_init($url);
         // 不取回数据
         curl_setopt($curl, CURLOPT_NOBODY, true);
+<<<<<<< HEAD
+=======
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'GET'); // 不加这个会返回403，加了才返回正确的200，原因不明
+>>>>>>> 9df55d4d210c8c798c86348d62f62e2267382d90
         // 发送请求
         $result = curl_exec($curl);
         $found  = false;
@@ -157,6 +172,7 @@ class Bing extends Controller
         $id || $this->error('参数错误');
         $id = deauthcode($id);
         $id || $this->error('参数值错误');
+<<<<<<< HEAD
 		
 		//dump($id);
         $model = model('BingWallpaper');
@@ -164,6 +180,15 @@ class Bing extends Controller
 
         $data            = $model->get($id);
 		//dump($data);
+=======
+
+        //dump($id);
+        $model = model('BingWallpaper');
+        $model->where('id', $id)->setInc('viewcount');
+
+        $data = $model->get($id);
+        //dump($data);
+>>>>>>> 9df55d4d210c8c798c86348d62f62e2267382d90
         $datesign        = $data['datesign'];
         $data['brief']   = model('BingBranchBrief')->where('datesign', $datesign)->select();
         $data['details'] = model('BingBranchDetails')->where('datesign', $datesign)->select();
