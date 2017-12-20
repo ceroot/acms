@@ -27,6 +27,8 @@ class Bing extends Controller
 {
     use Jump;
 
+    protected $batchValidate = true; // 是否批量验证
+
     protected $year; // 定义年
     protected $month; // 定义月
     protected $day; // 定义天
@@ -56,6 +58,79 @@ class Bing extends Controller
 
     }
 
+    public function test()
+    {
+
+        // $file_url = 'http://cn.bing.com/az/hprichbg/rb/PowysCounty_ZH-CN11115693548_1366x768.jpg';
+        $file_url = 'http://s3.cn.bing.net/th?id=OJ.MJ0SSZdeuqnfpw&pid=MSNJVFeeds';
+
+        // die;
+        $picName      = time() . '.jpg';
+        $saveFilePath = $this->saveRemoteFile($file_url, $picName, $this->bingwallpaperPath);
+
+        dump($saveFilePath);
+        die;
+        //$image = \think\Image::open($imgPath);
+        //$image->save($_savepath . $imgName);
+        //
+
+    }
+
+    public function saveRemoteFile($url, $picName, $savePath = '')
+    {
+        if (!$this->check_remote_file_exists($url)) {
+            return false;
+        };
+
+        $fileContent = $this->url_get_content($url);
+        make_dir($savePath);
+        $saveFilePath = $savePath . $picName;
+        $saveFile     = fopen($saveFilePath, 'w');
+        fwrite($saveFile, $fileContent);
+        fclose($saveFile);
+        return $saveFilePath;
+    }
+
+    public function url_get_content($url)
+    {
+        if (function_exists("curl_init")) {
+            $ch      = curl_init();
+            $timeout = 30;
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+            $file_contents = curl_exec($ch);
+            curl_close($ch);
+        } else {
+            $is_auf = ini_get('allow_url_fopen') ? true : false;
+            if ($is_auf) {
+                $file_contents = file_get_contents($url);
+            }
+        }
+        return $file_contents;
+    }
+
+    public function check_remote_file_exists($url)
+    {
+        $curl = curl_init($url);
+        // 不取回数据
+        curl_setopt($curl, CURLOPT_NOBODY, true);
+        // 发送请求
+        $result = curl_exec($curl);
+        $found  = false;
+        // 如果请求没有发送失败
+        if ($result !== false) {
+            // 再检查http响应码是否为200
+            $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            if ($statusCode == 200) {
+                $found = true;
+            }
+        }
+        curl_close($curl);
+
+        return $found;
+    }
+
     public function index()
     {
         // dump('bing');
@@ -82,23 +157,38 @@ class Bing extends Controller
         $id || $this->error('参数错误');
         $id = deauthcode($id);
         $id || $this->error('参数值错误');
-
+		
+		//dump($id);
         $model = model('BingWallpaper');
         $model->where('id', $id)->setInc('viewcount');
 
-        $data            = $model->find($id);
+        $data            = $model->get($id);
+		//dump($data);
         $datesign        = $data['datesign'];
         $data['brief']   = model('BingBranchBrief')->where('datesign', $datesign)->select();
         $data['details'] = model('BingBranchDetails')->where('datesign', $datesign)->select();
 
-        // dump($data);
+        //dump($data);
         $this->assign('data', $data);
         return $this->fetch();
 
     }
+    public function curl_file_get_contents($durl)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $durl);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        // curl_setopt($ch, CURLOPT_USERAGENT, _USERAGENT_);
+        // curl_setopt($ch, CURLOPT_REFERER, _REFERER_);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $r = curl_exec($ch);
+        curl_close($ch);
+        return $r;
+    }
 
     public function getFor4ui($type = null)
     {
+        // getFor4ui?type=b1a1xcodQ6629k8qRuFBowJn0eXRjcyCaZc2JaSdCC5GYi54
         //b1a1xcodQ6629k8qRuFBowJn0eXRjcyCaZc2JaSdCC5GYi54//
         //dump(authcode('getBing'));
 
@@ -109,16 +199,17 @@ class Bing extends Controller
 
         set_time_limit(0);
 
-        $html = file_get_contents('https://www.4ui.cn/bing/1.html'); // 采集网址
-        //采集规则
-        $rules = [
-            //采集a标签的href属性
-            'link'      => ['.list-wallpaper .caption a', 'href'],
-            //采集a标签的text文本
-            'link_text' => ['.list-wallpaper .caption a', 'text'],
-        ];
-        $ql   = QueryList::html($html)->rules($rules)->query();
-        $data = $ql->getData();
+        $url = 'https://www.4ui.cn/bing/1.html';
+
+        $data = QueryList::get($url)
+        // 设置采集规则
+            ->rules([
+                //采集a标签的href属性
+                'link' => ['.list-wallpaper .caption a', 'href'],
+                //采集a标签的text文本
+                // 'link_text' => ['.list-wallpaper .caption a', 'text'],
+            ])
+            ->query()->getData();
         $data = $data->all();
 
         $newarr = [];
@@ -126,8 +217,6 @@ class Bing extends Controller
             # code...
             $link = $value['link'];
             $link = 'https://www.4ui.cn' . $link;
-
-            $html = file_get_contents($link);
 
             $rules = [
                 //采集a标签的href属性
@@ -170,15 +259,13 @@ class Bing extends Controller
 
             ];
 
-            $ql = QueryList::html($html)->rules($rules)->query();
-
-            $data = $ql->getData();
+            $data = QueryList::get($link)->rules($rules)->query()->getData();
             $data = $data->all();
 
             $newarr[] = $data;
 
         }
-        // dump($newarr);
+        // dump($newarr);die;
 
         $sortArr = [];
         foreach ($newarr as $value) {
@@ -190,7 +277,7 @@ class Bing extends Controller
         // unset($sortArr[9]);
         // unset($sortArr[10]);
         // unset($sortArr[11]);
-        $sortArr = $this->f_order($sortArr, 'datesign', 1);
+        // $sortArr = $this->f_order($sortArr, 'datesign', 1);
         //cache('data', $newarr);
         // die;
         // dump($sortArr);die;
@@ -244,12 +331,13 @@ class Bing extends Controller
         }
 
         dump($bingData);
+        // die;
 
         // 验证数据
-        $validate = validate('BingWallpaper');
-        if (!$validate->check($wallpaperData)) {
-            return $this->error($validate->getError());
-        }
+        // $validate = validate('BingWallpaper');
+        // if (!$validate->check($bingData)) {
+        //     return $this->error($validate->getError());
+        // }
         // die;
 
         $briefTemp = [];
@@ -278,7 +366,7 @@ class Bing extends Controller
 
                 $imgUrl  = 'https://www.4ui.cn' . $value['img' . $i];
                 $imgName = md5(microtime() . $imgUrl) . '.jpg';
-                $imgPath = $this->save_pic($imgUrl, $imgName, $this->tempPath); // 执行临时文件保存操作
+                $imgPath = $this->saveRemoteFile($imgUrl, $imgName, $this->tempPath); // 执行临时文件保存操作
 
                 // 图片1迁移
                 if (is_file($imgPath)) {
@@ -301,120 +389,15 @@ class Bing extends Controller
 
     }
 
-    public function test1()
-    {
-        $newarr = cache('data');
-
-        unset($newarr[8]);
-        unset($newarr[9]);
-        unset($newarr[10]);
-        unset($newarr[11]);
-        // dump($newarr);die;
-
-        $bingData    = [];
-        $briefData   = [];
-        $detailsData = [];
-
-        foreach ($newarr as $value) {
-            $small = $value[0]['small'];
-            $small = trim(str_replace('Images（图片来源于必应搜索）', '', $small));
-            $small = trim(str_replace('（图片来源于必应搜索）', '', $small));
-            $arr   = preg_split("/<i class=(.*?)><\/i>/", $small);
-
-            $date     = trim($arr[1]);
-            $item_ttl = trim($arr[3]);
-            $author   = trim($arr[5]);
-
-            $dateTemp = strtotime($date);
-            $datesign = date('Y', $dateTemp) . date('m', $dateTemp) . date('d', $dateTemp);
-
-            $bing['title']       = trim($value[0]['title']);
-            $bing['titlelong']   = trim($value[0]['title']) . ' (© ' . $author . ')';
-            $bing['description'] = trim($value[0]['description']);
-            $bing['author']      = $author;
-            $bing['item_ttl']    = $item_ttl;
-            $bing['year']        = date('Y', $dateTemp);
-            $bing['month']       = date('m', $dateTemp);
-            $bing['datesign']    = $datesign;
-
-            $bingData[] = $bing;
-
-            $brief['datesign']     = $datesign;
-            $brief['title0']       = $value[0]['brief0_title'];
-            $brief['description0'] = $value[0]['brief0_description'];
-            $brief['title1']       = $value[0]['brief1_title'];
-            $brief['description1'] = $value[0]['brief1_description'];
-            $brief['title2']       = $value[0]['brief2_title'];
-            $brief['description2'] = $value[0]['brief2_description'];
-            $brief['title3']       = $value[0]['brief3_title'];
-            $brief['description3'] = $value[0]['brief3_description'];
-
-            $briefData[] = $brief;
-
-            $details['datesign']     = $datesign;
-            $details['resume0']      = $value[0]['details0_resume'];
-            $details['title0']       = $value[0]['details0_title'];
-            $details['description0'] = $value[0]['details0_description'];
-            $details['img0']         = $value[0]['details0_img'];
-            $details['resume1']      = $value[0]['details1_resume'];
-            $details['title1']       = $value[0]['details1_title'];
-            $details['description1'] = $value[0]['details1_description'];
-            $details['img1']         = $value[0]['details1_img'];
-
-            $detailsData[] = $details;
-
-        }
-        $bingData = $this->f_order($bingData, 'datesign', 1);
-        // dump($bingData);
-        // die;
-
-        $briefTemp = [];
-        foreach ($briefData as $value) {
-            $_t = [];
-            for ($i = 0; $i < 4; $i++) {
-                $v['datesign']    = $value['datesign'];
-                $v['title']       = $value['title' . $i];
-                $v['description'] = $value['description' . $i];
-                $briefTemp[]      = $v;
-            }
-        }
-        $briefTemp = $this->f_order($briefTemp, 'datesign', 1);
-        dump($briefTemp);
-
-        $detailsTemp = [];
-        foreach ($detailsData as $value) {
-            $datesign  = $value['datesign'];
-            $strtotime = strtotime($datesign);
-            $_t        = [];
-            for ($i = 0; $i < 2; $i++) {
-                $v['datesign']    = $datesign;
-                $v['title']       = $value['title' . $i];
-                $v['resume']      = $value['resume' . $i];
-                $v['description'] = $value['description' . $i];
-
-                $imgUrl  = 'https://www.4ui.cn' . $value['img' . $i];
-                $imgName = md5(microtime() . $imgUrl) . '.jpg';
-                $imgPath = $this->save_pic($imgUrl, $imgName, $this->tempPath); // 执行临时文件保存操作
-
-                // 图片1迁移
-                if (is_file($imgPath)) {
-                    $_savepath = $this->bingwallpaperPath . '/' . date('Y', $strtotime) . '/' . date('m', $strtotime) . '/' . date('d', $strtotime) . '/';
-                    make_dir($_savepath);
-                    $image = \think\Image::open($imgPath);
-                    $image->save($_savepath . $imgName);
-                    unlink($imgPath);
-                }
-                $v['img']      = $imgName;
-                $detailsTemp[] = $v;
-            }
-        }
-        $detailsTemp = $this->f_order($detailsTemp, 'datesign', 1);
-        dump($detailsTemp);
-
-        // dump($temparr);
-
-    }
-
+    /**
+     * { f_order 排序 }
+     *
+     * @param      <type>   $arr    The arr
+     * @param      <type>   $field  The field
+     * @param      integer  $sort   The sort 1为正序，其它为反序
+     *
+     * @return     <type>   ( description_of_the_return_value )
+     */
     public function f_order($arr, $field, $sort)
     {
         $order = array();
@@ -429,12 +412,6 @@ class Bing extends Controller
         return $arr;
     }
 
-    public function make_semiangle($str)
-    {
-        $arr = array('  ' => ' ');
-        return strtr($str, $arr);
-    }
-
     /**
      * [ getbingwallpaper 获取图片 ]
      * @author SpringYang
@@ -444,6 +421,7 @@ class Bing extends Controller
      */
     public function getbingwallpaper($type = null)
     {
+        // getbingwallpaper?type=b1a1xcodQ6629k8qRuFBowJn0eXRjcyCaZc2JaSdCC5GYi54
         //b1a1xcodQ6629k8qRuFBowJn0eXRjcyCaZc2JaSdCC5GYi54//
         //dump(authcode('getBing'));
 
@@ -491,7 +469,7 @@ class Bing extends Controller
      */
     public function getWallpaperData($type = 0)
     {
-        $sourcecode = file_get_contents('http://cn.bing.com/HPImageArchive.aspx?idx=0&n=1'); // 采集网址
+        $sourcecode = $this->url_get_content('http://cn.bing.com/HPImageArchive.aspx?idx=0&n=1'); // 采集网址
 
         $oldurl    = ''; // 原来 url 地址
         $oldurlbig = ''; // 原来 1920X1080 url 地址
@@ -587,7 +565,8 @@ class Bing extends Controller
         }
 
         // 执行保存并返回保存图像的路径
-        $bigImgPath = $this->save_pic($oldurlbig, $newname, $this->savePath);
+        // $bigImgPath = $this->save_pic($oldurlbig, $newname, $this->savePath);
+        $bigImgPath = $this->saveRemoteFile($oldurlbig, $newname, $this->savePath);
 
         if (is_file($bigImgPath)) {
             $image = \think\Image::open($bigImgPath); // 实例化图像
@@ -682,8 +661,8 @@ class Bing extends Controller
         $detailsName1 = md5(microtime() . $imgOld1) . '.jpg'; // 图片名称带后缀
         $detailsName2 = md5(microtime() . $imgOld2) . '.jpg'; // 图片名称带后缀
 
-        $img1 = $this->save_pic($imgOld1, $detailsName1, $this->tempPath); // 执行临时文件保存操作
-        $img2 = $this->save_pic($imgOld2, $detailsName2, $this->tempPath); // 执行临时文件保存操作
+        $img1 = $this->saveRemoteFile($imgOld1, $detailsName1, $this->tempPath); // 执行临时文件保存操作
+        $img2 = $this->saveRemoteFile($imgOld2, $detailsName2, $this->tempPath); // 执行临时文件保存操作
 
         // 图片1迁移
         if (is_file($img1)) {
@@ -723,102 +702,6 @@ class Bing extends Controller
         }
         return $reData;
 
-    }
-
-    //然后将几个函数组合，在函数save_pic()中调用，最后返回保存后的图片路径。
-    /*
-     * 参数:
-    @string: $url 文件远程url;
-    @string: $picName 保存文件名称;
-    @string: $savepath 文件保存路径;
-     */
-    /**
-     * [ save_pic 后将几个函数组合，在函数save_pic()中调用，最后返回保存后的图片路径 ]
-     * @author SpringYang
-     * @email    ceroot@163.com
-     * @dateTime 2017-12-15T16:18:34+0800
-     * @param    string                   $url      [文件远程url]
-     * @param    string                   $picName  [保存文件名称]
-     * @param    string                   $savepath [文件保存路径]
-     * @return   string                   filepath  [返回图片路径]
-     */
-    private function save_pic($url, $picName, $savepath = '')
-    {
-        //处理地址
-        $url = trim($url);
-        $url = str_replace(' ', '%20', $url);
-        //读文件
-        $string = $this->read_filetext($url);
-
-        if (empty($string)) {
-            //echo '读取不了文件';exit;
-            return 0;
-        }
-
-        //文件名
-        //$filename = get_filename($url);
-        $filename = $picName;
-        //echo $filename;
-        //存放目录
-
-        make_dir($savepath); //建立存放目录
-        //文件地址
-        $filepath = $savepath . $filename;
-        //写文件
-        $this->write_filetext($filepath, $string);
-        return $filepath;
-    }
-
-    /**
-     * [ read_filetext 取得图片内容。使用fopen打开图片文件，然后fread读取图片文件内容 ]
-     * @author SpringYang
-     * @email    ceroot@163.com
-     * @dateTime 2017-12-15T16:20:47+0800
-     * @param    [type]                   $filepath [文件路径]
-     * @return   [type]                             [description]
-     */
-    private function read_filetext($filepath)
-    {
-
-        $filepath = trim($filepath);
-        $htmlfp   = @fopen($filepath, 'r');
-        $string   = '';
-
-        //远程
-        if (strstr($filepath, '://')) {
-            while ($data = @fread($htmlfp, 500000)) {
-                $string .= $data;
-            }
-        } else {
-            //本地
-            $string = @fread($htmlfp, @filesize($filepath));
-        }
-
-        @fclose($htmlfp);
-        return $string;
-    }
-
-    /**
-     * [ write_filetext 写文件，将图片内容fputs写入文件中，即保存图片文件 ]
-     * @author SpringYang
-     * @email    ceroot@163.com
-     * @dateTime 2017-12-15T16:21:30+0800
-     * @param    [type]                   $filepath [文件路径]
-     * @param    [type]                   $string   [description]
-     * @return   [type]                             [description]
-     */
-    private function write_filetext($filepath, $string)
-    {
-        if (file_exists($filepath)) {
-            //echo '文件已经存在！</br>';
-            //picInfo($filepath);
-        } else {
-            $fp = @fopen($filepath, 'w');
-            @fputs($fp, $string);
-            @fclose($fp);
-            //echo '[OK]..!<br />';
-            //picInfo($filepath);
-        }
     }
 
     /**
@@ -871,8 +754,4 @@ class Bing extends Controller
         }
     }
 
-    public function hello($name = 'ThinkPHP5')
-    {
-        return 'hello,' . $name;
-    }
 }
