@@ -60,8 +60,6 @@ class Bing extends Controller
 
     public function test()
     {
-<<<<<<< HEAD
-=======
         $url = 'http://cn.bing.com/az/hprichbg/rb/PowysCounty_ZH-CN11115693548_1366x768.jpg';
         dump(parse_url($url, PHP_URL_PATH));
         dump(pathinfo(parse_url($url, PHP_URL_PATH)));
@@ -70,20 +68,57 @@ class Bing extends Controller
         echo pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION);
 
         die;
->>>>>>> 9df55d4d210c8c798c86348d62f62e2267382d90
 
-        // $file_url = 'http://cn.bing.com/az/hprichbg/rb/PowysCounty_ZH-CN11115693548_1366x768.jpg';
-        $file_url = 'http://s3.cn.bing.net/th?id=OJ.MJ0SSZdeuqnfpw&pid=MSNJVFeeds';
+    }
 
+    public function dd(){
+        $_m = 10;
+        $where = [
+            'year' => 2014,
+            'month' => 9
+        ];
+        $data = db('old')->where($where)->select();
+        // dump($data);
         // die;
-        $picName      = time() . '.jpg';
-        $saveFilePath = $this->saveRemoteFile($file_url, $picName, $this->bingwallpaperPath);
+        $newdata = [];
+        foreach ($data as $value) {
+            $imgName = $value['newname'];
+            $oldname = $value['oldname'];
+            $newname = str_ireplace('1366x768', '', $oldname);
+            
+            $tempArr['imgName']=$imgName;
+            $date = str_ireplace('BingWallpaper-', '', $imgName);
+            $date = str_ireplace('.jpg', '', $date);
+            $strtotime = strtotime($date);
 
-        dump($saveFilePath);
-        die;
-        //$image = \think\Image::open($imgPath);
-        //$image->save($_savepath . $imgName);
-        //
+            $datesign = date('Ymd',$strtotime);
+
+            $id = model('BingWallpaper')->getFieldByDatesign($datesign, 'id');
+
+            $tempArr['datesign'] = $datesign;
+            $tempArr['id'] = $id;
+            $tempArr['oldname'] = $oldname;
+            $tempArr['newname'] = $newname;
+            $tempArr['oldurl'] = $value['oldurl'];
+
+            $imgPath = './data/'.$imgName;
+            $strtotime = strtotime($datesign);
+
+            if (is_file($imgPath)) {
+                $_savepath = $this->bingwallpaperPath . '/' . date('Y', $strtotime) . '/' . date('m', $strtotime) . '/' . date('d', $strtotime) . '/';
+                make_dir($_savepath);
+
+                copy($imgPath,$_savepath . $imgName);
+                $image = \think\Image::open($imgPath);
+                $image->thumb(640, 640)->save($_savepath . 'thumb-' . $newname); // 缩略图本地开始
+            }
+
+            $newdata[] = $tempArr;
+            # code...
+        }
+
+        dump($newdata);
+        //model('BingWallpaper')->saveAll($newdata);
 
     }
 
@@ -126,10 +161,8 @@ class Bing extends Controller
         $curl = curl_init($url);
         // 不取回数据
         curl_setopt($curl, CURLOPT_NOBODY, true);
-<<<<<<< HEAD
-=======
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'GET'); // 不加这个会返回403，加了才返回正确的200，原因不明
->>>>>>> 9df55d4d210c8c798c86348d62f62e2267382d90
+
         // 发送请求
         $result = curl_exec($curl);
         $found  = false;
@@ -149,7 +182,10 @@ class Bing extends Controller
     public function index()
     {
         // dump('bing');
-        $data    = model('BingWallpaper')->order('datesign', 'desc')->paginate(10);
+        $data    = model('BingWallpaper')->order('datesign', 'desc')->paginate(12,'',[
+            'type'     => '\page\Layui',
+            'var_page' => 'page',
+        ]);
         $newdata = [];
         foreach ($data as $value) {
             $datesign         = $value['datesign'];
@@ -172,7 +208,6 @@ class Bing extends Controller
         $id || $this->error('参数错误');
         $id = deauthcode($id);
         $id || $this->error('参数值错误');
-<<<<<<< HEAD
 		
 		//dump($id);
         $model = model('BingWallpaper');
@@ -180,15 +215,7 @@ class Bing extends Controller
 
         $data            = $model->get($id);
 		//dump($data);
-=======
 
-        //dump($id);
-        $model = model('BingWallpaper');
-        $model->where('id', $id)->setInc('viewcount');
-
-        $data = $model->get($id);
-        //dump($data);
->>>>>>> 9df55d4d210c8c798c86348d62f62e2267382d90
         $datesign        = $data['datesign'];
         $data['brief']   = model('BingBranchBrief')->where('datesign', $datesign)->select();
         $data['details'] = model('BingBranchDetails')->where('datesign', $datesign)->select();
@@ -460,10 +487,10 @@ class Bing extends Controller
         // dump($wallpaperData);
 
         // 验证数据
-        $validate = validate('BingWallpaper');
-        if (!$validate->check($wallpaperData)) {
-            return $this->error($validate->getError());
-        }
+        // $validate = validate('BingWallpaper');
+        // if (!$validate->check($wallpaperData)) {
+        //     return $this->error($validate->getError());
+        // }
 
         // 获取景区数据
         $branchData = $this->getBranchData();

@@ -55,11 +55,14 @@ class Manager extends Base
             }
             $data = $this->app->request->param();
 
+
+
             if (!$this->id) {
                 return $this->error('参数错误');
             }
 
             $user = $this->model::get($this->id, 'UcenterMember'); // 从数据取得用户数据
+            
             $uid  = $user['uid'];
 
             if (!$user) {
