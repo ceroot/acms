@@ -36,7 +36,7 @@
 	    	<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
 	    		<div class="bing-box">
 		    	  	<a href="{:url('details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">
-			    		<img src="./resize?i={:authcode('./data/bingwallpaper/'.date('Y/m/d/',strtotime($lists.datesign)).$lists.newname)}&w=400" alt="{$lists.title}" />
+			    		<img src="/resize?i={:authcode('./data/bingwallpaper/'.date('Y/m/d/',strtotime($lists.datesign)).$lists.newname)}&w=400" alt="{$lists.title}" />
 			    	</a>
 			    	<p>{$lists.item_ttl}</p>
 			    	<h4>
