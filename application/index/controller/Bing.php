@@ -398,9 +398,10 @@ class Bing extends Extend
         $description = $data['description'];
         // dump($description);
         $get_keywords = get_keywords($description);
+
+        // dump($get_keywords);
         
-        dump($get_keywords);
-        die;
+        // die;
         // $description = $data('description');
         // dump($description);
         // $keywords = get_keywords($description);
