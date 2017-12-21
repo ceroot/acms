@@ -19,8 +19,8 @@ Route::rule('bing', 'index/Bing/index');
 // Route::rule('bingdetails/:id','index/Bing/details');
 Route::rule('new/:id', 'index/News/read');
 
-Route::rule('resize', function ($img, $w) {
-    $image = deauthcode($img); // 解密
+Route::rule('resize', function ($i, $w) {
+    $image = deauthcode($i); // 解密
     // $image = 'https://www.benweng.com/data/bingwallpaper/2017/12/20/PowysCounty_ZH-CN11115693548.jpg';
 
     if (!$image) {

@@ -71,16 +71,189 @@ class Bing extends Extend
 
     }
 
-    public function dd()
+    public function dd1($year, $month, $wr = null)
+    {
+        $where = [
+            'year'    => $year,
+            'month'   => $month,
+            'country' => 'cn',
+        ];
+        $data = db('bingwallpapertest')->where($where)->select();
+        // dump($data);
+        // dump($data);die;
+
+        $newArr            = [];
+        $bingWallpaperPath = './data/bingwallpapertest/';
+        foreach ($data as $key => $value) {
+            // dump($key);
+            if ($key > -1) {
+                $month  = $value['month'];
+                $day    = $value['day'];
+                $author = $value['author'];
+                if ($author) {
+                    dump($author);
+                    die;
+                }
+                $source = '';
+
+                $month = sprintf('%02d', $month);
+                $day   = sprintf('%02d', $day);
+
+                $datesign = $value['year'] . $month . $day;
+                $title    = $value['title'];
+
+                if (strpos($title, '1366')) {
+                    dump($title);
+                    die;
+                }
+                $name  = $value['name'];
+                $title = trim(preg_replace("/\((.*)\)/", "", $title)); // 去掉小括号里的内容和前后的空格
+                // dump($title);
+                if ($key == 110) {
+                    $title = $title . '1';
+                }
+                // dump($value['title']);
+                preg_match_all("/(?:\(©)(.*)(?:\))/i", $value['title'], $result);
+                // dump($result);
+                $authorSource = $result[1][0];
+                // dump($authorSource);
+
+                if (!strpos($authorSource, '/')) {
+                    $author = trim($authorSource);
+                    $source = '';
+                } else {
+                    $_arr = explode('/', $authorSource);
+                    // dump($_arr);
+                    $source = trim(array_pop($_arr));
+                    $author = trim($this->author($_arr));
+                }
+
+                // dump($author);
+
+                // $authorArr = explode('/', $result[1]);
+                // dump($authorArr);
+                // dump($key);
+                // $fgf = '--';
+                // if ($key == 110) {
+                //     $fgf = '- -';
+                // } elseif ($key == 125) {
+                //     $fgf = '–';
+                // }
+
+                // $titleArr = explode($fgf, $title);
+                // $title    = trim($titleArr[0]);
+
+                // $authorArr = $titleArr[1];
+
+                // // dump($key);
+                // if (!strpos($authorArr, '/')) {
+                //     $author = trim($authorArr);
+                //     $source = '';
+                // } else {
+                //     $_arr   = explode('/', $authorArr);
+                //     $source = trim(array_pop($_arr));
+                //     $author = trim($this->author($_arr));
+                // }
+
+                // if ($key == 300 || $key == 119) {
+                //     $author = trim($authorArr);
+                //     $source = '';
+                // } else {
+                //     $source = trim(array_pop($_arr));
+                //     $author = trim($this->author($_arr));
+                // }
+                // dump($_arr);
+
+                $ddd = 1;
+                if ($ddd == 1) {
+                    $tempArr['datesign']    = $datesign;
+                    $tempArr['oldname']     = $name;
+                    $tempArr['newname']     = $name;
+                    $tempArr['title']       = $title;
+                    $tempArr['titlelong']   = $value['title'];
+                    $tempArr['author']      = $author;
+                    $tempArr['description'] = $value['describe'];
+                    $tempArr['source']      = $source;
+                    $tempArr['year']        = $year;
+                    $tempArr['month']       = $month;
+
+                    $newArr[] = $tempArr;
+
+                    // 图片处理
+                    $strtotime     = strtotime($datesign);
+                    $monthPath     = date('Ym', $strtotime);
+                    $imgPathSource = $bingWallpaperPath . $monthPath . '/' . $value['name'];
+                    //dump($imgPathSource);
+                    if (is_file($imgPathSource)) {
+                        $savePath = $this->bingwallpaperPath . date('Y/m/d', $strtotime) . '/';
+                        //dump($savePath);
+                        make_dir($savePath);
+                        $imgSavePath = $savePath . $name;
+                        copy($imgPathSource, $imgSavePath);
+                    } else {
+                        // dump('不存在');
+                        $log = '';
+                        $log .= date('Y-m-d H:i:s') . "\n";
+                        $log .= $imgPathSource;
+
+                        $logFile = $this->bingwallpaperPath . date('Ymd', $strtotime) . '.log'; // 记录日志文件地址
+                        file_put_contents($logFile, $log, FILE_APPEND);
+                    }
+                }
+            }
+        }
+
+        if ($wr) {
+
+            // $dd[] = $newArr[26];
+            // $dd[] = $newArr[27];
+            // $dd[] = $newArr[28];
+            // $dd[] = $newArr[29];
+            // $dd[] = $newArr[30];
+            // dump($dd);
+            // die;
+
+            $status = db('bingWallpaperTest')->insertAll($newArr);
+
+            dump($status);
+        } else {
+            dump($newArr);die;
+        }
+        // dump($data);
+        //bing_wallpaper_test
+
+    }
+
+    public function author($_arr)
+    {
+        $author = '';
+        if (count($_arr) > 1) {
+            foreach ($_arr as $k => $val) {
+                if ($k == 0) {
+                    $author .= trim($val);
+                } else {
+                    $author .= '/' . $val;
+                }
+
+            }
+        } else {
+            $author = trim($_arr[0]);
+        }
+
+        return $author;
+    }
+
+    public function dd($year, $month, $c)
     {
         $_m    = 10;
         $where = [
-            'year'  => 2014,
-            'month' => 9,
+            'year'    => $year,
+            'month'   => $month,
+            'country' => $c,
         ];
-        $data = db('old')->where($where)->select();
-        // dump($data);
-        // die;
+        $data = db('bingwallpapertest')->where($where)->select();
+        dump($data);
+        die;
         $newdata = [];
         foreach ($data as $value) {
             $imgName = $value['newname'];
