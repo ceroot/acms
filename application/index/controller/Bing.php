@@ -19,11 +19,11 @@
 
 namespace app\index\controller;
 
+use app\common\controller\Extend;
 use QL\QueryList;
-use think\Controller;
 use traits\controller\Jump;
 
-class Bing extends Controller
+class Bing extends Extend
 {
     use Jump;
 
@@ -71,11 +71,12 @@ class Bing extends Controller
 
     }
 
-    public function dd(){
-        $_m = 10;
+    public function dd()
+    {
+        $_m    = 10;
         $where = [
-            'year' => 2014,
-            'month' => 9
+            'year'  => 2014,
+            'month' => 9,
         ];
         $data = db('old')->where($where)->select();
         // dump($data);
@@ -85,30 +86,30 @@ class Bing extends Controller
             $imgName = $value['newname'];
             $oldname = $value['oldname'];
             $newname = str_ireplace('1366x768', '', $oldname);
-            
-            $tempArr['imgName']=$imgName;
-            $date = str_ireplace('BingWallpaper-', '', $imgName);
-            $date = str_ireplace('.jpg', '', $date);
-            $strtotime = strtotime($date);
 
-            $datesign = date('Ymd',$strtotime);
+            $tempArr['imgName'] = $imgName;
+            $date               = str_ireplace('BingWallpaper-', '', $imgName);
+            $date               = str_ireplace('.jpg', '', $date);
+            $strtotime          = strtotime($date);
+
+            $datesign = date('Ymd', $strtotime);
 
             $id = model('BingWallpaper')->getFieldByDatesign($datesign, 'id');
 
             $tempArr['datesign'] = $datesign;
-            $tempArr['id'] = $id;
-            $tempArr['oldname'] = $oldname;
-            $tempArr['newname'] = $newname;
-            $tempArr['oldurl'] = $value['oldurl'];
+            $tempArr['id']       = $id;
+            $tempArr['oldname']  = $oldname;
+            $tempArr['newname']  = $newname;
+            $tempArr['oldurl']   = $value['oldurl'];
 
-            $imgPath = './data/'.$imgName;
+            $imgPath   = './data/' . $imgName;
             $strtotime = strtotime($datesign);
 
             if (is_file($imgPath)) {
                 $_savepath = $this->bingwallpaperPath . '/' . date('Y', $strtotime) . '/' . date('m', $strtotime) . '/' . date('d', $strtotime) . '/';
                 make_dir($_savepath);
 
-                copy($imgPath,$_savepath . $imgName);
+                copy($imgPath, $_savepath . $imgName);
                 $image = \think\Image::open($imgPath);
                 $image->thumb(640, 640)->save($_savepath . 'thumb-' . $newname); // 缩略图本地开始
             }
@@ -182,7 +183,7 @@ class Bing extends Controller
     public function index()
     {
         // dump('bing');
-        $data    = model('BingWallpaper')->order('datesign', 'desc')->paginate(12,'',[
+        $data = model('BingWallpaper')->order('datesign', 'desc')->paginate(12, '', [
             'type'     => '\page\Layui',
             'var_page' => 'page',
         ]);
@@ -208,13 +209,13 @@ class Bing extends Controller
         $id || $this->error('参数错误');
         $id = deauthcode($id);
         $id || $this->error('参数值错误');
-		
-		//dump($id);
+
+        //dump($id);
         $model = model('BingWallpaper');
         $model->where('id', $id)->setInc('viewcount');
 
-        $data            = $model->get($id);
-		//dump($data);
+        $data = $model->get($id);
+        //dump($data);
 
         $datesign        = $data['datesign'];
         $data['brief']   = model('BingBranchBrief')->where('datesign', $datesign)->select();
@@ -225,6 +226,22 @@ class Bing extends Controller
         return $this->fetch();
 
     }
+
+    public function resize($img, $w)
+    {
+        // dump(authcode(20171221));die;
+        // dump(authcode('2017/12/21/SolsticeSquirrel_ZH-CN6551849968.jpg'));die;
+
+        $img = deauthcode($img);
+
+        // $image     = './data/bingwallpaper/2017/12/21/' . $img;
+        // $image = './data/bingwallpaper/' . $img;
+        $image = $img;
+        // dump($w);die;
+
+        $this->imgResize($image, $w);
+    }
+
     public function curl_file_get_contents($durl)
     {
         $ch = curl_init();
@@ -656,6 +673,7 @@ class Bing extends Controller
     {
         // 使用 QueryList 取得数据
         $data = QueryList::get('http://cn.bing.com/cnhp/life')->rules([
+            'rms_img'              => ['#hplaDL img.rms_img', 'src'],
             'hplaTtl'              => ['#hplaT .hplaTtl', 'text'],
             'hplaAttr'             => ['#hplaT .hplaAttr', 'text'],
             'hplatt'               => ['.hplaCata .hplatt', 'text'],
@@ -684,7 +702,7 @@ class Bing extends Controller
         ])->query()->getData();
 
         $scenic = $data->all(); // 取得数据
-        // dump($scenic);
+        dump($scenic);die;
 
         // 基本数据
         $bing['item_ttl']    = $scenic[0]['hplaTtl'];

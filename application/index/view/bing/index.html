@@ -14,7 +14,7 @@
 	p,h4{ margin:0; padding:0; }
 	a{ color: #23527c; text-decoration: none; }
 	.bing-area{}
-	.bing-area .bing-box{ list-style: none; border:1px solid #ddd; border-radius: 5px; display: inline-block; padding: 5px; }
+	.bing-area .bing-box{ list-style: none; border:1px solid #ddd; border-radius: 5px; display: inline-block; padding: 5px; width: 356px; }
 	.bing-area .bing-box:hover{ border:1px solid #23527c;}
 	.bing-area .bing-box .item{ color: #666 }
 	.bing-area .bing-box h4{ padding-bottom: 5px}
@@ -23,7 +23,7 @@
 	.text-align-r{ text-align: right; }
 
 	@media screen and (max-width: 575.99px) {
-	  .bing-area .bing-box{border: 0; border-radius: 0; border-bottom:1px solid #ddd; display:block; padding:0; }
+	  .bing-area .bing-box{border: 0; border-radius: 0; border-bottom:1px solid #ddd; display:block; padding:0; width: auto; }
 	}
 </style>
 </head>
@@ -31,12 +31,12 @@
     
 </body>
 <div class="layui-container">
-  	<div class="layui-row layui-col-space20 bing-area">
+  	<div class="layui-row layui-col-space18 bing-area">
   		{volist name='list' id='lists'}
 	    	<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
 	    		<div class="bing-box">
 		    	  	<a href="{:url('details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">
-			    		<img src="/data/bingwallpaper/{$lists.year}/{$lists.month}/{$lists.datesign|strtotime|date='d'}/thumb-{$lists.newname}">
+			    		<img src="./resize?img={:authcode('./data/bingwallpaper/'.date('Y/m/d/',strtotime($lists.datesign)).$lists.newname)}&w=400" alt="{$lists.title}" />
 			    	</a>
 			    	<p>{$lists.item_ttl}</p>
 			    	<h4>
