@@ -394,7 +394,18 @@ class Bing extends Extend
         $data['brief']   = model('BingBranchBrief')->where('datesign', $datesign)->select();
         $data['details'] = model('BingBranchDetails')->where('datesign', $datesign)->select();
 
-        //dump($data);
+        // dump($data);
+        $description = $data['description'];
+        // dump($description);
+        $get_keywords = get_keywords($description);
+        
+        dump($get_keywords);
+        die;
+        // $description = $data('description');
+        // dump($description);
+        // $keywords = get_keywords($description);
+
+        // dump($keywords);die;
         $this->assign('data', $data);
         return $this->fetch();
 

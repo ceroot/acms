@@ -404,12 +404,13 @@ class Pscws
         $this->_off = $off;
 
         // sort it & return
-        $cmp_func = create_function('$a,$b', 'return ($b[\'weight\'] > $a[\'weight\'] ? 1 : -1);');
-        usort($list, $cmp_func);
+        //$cmp_func = create_function('$a,$b', 'return ($b[\'weight\'] > $a[\'weight\'] ? 1 : -1);');
+        //dump($list);
+        //usort($list, $cmp_func);
         if (count($list) > $limit) {
             $list = array_slice($list, 0, $limit);
         }
-
+// dump($list);
         return $list;
     }
 

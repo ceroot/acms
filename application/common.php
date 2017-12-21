@@ -844,6 +844,7 @@ if (!function_exists('del_file')) {
 if (!function_exists('get_keywords')) {
     function get_keywords($str, $lenght = 10, $separator = ',')
     {
+
         $str = strip_tags($str); // 去掉 html 代码
         $str = preg_replace('/[ ]/', '', $str);
         $str = str_replace('&nbsp;', '', $str); // 去掉 &nbsp;
@@ -855,7 +856,7 @@ if (!function_exists('get_keywords')) {
         $pscws->set_rule($extendPath . 'scws/lib/rules.utf8.ini');
         $pscws->set_ignore(true);
         $pscws->send_text($str);
-        $words = $pscws->get_tops($lenght);
+        $words = $pscws->get_tops($lenght);//return $str;
         $pscws->close();
 
         $end  = end($words);
