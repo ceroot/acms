@@ -80,7 +80,7 @@ class Bing extends Extend
         ];
         $data = db('bingwallpapertest')->where($where)->select();
         // dump($data);
-        // dump($data);die;
+        dump($data);die;
 
         $newArr            = [];
         $bingWallpaperPath = './data/bingwallpapertest/';
@@ -90,6 +90,7 @@ class Bing extends Extend
                 $month  = $value['month'];
                 $day    = $value['day'];
                 $author = $value['author'];
+
                 if ($author) {
                     dump($author);
                     die;
@@ -102,12 +103,19 @@ class Bing extends Extend
                 $datesign = $value['year'] . $month . $day;
                 $title    = $value['title'];
 
-                if (strpos($title, '1366')) {
-                    dump($title);
-                    die;
+                $newname = $name = $value['name'];
+                if (strpos($name, '1366')) {
+                    //dump($key);
+                    //dump($name);
+                    $newname = str_replace('_1366x768', '', $name);
+
                 }
-                $name  = $value['name'];
+                // dump($newname);
+                // die;
+
                 $title = trim(preg_replace("/\((.*)\)/", "", $title)); // 去掉小括号里的内容和前后的空格
+                // dump($datesign);
+                // dump($key);
                 // dump($title);
                 if ($key == 110) {
                     $title = $title . '1';
@@ -168,7 +176,7 @@ class Bing extends Extend
                 if ($ddd == 1) {
                     $tempArr['datesign']    = $datesign;
                     $tempArr['oldname']     = $name;
-                    $tempArr['newname']     = $name;
+                    $tempArr['newname']     = $newname;
                     $tempArr['title']       = $title;
                     $tempArr['titlelong']   = $value['title'];
                     $tempArr['author']      = $author;
@@ -179,8 +187,10 @@ class Bing extends Extend
 
                     $newArr[] = $tempArr;
 
+                    $strtotime = strtotime($datesign);
+                    $logFile   = $this->bingwallpaperPath . 'log/' . date('Ymd', $strtotime) . '.log'; // 记录日志文件地址
                     // 图片处理
-                    $strtotime     = strtotime($datesign);
+
                     $monthPath     = date('Ym', $strtotime);
                     $imgPathSource = $bingWallpaperPath . $monthPath . '/' . $value['name'];
                     //dump($imgPathSource);
@@ -188,15 +198,18 @@ class Bing extends Extend
                         $savePath = $this->bingwallpaperPath . date('Y/m/d', $strtotime) . '/';
                         //dump($savePath);
                         make_dir($savePath);
-                        $imgSavePath = $savePath . $name;
+                        $imgSavePath = $savePath . $newname;
                         copy($imgPathSource, $imgSavePath);
+
+                        // 删除日志文件
+                        if (is_file($logFile)) {
+                            unlink($logFile);
+                        }
                     } else {
                         // dump('不存在');
                         $log = '';
                         $log .= date('Y-m-d H:i:s') . "\n";
                         $log .= $imgPathSource;
-
-                        $logFile = $this->bingwallpaperPath . date('Ymd', $strtotime) . '.log'; // 记录日志文件地址
                         file_put_contents($logFile, $log, FILE_APPEND);
                     }
                 }
@@ -214,6 +227,151 @@ class Bing extends Extend
             // die;
 
             $status = db('bingWallpaperTest')->insertAll($newArr);
+
+            dump($status);
+        } else {
+            dump($newArr);die;
+        }
+        // dump($data);
+        //bing_wallpaper_test
+
+    }
+
+    public function dd2($year, $month, $wr = null)
+    {
+        $where = [
+            'year'    => $year,
+            'month'   => $month,
+            'country' => 'cn',
+        ];
+        $data = db('bingwallpapertest')->where($where)->select();
+        // dump($data);
+        // dump($data);die;
+
+        $newArr            = [];
+        $bingWallpaperPath = './data/bingwallpapertest/';
+        foreach ($data as $key => $value) {
+            // dump($key);
+            if ($key > -1) {
+                $month  = $value['month'];
+                $day    = $value['day'];
+                $author = $value['author'];
+
+                if ($author) {
+                    dump($author);
+                    die;
+                }
+                $source = '';
+
+                $month = sprintf('%02d', $month);
+                $day   = sprintf('%02d', $day);
+
+                $datesign = $value['year'] . $month . $day;
+                $title    = $value['title'];
+
+                $newname = $name = $value['name'];
+                if (strpos($name, '1366')) {
+                    //dump($key);
+                    //dump($name);
+                    $newname = str_replace('_1366x768', '', $name);
+
+                }
+                // dump($newname);
+                // die;
+
+                $title = trim(preg_replace("/\((.*)\)/", "", $title)); // 去掉小括号里的内容和前后的空格
+                // dump($title);
+                if ($key == 110) {
+                    $title = $title . '1';
+                }
+                // dump($value['title']);
+                preg_match_all("/(?:\(©)(.*)(?:\))/i", $value['title'], $result);
+                // dump($result);
+                $authorSource = $result[1][0];
+                // dump($authorSource);
+
+                if (!strpos($authorSource, '/')) {
+                    $author = trim($authorSource);
+                    $source = '';
+                } else {
+                    $_arr = explode('/', $authorSource);
+                    // dump($_arr);
+                    $source = trim(array_pop($_arr));
+                    $author = trim($this->author($_arr));
+                }
+
+                $ddd = 1;
+                if ($ddd == 1) {
+                    $tempArr['datesign'] = $datesign;
+                    $tempArr['title']    = $title;
+                    $tempArr['newname']  = $newname;
+
+                    $datesign_plus  = $datesign + 1;
+                    $strtotime_plus = strtotime($datesign_plus);
+                    $newArr[]       = $tempArr;
+
+                    dump($datesign);
+                    dump($newname);
+                    //dump($datesign);
+                    //dump($datesign_plus);
+                    //dump($strtotime_plus);
+
+                    $strtotime = strtotime($datesign);
+                    $logFile   = $this->bingwallpaperPath . 'log/' . date('Ymd', $strtotime) . '.log'; // 记录日志文件地址
+                    // 图片处理
+
+                    $monthPath = date('Ym', $strtotime);
+                    // $imgPathSource = $bingWallpaperPath . $monthPath . '/' . $value['name'];
+
+                    // $ddd = 'CN_' . date('d-m-Y', $strtotime_plus) . '（' . $title . '）.jpg';
+                    // dump($ddd);
+                    // $imgPathSource = $bingWallpaperPath . $monthPath . '/' . $value['name'];
+                    // CN_01-12-2012（加州约塞米蒂国家公园）.jpg
+                    //$imgPathSource = 'CN_' . date('d-m-Y', $strtotime_plus) . '（' . $title . '）.jpg';
+                    // 2013-02-01-缅甸掸邦，茵莱湖附近隋燕寺院的小沙弥
+                    // $imgPathSource = date('Y-m-d', $strtotime_plus) . '-' . $title . '.jpg';
+                    // CN_2013-05-02（苏格兰斯凯岛石南花田中的高地牛）.jpg
+                    // $imgPathSource = 'CN_' . date('Y-m-d', $strtotime_plus) . '（' . $title . '）.jpg';
+                    // BingWallpaper-2014-03-01（加拿大圣劳伦斯湾的竖琴海豹宝宝）.jpg
+                    $imgPathSource = 'BingWallpaper-' . date('Y-m-d', $strtotime_plus) . '（' . $title . '）.jpg';
+                    $imgPathSource = $bingWallpaperPath . $monthPath . '/' . $imgPathSource;
+                    // $imgPathSource = mb_convert_encoding($imgPathSource, 'GB2312', 'auto'); // 文件名编码转换
+                    //dump($imgPathSource);
+                    if (is_file($imgPathSource)) {
+                        $savePath = $this->bingwallpaperPath . date('Y/m/d', $strtotime) . '/';
+                        // dump($savePath);
+                        // die;
+                        make_dir($savePath);
+                        $imgSavePath = $savePath . $newname;
+                        copy($imgPathSource, $imgSavePath);
+
+                        // 删除日志文件
+                        if (is_file($logFile)) {
+                            unlink($logFile);
+                        }
+                    } else {
+                        dump($imgPathSource);
+                        // dump('不存在');die;
+                        $log = '';
+                        $log .= date('Y-m-d H:i:s') . "\n";
+                        $log .= $imgPathSource;
+                        file_put_contents($logFile, $log, FILE_APPEND);
+                    }
+                }
+            }
+        }
+
+        if ($wr) {
+
+            // $dd[] = $newArr[26];
+            // $dd[] = $newArr[27];
+            // $dd[] = $newArr[28];
+            // $dd[] = $newArr[29];
+            // $dd[] = $newArr[30];
+            // dump($dd);
+            // die;
+
+            //$status = db('bingWallpaperTest')->insertAll($newArr);
 
             dump($status);
         } else {
@@ -388,19 +546,21 @@ class Bing extends Extend
         $model->where('id', $id)->setInc('viewcount');
 
         $data = $model->get($id);
-        //dump($data);
+        //dump($data);die;
 
         $datesign        = $data['datesign'];
         $data['brief']   = model('BingBranchBrief')->where('datesign', $datesign)->select();
         $data['details'] = model('BingBranchDetails')->where('datesign', $datesign)->select();
 
-        // dump($data);
+        // dump($data);die;
         $description = $data['description'];
         // dump($description);
-        $get_keywords = get_keywords($description);
+        if ($description) {
+            $get_keywords = get_keywords($description);
+        }
 
         // dump($get_keywords);
-        
+
         // die;
         // $description = $data('description');
         // dump($description);
@@ -887,7 +1047,7 @@ class Bing extends Extend
         ])->query()->getData();
 
         $scenic = $data->all(); // 取得数据
-        dump($scenic);die;
+        // dump($scenic);die;
 
         // 基本数据
         $bing['item_ttl']    = $scenic[0]['hplaTtl'];
