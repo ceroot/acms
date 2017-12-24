@@ -870,9 +870,9 @@ class Bing extends Extend
         $description = $data['description'] ?:$data['title'];
         // dump($description);
         if ($description) {
-            $get_keywords = get_keywords($description,5);
+            $keywords = get_keywords($description,5);
             // dump($get_keywords);
-            $keywordsArr = explode(',', $get_keywords);
+            $keywordsArr = explode(',', $keywords);
             // dump($keywordsArr);
             //where('name','like',['%think','php%'],'OR');
 
@@ -895,6 +895,7 @@ class Bing extends Extend
         // $data['nextid'] = is_numeric($nextId) ? authcode($nextId) : $nextId;
         $data['previd'] = $prevId;
         $data['nextid'] = $nextId;
+        $data['keywords'] = $keywords;
         // dump($data);
         // die;
         $this->assign('groom', $groom);
