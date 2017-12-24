@@ -19,14 +19,31 @@
 	@media screen and (max-width: 575.99px) {
 	  .area p img{ width: 100%; }  
 	}
+
+	p,h4{ margin:0; padding:0; }
+	a{ color: #23527c; text-decoration: none; }
+	.bing-area{}
+	.bing-area .bing-box{ list-style: none; border:1px solid #ddd; border-radius: 5px; display: inline-block; padding: 5px; margin-bottom: 5px;  max-width: 265.5px; }
+	.bing-area .bing-box:hover{ border:1px solid #23527c;}
+	.bing-area .bing-box .item{ color: #666 }
+	.bing-area .bing-box .img-box{ overflow: hidden;}
+	.bing-area .bing-box h4{ padding-bottom: 5px; overflow: hidden; white-space:nowrap;}
+	.bing-area .bing-box h4 a{ font-weight: 600; }
+	.bing-area img{ width: 100%; }
+	.text-align-r{ text-align: right; }
+
+	@media screen and (max-width: 575.99px) {
+	  .bing-area .bing-box{border: 0; border-radius: 0; border-bottom:1px solid #ddd; display:block; padding:0; width: auto; max-height:auto; max-width: none; }
+	  .bing-area .bing-box .img-box{ max-height:auto; max-width:none; }
+	}
 </style>
+
 </head>
 <body>
-
 	<div class="layui-container area">
 		<h2 style="text-align: center;">{$data.title}</h2>
-		<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; text-align: center; font-size: 12px; color: #444">
-			{$data.datesign|strtotime|date='Y-m-d'}&nbsp;&nbsp;{$data.viewcount}&nbsp;&nbsp;{$data.downcount}&nbsp;&nbsp;{$data.item_ttl}&nbsp;&nbsp;{$data.author}
+		<div style="border-bottom: 1px solid #ddd; margin-bottom: 5px; line-height: 22px; text-align: center; color: #444">
+			<i class="layui-icon">&#xe60e;</i> {$data.datesign|strtotime|date='Y-m-d'}&nbsp;&nbsp;<i class="layui-icon">&#xe60d;</i> {$data.viewcount}&nbsp;&nbsp;<i class="layui-icon">&#xe601;</i> {$data.downcount}&nbsp;&nbsp;{$data.item_ttl}&nbsp;&nbsp;© {$data.author}
 		</div>
 		<div style="padding-top: 15px; padding-bottom: 10px;">
 			<img class="big" src="/data/bingwallpaper/{$data.datesign|strtotime|date='Y/m/d'}/{$data.newname}" alt="{$data.title}">
@@ -46,5 +63,51 @@
 			{/foreach}
 		{/notempty}
 	</div>
+	<div class="layui-container">
+		<div class="layui-row">
+			<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+				{if condition="is_numeric($data.previd)"}
+					<a href="{:url('details',['id'=>authcode($data.previd)])}" title="上一个"><i class="layui-icon">&#xe603;</i> 上一个</a>
+				{else }
+					{$data.previd}
+				{/if}
+			</div>
+			<div class="layui-col-xs6 layui-col-sm6 layui-col-md6" style="text-align: right;">	
+				{if condition="is_numeric($data.nextid)"}
+					<a href="{:url('details',['id'=>authcode($data.nextid)])}" title="下一个">下一个 <i class="layui-icon">&#xe602;</i></a>
+				{else }
+					{$data.nextid}
+				{/if}
+			</div>
+		</div>
+	</div>
+	{notempty name="$groom"}
+		<div class="layui-container">
+			<div class="layui-row layui-col-space10 bing-area" style="margin-top: 20px">
+				<h4 style="border-bottom: 2px solid #ddd; margin-bottom: 10px; padding-left: 10px; font-size:16px; font-weight: 900;">推荐</h4>
+		  		{volist name='groom' id='lists'}
+			    	<div class="layui-col-xs12 layui-col-sm6 layui-col-md3">
+			    		<div class="bing-box">
+			    			<div class="img-box">
+					    	  	<a href="{:url('details',['id'=>authcode($lists.id)])}" target="_blank" title="{$lists.title}">
+						    		<img src="/resize?i={:authcode('./data/bingwallpaper/'.date('Y/m/d/',strtotime($lists.datesign)).$lists.newname)}&w=400" alt="{$lists.title}" />
+						    	</a>
+					    	</div>
+					    	<p>{$lists.item_ttl}</p>
+					    	<h4>
+					    		<a href="{:url('details',['id'=>authcode($lists.id)])}" target="_blank" title="{$lists.title}">{$lists.title}</a>
+					    	</h4>
+					    	<div class="layui-row class item">
+					    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6"><i class="layui-icon">&#xe60d;</i> {$lists.viewcount}</div>
+					    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+					    			<div class="text-align-r"><i class="layui-icon">&#xe60e;</i> {$lists.datesign|strtotime|date='Y-m-d'}</div>
+					    		</div>
+					    	</div>
+					    </div>
+			    	</div>
+		    	{/volist}
+	    	</div>
+		</div>
+	{/notempty}
 </body>
 </html>

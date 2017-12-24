@@ -37,6 +37,7 @@ class Bing extends Extend
     protected $basePath; // 基本目录，到月
     protected $savePath; // 保存目录，到天
     protected $bingwallpaperPath; // bing 目录
+    //http://www.istartedsomething.com/bingimages/
 
     /**
      * [initialize 控制器初始化]
@@ -71,6 +72,353 @@ class Bing extends Extend
 
     }
 
+    public function ee(){
+        
+
+        // $one = db('bingWallpaperTest')->where('datesign','=',20170626)->find();
+        // $id = db('bingWallpaperTest')->getFieldByDatesign(20170626,'id');
+        // $id = $one['id'];
+        // dump($id);
+        // die;
+//         $data2 = db('bingWallpaperTest')->where('id','>',$id)->select();
+
+// dump($data2);
+
+        $dada1 = db('BingWallpaper')->select();
+
+        $newArr = [];
+        foreach ($dada1 as $key => $value) {
+
+            if($key>157){
+            $datesign = $value['datesign'];
+            $id = db('bingWallpaperTest')->getFieldByDatesign($datesign,'id');
+
+            $temp['id'] = $id;
+            $temp['datesign'] = $datesign;
+            $temp['description'] = $value['description'];
+            $temp['item_ttl'] = $value['item_ttl'];
+            $temp['item_attr'] = $value['item_attr'];
+            $temp['item_tt'] = $value['item_tt'];
+            $temp['item_ts'] = $value['item_ts'];
+
+            $newArr[] = $temp;
+
+            }
+
+
+
+        }
+
+        // dump($newArr);die;
+
+        $status = model('bingWallpaperTest')->saveAll($newArr);
+
+        dump($status);
+
+        
+    }
+
+    public function ee1($f,$die=null){
+        $f = $f . '01';
+        $date = date($f);
+        $firstday = date('Ym01', strtotime($date));
+        $lastday = date('Ymd', strtotime("$firstday +1 month -1 day"));
+
+        // dump($firstday);
+        // dump($lastday);
+        // die;
+        $where = [
+            ['datesign','>=',$firstday],
+            ['datesign','<=',$lastday],
+        ];
+        $dada = db('BingWallpaper')->where($where)->select();
+
+        if($die){
+            dump($dada);die;
+        }
+
+        $oldPath = './data/bingwallpapertest/';
+        
+        foreach ($dada as $key => $value) {
+            $oldname = $value['oldname'];
+            $newname = $value['newname'];
+            if($newname){
+            
+
+                $datesign = $value['datesign'];
+                $strtotime = strtotime($datesign);
+
+
+                $oldPathImg = $oldPath . date('Ym',$strtotime).$oldname;
+
+                // $oldPathImg = $oldPath . date('Ym',$strtotime).'/'.$oldname;
+                //BingWallpaper-1920x1080-2015-07-10.jpg
+                $oldname = '1920x1080/BingWallpaper-1920x1080-'.date('Y-m-d',$strtotime).'.jpg';
+                $oldPathImg = $oldPath . date('Ym',$strtotime).'/'.$oldname;
+
+                $logFile   = $this->bingwallpaperPath . 'log/' . date('Ymd', $strtotime) . '.log'; // 记录日志文件地址
+
+
+
+                if (is_file($oldPathImg)) {
+                    $datePath = date('Y/m/d',$strtotime).'/';
+                    $savepath = $this->bingwallpaperPath.$datePath;
+                    
+                    // dump($savePath);
+                    make_dir($savepath);
+                    $savepathImg = $savepath . $newname;
+
+                    // $image = \think\Image::open($oldPathImg);
+                    // $image->save($savepathImg);
+                    dump($oldPathImg);
+                    dump($savepathImg);
+                    copy($oldPathImg, $savepathImg);
+
+                    // 删除日志文件
+                    if (is_file($logFile)) {
+                        unlink($logFile);
+                    }
+                } else {
+                    dump('不存在：'.$datesign .'||'.$oldPathImg);
+                    $log = '';
+                    $log .= date('Y-m-d H:i:s') . "\n";
+                    $log .= $oldPathImg . "\n";
+                    $log .= '==========================================';
+                    file_put_contents($logFile, $log, FILE_APPEND);
+                }
+            }
+
+        }
+
+
+
+
+    }
+
+    // from http://www.istartedsomething.com/bingimages
+    // http://www.istartedsomething.com/bingimages/resize.php?i=DiaDosNamorados_ZH-CN10966266512_1366x768.jpg&w=1366
+    public function ee2($f,$die=null){
+        set_time_limit(0);
+        $f = $f . '01';
+        $date = date($f);
+        $firstday = date('Ym01', strtotime($date));
+        // $firstday = 20131014;
+        $lastday = date('Ymd', strtotime("$firstday +1 month -1 day"));
+        $where = [
+            ['datesign','>=',$firstday],
+            ['datesign','<=',$lastday],
+        ];
+        $dada = db('BingWallpaper')->where($where)->select();
+
+        if($die){
+            dump($dada);die;
+        }
+        
+        foreach ($dada as $key => $value) {
+            $oldname = $value['oldname'];
+            $newname = $value['newname'];
+            if($newname){
+            
+                $datesign = $value['datesign'];
+                $strtotime = strtotime($datesign);
+                
+                $datePath = date('Y/m/d',$strtotime).'/';
+                $savepath = $this->bingwallpaperPath.$datePath;
+                
+                // dump($savePath);
+                make_dir($savepath);
+
+                $oldurlbig = 'http://www.istartedsomething.com/bingimages/resize.php?i='. $oldname .'&w=1366';
+                $bigImgPath = $this->saveRemoteFile($oldurlbig, $newname, $savepath);
+
+            }
+
+        }
+
+
+
+
+    }
+
+    public function eeone(){
+        $image = \think\Image::open('./data/bingwallpapertest/EvergladesTrees_ZH-CN13844523364_1366x768.jpg');
+        $image->save('./data/bingwallpaper/2015/01/03/EvergladesTrees_ZH-CN13844523364.jpg');
+    }
+
+    public function ee3($y, $m,$die=null, $r = null)
+    {
+        $where = [
+            'year'    => $y,
+            'month'   => $m,
+        ];
+        $data = db('bingwallpaper1')->where($where)->select();
+        // dump($data);
+        // dump($data);die;
+        if($die){
+            dump($data);die;
+        }
+
+        $newArr            = [];
+        $bingWallpaperPath = './data/bingwallpapertest/';
+        foreach ($data as $key => $value) {
+            // dump($value);
+            // dump($key);
+            if ($key >-1) {
+                //dump($data[]);
+                // dump($value);
+                $oldname = $value['oldname'];
+                $tempNewname = $value['newname'];
+
+                $date = str_replace('BingWallpaper-', '', $tempNewname);
+                $date = str_replace('.jpg', '', $date);
+
+                $strtotime = strtotime($date);
+                $datesign = date('Ymd',$strtotime);
+
+                $newname = str_replace('_1366x768', '', $oldname);
+                // dump($value['remark']);
+                preg_match_all("/(?:\(©)(.*)(?:\))/i", $value['remark'], $result);
+                // dump($result);
+                $authorSource = $result[1][0];
+                // dump($authorSource);
+
+                if (!strpos($authorSource, '/')) {
+                    $author = trim($authorSource);
+                    $source = '';
+                } else {
+                    $_arr = explode('/', $authorSource);
+                    // dump($_arr);
+                    $source = trim(array_pop($_arr));
+                    $author = trim($this->author($_arr));
+                }
+
+                // dump($newname);
+                // dump($datesign);
+                $tempArr['datesign']    = $datesign;
+                $tempArr['oldname']     = $oldname;
+                $tempArr['newname']     = $newname;
+                $tempArr['title']       = $value['title'];
+                $tempArr['titlelong']   = $value['remark'];
+                $tempArr['author']      = $author;
+                $tempArr['source']      = $source;
+                $tempArr['description'] = $value['desc'];
+                $tempArr['oldurl'] = $value['oldurl'];
+               $tempArr['year']        = date('Y',$strtotime);;
+                $tempArr['month']       = date('m',$strtotime);;
+
+                $newArr[] = $tempArr;
+                
+            }
+        }
+
+        if ($r) {
+
+            // $dd[] = $newArr[26];
+            // $dd[] = $newArr[27];
+            // $dd[] = $newArr[28];
+            // $dd[] = $newArr[29];
+            // $dd[] = $newArr[30];
+            // dump($dd);
+            // die;
+
+            $status = db('bingWallpaperTest')->insertAll($newArr);
+
+            dump($status);
+        } else {
+            dump($newArr);die;
+        }
+        // dump($data);
+        //bing_wallpaper_test
+
+    }
+
+    public function dd0($y, $m,$die=null, $r = null)
+    {
+        $where = [
+            'year'    => $y,
+            'month'   => $m,
+        ];
+        $data = db('bingwallpaper1')->where($where)->select();
+        // dump($data);
+        // dump($data);die;
+        if($die){
+            dump($data);die;
+        }
+
+        $newArr            = [];
+        $bingWallpaperPath = './data/bingwallpapertest/';
+        foreach ($data as $key => $value) {
+            // dump($value);
+            // dump($key);
+            if ($key >-1) {
+                //dump($data[]);
+                // dump($value);
+                $oldname = $value['oldname'];
+                $tempNewname = $value['newname'];
+
+                $date = str_replace('BingWallpaper-', '', $tempNewname);
+                $date = str_replace('.jpg', '', $date);
+
+                $strtotime = strtotime($date);
+                $datesign = date('Ymd',$strtotime);
+
+                $newname = str_replace('_1366x768', '', $oldname);
+                // dump($value['remark']);
+                preg_match_all("/(?:\(©)(.*)(?:\))/i", $value['remark'], $result);
+                // dump($result);
+                $authorSource = $result[1][0];
+                // dump($authorSource);
+
+                if (!strpos($authorSource, '/')) {
+                    $author = trim($authorSource);
+                    $source = '';
+                } else {
+                    $_arr = explode('/', $authorSource);
+                    // dump($_arr);
+                    $source = trim(array_pop($_arr));
+                    $author = trim($this->author($_arr));
+                }
+
+                // dump($newname);
+                // dump($datesign);
+                $tempArr['datesign']    = $datesign;
+                $tempArr['oldname']     = $oldname;
+                $tempArr['newname']     = $newname;
+                $tempArr['title']       = $value['title'];
+                $tempArr['titlelong']   = $value['remark'];
+                $tempArr['author']      = $author;
+                $tempArr['source']      = $source;
+                $tempArr['description'] = $value['desc'];
+                $tempArr['oldurl'] = $value['oldurl'];
+               $tempArr['year']        = date('Y',$strtotime);;
+                $tempArr['month']       = date('m',$strtotime);;
+
+                $newArr[] = $tempArr;
+                
+            }
+        }
+
+        if ($r) {
+
+            // $dd[] = $newArr[26];
+            // $dd[] = $newArr[27];
+            // $dd[] = $newArr[28];
+            // $dd[] = $newArr[29];
+            // $dd[] = $newArr[30];
+            // dump($dd);
+            // die;
+
+            $status = db('bingWallpaperTest')->insertAll($newArr);
+
+            dump($status);
+        } else {
+            dump($newArr);die;
+        }
+        // dump($data);
+        //bing_wallpaper_test
+
+    }
+
     public function dd1($year, $month, $wr = null)
     {
         $where = [
@@ -80,7 +428,7 @@ class Bing extends Extend
         ];
         $data = db('bingwallpapertest')->where($where)->select();
         // dump($data);
-        dump($data);die;
+        // dump($data);die;
 
         $newArr            = [];
         $bingWallpaperPath = './data/bingwallpapertest/';
@@ -117,7 +465,7 @@ class Bing extends Extend
                 // dump($datesign);
                 // dump($key);
                 // dump($title);
-                if ($key == 110) {
+                if ($key == 241) {
                     $title = $title . '1';
                 }
                 // dump($value['title']);
@@ -136,41 +484,6 @@ class Bing extends Extend
                     $author = trim($this->author($_arr));
                 }
 
-                // dump($author);
-
-                // $authorArr = explode('/', $result[1]);
-                // dump($authorArr);
-                // dump($key);
-                // $fgf = '--';
-                // if ($key == 110) {
-                //     $fgf = '- -';
-                // } elseif ($key == 125) {
-                //     $fgf = '–';
-                // }
-
-                // $titleArr = explode($fgf, $title);
-                // $title    = trim($titleArr[0]);
-
-                // $authorArr = $titleArr[1];
-
-                // // dump($key);
-                // if (!strpos($authorArr, '/')) {
-                //     $author = trim($authorArr);
-                //     $source = '';
-                // } else {
-                //     $_arr   = explode('/', $authorArr);
-                //     $source = trim(array_pop($_arr));
-                //     $author = trim($this->author($_arr));
-                // }
-
-                // if ($key == 300 || $key == 119) {
-                //     $author = trim($authorArr);
-                //     $source = '';
-                // } else {
-                //     $source = trim(array_pop($_arr));
-                //     $author = trim($this->author($_arr));
-                // }
-                // dump($_arr);
 
                 $ddd = 1;
                 if ($ddd == 1) {
@@ -178,8 +491,8 @@ class Bing extends Extend
                     $tempArr['oldname']     = $name;
                     $tempArr['newname']     = $newname;
                     $tempArr['title']       = $title;
-                    $tempArr['titlelong']   = $value['title'];
-                    $tempArr['author']      = $author;
+                   $tempArr['titlelong']   = $value['title'];
+                   $tempArr['author']      = $author;
                     $tempArr['description'] = $value['describe'];
                     $tempArr['source']      = $source;
                     $tempArr['year']        = $year;
@@ -511,10 +824,10 @@ class Bing extends Extend
         return $found;
     }
 
-    public function index()
+    public function index($limit = 12)
     {
         // dump('bing');
-        $data = model('BingWallpaper')->order('datesign', 'desc')->paginate(12, '', [
+        $data = model('BingWallpaper')->order('datesign', 'desc')->paginate($limit, '', [
             'type'     => '\page\Layui',
             'var_page' => 'page',
         ]);
@@ -541,35 +854,78 @@ class Bing extends Extend
         $id = deauthcode($id);
         $id || $this->error('参数值错误');
 
-        //dump($id);
+        // dump($id);die;
         $model = model('BingWallpaper');
         $model->where('id', $id)->setInc('viewcount');
 
         $data = $model->get($id);
-        //dump($data);die;
+        // dump($data);die;
 
         $datesign        = $data['datesign'];
         $data['brief']   = model('BingBranchBrief')->where('datesign', $datesign)->select();
         $data['details'] = model('BingBranchDetails')->where('datesign', $datesign)->select();
 
         // dump($data);die;
-        $description = $data['description'];
+        $groom ='';
+        $description = $data['description'] ?:$data['title'];
         // dump($description);
         if ($description) {
-            $get_keywords = get_keywords($description);
+            $get_keywords = get_keywords($description,5);
+            // dump($get_keywords);
+            $keywordsArr = explode(',', $get_keywords);
+            // dump($keywordsArr);
+            //where('name','like',['%think','php%'],'OR');
+
+            $whereLike = [];
+            foreach ($keywordsArr as $key => $value) {
+                $value = '%'.$value.'%';
+                $whereLike[] = $value;
+            }
+
+            $where = [
+                ['id','<>',$data['id']]
+            ];
+            $groom = $model->where($where)->where('title','like',$whereLike,'OR')->limit(8)->select();
+
         }
 
-        // dump($get_keywords);
-
+        $prevId = $this->getPrevNextId($id);
+        $nextId = $this->getPrevNextId($id,1);
+        // $data['previd'] = is_numeric($prevId) ? authcode($prevId) : $prevId;
+        // $data['nextid'] = is_numeric($nextId) ? authcode($nextId) : $nextId;
+        $data['previd'] = $prevId;
+        $data['nextid'] = $nextId;
+        // dump($data);
         // die;
-        // $description = $data('description');
-        // dump($description);
-        // $keywords = get_keywords($description);
-
-        // dump($keywords);die;
+        $this->assign('groom', $groom);
         $this->assign('data', $data);
         return $this->fetch();
 
+    }
+
+    private function getPrevNextId($id,$type=0){
+        $model = model('BingWallpaper');
+        $tempId = $id;
+        if($type){
+            $id = $id + 1;
+            $tipsId = $model->max('id');
+            $tips = '已经是最后一个了';
+        }else{
+            $id = $id - 1;
+            $tipsId = $model->min('id');
+            $tips = '已经是第一个了';
+        }
+
+        if($tempId == $tipsId){
+            return $tips;
+        }
+
+        $data = $model->get($id);
+        if(!$data){
+            $this->getPrevNextId($id,$type);
+        }
+
+        return $id;
     }
 
     public function resize($img, $w)
@@ -860,9 +1216,9 @@ class Bing extends Extend
         // 数据组合
         $wallpaperData = array_merge($wallpaperData, $branchData['bing']);
 
-        dump($wallpaperData);
-        dump($branchData['brief']);
-        dump($branchData['details']);
+        //dump($wallpaperData);
+        //dump($branchData['brief']);
+        //dump($branchData['details']);
 
         // 数据写入
         $status = model('BingWallpaper')->save($wallpaperData);
@@ -1002,6 +1358,7 @@ class Bing extends Extend
         $data['description'] = $description;
         $data['oldurl']      = $oldurl;
         $data['country']     = $country;
+        $data['source'] = '';
 
         return $data;
     }

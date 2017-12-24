@@ -14,7 +14,7 @@
 	p,h4{ margin:0; padding:0; }
 	a{ color: #23527c; text-decoration: none; }
 	.bing-area{}
-	.bing-area .bing-box{ list-style: none; border:1px solid #ddd; border-radius: 5px; display: inline-block; padding: 5px; width: 356px; max-height: 244px; }
+	.bing-area .bing-box{ list-style: none; border:1px solid #ddd; border-radius: 5px; display: inline-block; padding: 5px; width: 356px; }
 	.bing-area .bing-box:hover{ border:1px solid #23527c;}
 	.bing-area .bing-box .item{ color: #666 }
 	.bing-area .bing-box .img-box{ max-height: 199.35px; overflow: hidden; }
@@ -47,17 +47,17 @@
 			    		<a href="{:url('details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">{$lists.title}</a>
 			    	</h4>
 			    	<div class="layui-row class item">
-			    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">{$lists.viewcount}</div>
+			    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6"><i class="layui-icon" style=" color: #1E9FFF;">&#xe60d;</i> {$lists.viewcount}</div>
 			    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-			    			<div class="text-align-r">{$lists.datesign|strtotime|date='Y-m-d'}</div>
+			    			<div class="text-align-r"><i class="layui-icon">&#xe60e;</i>  {$lists.datesign|strtotime|date='Y-m-d'}</div>
 			    		</div>
 			    	</div>
 			    </div>
 	    	</div>
     	{/volist}
   	</div>
-  	<div>{$page|raw}</div>
 </div>
+<div class="layui-container"><div>{$page|raw}</div></div>
 <!-- LayUi -->
 <script type="text/javascript" src="__LIBS__/{$Think.config.static.layui_version}/layui.js"></script>
 </html>
