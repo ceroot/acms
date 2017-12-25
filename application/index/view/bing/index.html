@@ -38,13 +38,13 @@
 	    	<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
 	    		<div class="bing-box">
 	    			<div class="img-box">
-			    	  	<a href="{:url('details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">
+			    	  	<a href="{:url('index/Bing/details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">
 				    		<img src="/resize?i={:authcode('./data/bingwallpaper/'.date('Y/m/d/',strtotime($lists.datesign)).$lists.newname)}&w=400" alt="{$lists.title}" />
 				    	</a>
 			    	</div>
 			    	<p>{$lists.item_ttl}</p>
 			    	<h4>
-			    		<a href="{:url('details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">{$lists.title}</a>
+			    		<a href="{:url('index/Bing/details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">{$lists.title}</a>
 			    	</h4>
 			    	<div class="layui-row class item">
 			    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6"><i class="layui-icon" style=" color: #1E9FFF;">&#xe60d;</i> {$lists.viewcount}</div>

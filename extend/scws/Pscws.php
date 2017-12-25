@@ -405,13 +405,36 @@ class Pscws
 
         // sort it & return
         //$cmp_func = create_function('$a,$b', 'return ($b[\'weight\'] > $a[\'weight\'] ? 1 : -1);');
-        //dump($list);
         //usort($list, $cmp_func);
+        $list = $this->sortKeyWords($list);  // 因为create_function 在 php 7.2 里是过时的，所以在这里改变一下排序
+        // dump($list);
         if (count($list) > $limit) {
             $list = array_slice($list, 0, $limit);
         }
-// dump($list);
+
         return $list;
+    }
+
+    /* sortKeyWords 排序关键字的权重
+    * $arr 原来的
+    */
+    private function sortKeyWords($arr){
+        $weight = [];
+        foreach ($arr as $value) {
+            $weightT = $value['weight'];
+            $weight[] = $weightT;
+        }
+        arsort($weight);
+
+        $redata = [];
+        foreach ($weight as $value) {
+            foreach ($arr as $k => $val) {
+                if($value == $val['weight']){
+                    $redata[] = $arr[$k];
+                }
+            }
+        }
+        return $redata;
     }
 
     // 关闭释放资源

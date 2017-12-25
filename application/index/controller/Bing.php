@@ -910,7 +910,7 @@ class Bing extends Extend
         if($type){
             $id = $id + 1;
             $tipsId = $model->max('id');
-            $tips = '已经是最后一个了';
+            $tips = '未来在路上，请稍等……';
         }else{
             $id = $id - 1;
             $tipsId = $model->min('id');
