@@ -61,6 +61,17 @@ class Bing extends Extend
 
     public function test()
     {
+        $oldname = './data/bingwallpaper/default.jpg';
+        $name = '这是测试图片名称';
+
+
+        $name = mb_convert_encoding($name, 'UTF-8', 'auto'); // 文件名编码转换
+
+        $newPath = './data/bingwallpaper/' . $name . '.jpg';
+        copy($oldname,$newPath);
+
+
+        die;
         $url = 'http://cn.bing.com/az/hprichbg/rb/PowysCounty_ZH-CN11115693548_1366x768.jpg';
         dump(parse_url($url, PHP_URL_PATH));
         dump(pathinfo(parse_url($url, PHP_URL_PATH)));
@@ -676,14 +687,6 @@ class Bing extends Extend
 
         if ($wr) {
 
-            // $dd[] = $newArr[26];
-            // $dd[] = $newArr[27];
-            // $dd[] = $newArr[28];
-            // $dd[] = $newArr[29];
-            // $dd[] = $newArr[30];
-            // dump($dd);
-            // die;
-
             //$status = db('bingWallpaperTest')->insertAll($newArr);
 
             dump($status);
@@ -929,21 +932,6 @@ class Bing extends Extend
         return $id;
     }
 
-    public function resize($img, $w)
-    {
-        // dump(authcode(20171221));die;
-        // dump(authcode('2017/12/21/SolsticeSquirrel_ZH-CN6551849968.jpg'));die;
-
-        $img = deauthcode($img);
-
-        // $image     = './data/bingwallpaper/2017/12/21/' . $img;
-        // $image = './data/bingwallpaper/' . $img;
-        $image = $img;
-        // dump($w);die;
-
-        $this->imgResize($image, $w);
-    }
-
     public function curl_file_get_contents($durl)
     {
         $ch = curl_init();
@@ -1044,14 +1032,6 @@ class Bing extends Extend
             // dump($value[0]);
         }
 
-        // unset($sortArr[8]);
-        // unset($sortArr[9]);
-        // unset($sortArr[10]);
-        // unset($sortArr[11]);
-        // $sortArr = $this->f_order($sortArr, 'datesign', 1);
-        //cache('data', $newarr);
-        // die;
-        // dump($sortArr);die;
 
         $bingData    = [];
         $briefData   = [];
@@ -1175,11 +1155,9 @@ class Bing extends Extend
         foreach ($arr as $kay => $value) {
             $order[] = $value[$field];
         }
-        if ($sort == 1) {
-            array_multisort($order, SORT_ASC, $arr);
-        } else {
-            array_multisort($order, SORT_DESC, $arr);
-        }
+
+        $sortType = $sort ? SORT_ASC : SORT_DESC;
+        array_multisort($order, $sortType, $arr);
         return $arr;
     }
 
@@ -1300,7 +1278,8 @@ class Bing extends Extend
         $filename     = trim(str_replace('_1366x768', '', $oldname)); // 去掉名称中有 _1366x768
         $newname      = mb_convert_encoding($filename, 'UTF-8', 'auto'); // 文件名编码转换
         $newnamebig   = mb_convert_encoding($filenamebig, 'UTF-8', 'auto'); // 文件名编码转换
-        $newnamecnbig = mb_convert_encoding($filenamecnbig, 'GB2312', 'auto'); // 文件名编码转换
+        // $newnamecnbig = mb_convert_encoding($filenamecnbig, 'GB2312', 'auto'); // 文件名编码转换
+        $newnamecnbig = mb_convert_encoding($filenamecnbig, 'UTF-8', 'auto'); // 文件名编码转换
 
         if ($type) {
             echo 'oldurl：' . $oldurl; // 原 url
