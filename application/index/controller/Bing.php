@@ -987,28 +987,30 @@ class Bing extends Extend
             header('Content-Disposition: attachment; filename="' . $fileName . '"');
             header("Content-Length: " . filesize($file));
             readfile($file);
-            $model->where('id', $id)->setInc('downcount');
-            exit;
-        } elseif ($w == '1440x900') {
-            $wValue = '1440';
-        } elseif ($w == '1366x768') {
-            $wValue = '1366';
-        } elseif ($w == '1024x768') {
-            $wValue = '1024';
-        } else {
-            return 'error';
+        }else{
+
+            if ($w == '1440x900') {
+                $wValue = '1440';
+            } elseif ($w == '1366x768') {
+                $wValue = '1366';
+            } elseif ($w == '1024x768') {
+                $wValue = '1024';
+            } else {
+                return 'error';
+            }
+            
+            ob_start();
+            $this->imgResize($file, $wValue);
+            $s = ob_get_clean();
+
+            $fileName = str_replace('.jpg', '_' . $w . '.jpg', $fileName);
+            header("Content-Type: image/jpeg");
+            header('Content-Disposition: attachment; filename="' . $fileName . '"');
+            header('Content-Length: ' . strlen($s));
+            echo $s;
         }
 
-        ob_start();
-        $this->imgResize($file, $wValue);
-        $s = ob_get_clean();
-
-        header("Content-Type: image/jpeg");
-        header('Content-Disposition: attachment; filename="' . $fileName . '"');
-        header('Content-Length: ' . strlen($s));
-        echo $s;
-
-        exit;
+        $model->where('id', $id)->setInc('downcount');
     }
 
     public function image()
