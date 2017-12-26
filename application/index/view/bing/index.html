@@ -5,11 +5,12 @@
 <meta name="renderer" content="webkit">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>bing每日图片欣赏</title>
+<title>bing 每日图片欣赏</title>
 <meta name="description" content="">
 <meta name="keywords" content="">
 <!-- LayUi -->
 <link rel="stylesheet" type="text/css" href="__LIBS__/{$Think.config.static.layui_version}/css/layui.css" media="all">
+<link rel="stylesheet" type="text/css" href="__LIBS__/font-awesome/4.7.0/css/font-awesome.min.css" media="all">
 <style type="text/css">
 	p,h4{ margin:0; padding:0; }
 	a{ color: #23527c; text-decoration: none; }
@@ -42,14 +43,14 @@
 				    		<img class="lazyload" data-src="/resize?i={:authcode('./data/bingwallpaper/'.date('Y/m/d/',strtotime($lists.datesign)).$lists.newname)}&w=400" src="/data/bingwallpaper/default.jpg" alt="{$lists.title}" />
 				    	</a>
 			    	</div>
-			    	<p>{$lists.item_ttl}</p>
+			    	{notempty name="$lists.item_ttl"}<p style="font-size: 90%;"><i class="fa fa-deaf fa-fw" title=""></i>{$lists.item_ttl}</p>{/notempty}
 			    	<h4>
 			    		<a href="{:url('index/Bing/details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">{$lists.title}</a>
 			    	</h4>
 			    	<div class="layui-row class item">
-			    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6"><i class="layui-icon" style=" color: #1E9FFF;">&#xe60d;</i> {$lists.viewcount}</div>
+			    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6"><i class="fa fa-eye fa-fw"></i> {$lists.viewcount}&nbsp;&nbsp; <i class="fa fa-download fa-fw"></i> {$lists.downcount}</div>
 			    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-			    			<div class="text-align-r"><i class="layui-icon">&#xe60e;</i>  {$lists.datesign|strtotime|date='Y-m-d'}</div>
+			    			<div class="text-align-r"><i class="fa fa-clock-o fa-fw" title="发布时间"></i> {$lists.datesign|strtotime|date='Y-m-d'}</div>
 			    		</div>
 			    	</div>
 			    </div>

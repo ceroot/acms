@@ -5,17 +5,18 @@
 <meta name="renderer" content="webkit">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>{$data.title}-Bing每日图片欣赏</title>
+<title>{$data.title} - Bing每日图片欣赏</title>
 <meta name="description" content="{$data.description}">
 <meta name="keywords" content="{$data.keywords}">
 <!-- LayUi -->
 <link rel="stylesheet" type="text/css" href="__LIBS__/{$Think.config.static.layui_version}/css/layui.css" media="all">
+<link rel="stylesheet" type="text/css" href="__LIBS__/font-awesome/4.7.0/css/font-awesome.min.css" media="all">
 
 <style type="text/css">
 	.area img.big{ width: 100%; }
 	.area h2{ font-weight: 700; }
-	.area h3{ font-weight: 700; margin-bottom: 8px; }
-	.area p{ margin-bottom: 15px; }
+	.area h3{ font-weight: 700; margin-bottom: .5em; }
+	.area p{ margin-bottom: 1em; }
 	@media screen and (max-width: 575.99px) {
 	  .area p img{ width: 100%; }  
 	}
@@ -23,14 +24,20 @@
 	p,h4{ margin:0; padding:0; }
 	a{ color: #23527c; text-decoration: none; }
 	.bing-area{}
-	.bing-area .bing-box{ list-style: none; border:1px solid #ddd; border-radius: 5px; display: inline-block; padding: 5px; margin-bottom: 5px;  max-width: 265.5px; }
+	.bing-area .bing-box{ list-style: none; border:1px solid #ddd; border-radius: .35em; display: inline-block; padding: .35em; margin-bottom: .35em;  max-width: 265.5px; }
 	.bing-area .bing-box:hover{ border:1px solid #23527c;}
 	.bing-area .bing-box .item{ color: #666 }
 	.bing-area .bing-box .img-box{ overflow: hidden;}
-	.bing-area .bing-box h4{ padding-bottom: 5px; overflow: hidden; white-space:nowrap;}
+	.bing-area .bing-box h4{ padding-bottom: .35em; overflow: hidden; white-space:nowrap;}
 	.bing-area .bing-box h4 a{ font-weight: 600; }
 	.bing-area img{ width: 100%; }
 	.text-align-r{ text-align: right; }
+
+	.area .title-item{border-bottom: 1px solid #ddd; margin-bottom: .2em; padding-bottom: .7em; padding-top: .5em; text-align: center; color: #444; font-size: 90%; line-height: 1.3em}
+	.area h3{ border-bottom: 1px solid #f1f1f1; }
+	.area h3 small{color: #333; font-weight: normal; font-size: .75em;}
+	.area p.img{text-align: center;}
+	.area p.text{text-indent: 28px;}
 
 	@media screen and (max-width: 575.99px) {
 	  .bing-area .bing-box{border: 0; border-radius: 0; border-bottom:1px solid #ddd; display:block; padding:0; width: auto; max-height:auto; max-width: none; }
@@ -42,37 +49,51 @@
 <body>
 	<div class="layui-container area">
 		<h2 style="text-align: center;">{$data.title}</h2>
-		<div style="border-bottom: 1px solid #ddd; margin-bottom: 5px; line-height: 22px; text-align: center; color: #444">
-			<i class="layui-icon">&#xe60e;</i> {$data.datesign|strtotime|date='Y-m-d'}&nbsp;&nbsp;<i class="layui-icon">&#xe60d;</i> {$data.viewcount}&nbsp;&nbsp;<i class="layui-icon">&#xe601;</i> {$data.downcount}&nbsp;&nbsp;{$data.item_ttl}&nbsp;&nbsp;© {$data.author}
+		<div class="title-item">
+			<i class="fa fa-clock-o fa-fw" title="发布时间"></i>{$data.datesign|strtotime|date='Y-m-d'}&nbsp;&nbsp;<i class="fa fa-eye fa-fw" title="浏览次数"></i> {$data.viewcount}&nbsp;&nbsp;<i class="fa fa-download fa-fw" title="下载次数"></i>{$data.downcount}{notempty name="$data.item_ttl"}&nbsp;&nbsp;<i class="fa fa-deaf fa-fw" title=""></i>{$data.item_ttl}{/notempty}{notempty name="$data.author"}&nbsp;&nbsp;<i class="fa fa-copyright fa-fw" title="版权"></i>{$data.author}{/notempty}（图片来源于必应搜索） 
 		</div>
 		<div style="padding-top: 15px; padding-bottom: 10px;">
 			<img class="big" src="/data/bingwallpaper/{$data.datesign|strtotime|date='Y/m/d'}/{$data.newname}" alt="{$data.title}">
 		</div>
-		<p>{$data.description}</p>
+		<p class="text">{$data.description}</p>
+		{notempty name="$data.first"}
+			<h3>{$data.first.title}&nbsp;<small>{$data.first.resume}</small></h3>
+			<p class="text">{$data.first.description}</p>
+			<p class="img" style="color: #727272">
+				<img src="/data/bingwallpaper/{$data.datesign|strtotime|date='Y/m/d'}/{$data.first.img}" alt="{$data.first.title}|{$data.first.resume}"/><br/>
+				{$data.item_tt}，{$data.item_ts}
+			</p>
+		{/notempty}
 		{notempty name="$data.brief"}
 			{foreach name="$data.brief" item="brief"}
 				<h3>{$brief.title}</h3>
-				<p>{$brief.description}</p>
+				<p class="text">{$brief.description}</p>
 			{/foreach}
 		{/notempty}
 		{notempty name="$data.details"}
 			{foreach name="$data.details" item="brief"}
-				<h3>{$brief.title}&nbsp;<small style="color: #333; font-weight: normal; font-size: 12px;">{$brief.resume}</small></h3>
-				<p style="text-align: center;"><img src="/data/bingwallpaper/{$data.datesign|strtotime|date='Y/m/d'}/{$brief.img}" alt="{$brief.title}|{$brief.resume}"></p>
-				<p>{$brief.description}</p>
+				<h3>{$brief.title}&nbsp;<small>{$brief.resume}</small></h3>
+				<p class="img"><img src="/data/bingwallpaper/{$data.datesign|strtotime|date='Y/m/d'}/{$brief.img}" alt="{$brief.title}|{$brief.resume}"></p>
+				<p class="text">{$brief.description}</p>
 			{/foreach}
 		{/notempty}
 	</div>
 	<div class="layui-container">
 		<div class="layui-row">
-			<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+			<div class="layui-col-xs6 layui-col-sm6 layui-col-md3">
 				{if condition="is_numeric($data.previd)"}
 					<a href="{:url('index/Bing/details',['id'=>authcode($data.previd)])}" title="上一个"><i class="layui-icon">&#xe603;</i> 上一个</a>
 				{else }
 					{$data.previd}
 				{/if}
 			</div>
-			<div class="layui-col-xs6 layui-col-sm6 layui-col-md6" style="text-align: right;">	
+			<div class="layui-col-xs6 layui-col-sm6 layui-col-md3">
+				<a href="{:url('download',['id'=>authcode($data.id),'i'=>authcode('./data/bingwallpaper/'.date(\'Y/m/d\',strtotime($data.datesign)).'/'.$data.newname),'w'=>'1920x1080'])}">下载</a>
+				<a href="{:url('download',['id'=>authcode($data.id),'i'=>authcode('./data/bingwallpaper/'.date(\'Y/m/d\',strtotime($data.datesign)).'/'.$data.newname),'w'=>'1440x900'])}">下载</a>
+				<a href="{:url('download',['id'=>authcode($data.id),'i'=>authcode('./data/bingwallpaper/'.date(\'Y/m/d\',strtotime($data.datesign)).'/'.$data.newname),'w'=>'1366x768'])}">下载</a>
+				<a href="{:url('download',['id'=>authcode($data.id),'i'=>authcode('./data/bingwallpaper/'.date(\'Y/m/d\',strtotime($data.datesign)).'/'.$data.newname),'w'=>'1024x768'])}">下载</a>
+			</div>
+			<div class="layui-col-xs6 layui-col-sm6 layui-col-md3" style="text-align: right;">	
 				{if condition="is_numeric($data.nextid)"}
 					<a href="{:url('index/Bing/details',['id'=>authcode($data.nextid)])}" title="下一个">下一个 <i class="layui-icon">&#xe602;</i></a>
 				{else }
@@ -98,9 +119,9 @@
 					    		<a href="{:url('index/Bing/details',['id'=>authcode($lists.id)])}" target="_blank" title="{$lists.title}">{$lists.title}</a>
 					    	</h4>
 					    	<div class="layui-row class item">
-					    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6"><i class="layui-icon">&#xe60d;</i> {$lists.viewcount}</div>
+					    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6"><i class="fa fa-eye fa-fw"></i> {$lists.viewcount} &nbsp;&nbsp; <i class="fa fa-download fa-fw"></i> {$lists.downcount}</div>
 					    		<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-					    			<div class="text-align-r"><i class="layui-icon">&#xe60e;</i> {$lists.datesign|strtotime|date='Y-m-d'}</div>
+					    			<div class="text-align-r"><i class="fa fa-clock-o fa-fw" title="发布时间"></i> {$lists.datesign|strtotime|date='Y-m-d'}</div>
 					    		</div>
 					    	</div>
 					    </div>
