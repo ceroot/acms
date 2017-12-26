@@ -859,10 +859,11 @@ class Bing extends Extend
     public function index($limit = 12)
     {
         // dump('bing');
-        $data = model('BingWallpaper')->order('datesign', 'desc')->paginate($limit, '', [
-            'type'     => '\page\Layui',
-            'var_page' => 'page',
-        ]);
+        // $data = model('BingWallpaper')->order('datesign', 'desc')->paginate($limit, '', [
+        //     'type'     => '\page\Layui',
+        //     'var_page' => 'page',
+        // ]);
+        $data = model('BingWallpaper')->order('datesign', 'desc')->paginate($limit);
         $newdata = [];
         foreach ($data as $value) {
             $datesign         = $value['datesign'];
@@ -998,7 +999,7 @@ class Bing extends Extend
             } else {
                 return 'error';
             }
-            
+
             ob_start();
             $this->imgResize($file, $wValue);
             $s = ob_get_clean();
