@@ -80,20 +80,20 @@
 	</div>
 	<div class="layui-container">
 		<div class="layui-row">
-			<div class="layui-col-xs6 layui-col-sm6 layui-col-md3">
+			<div class="layui-col-xs4 layui-col-sm4 layui-col-md4">
 				{if condition="is_numeric($data.previd)"}
 					<a href="{:url('index/Bing/details',['id'=>authcode($data.previd)])}" title="上一个"><i class="layui-icon">&#xe603;</i> 上一个</a>
 				{else }
 					{$data.previd}
 				{/if}
 			</div>
-			<div class="layui-col-xs6 layui-col-sm6 layui-col-md3">
+			<div class="layui-col-xs4 layui-col-sm4 layui-col-md4">
 				<a href="{:url('download',['id'=>authcode($data.id),'i'=>authcode('./data/bingwallpaper/'.date(\'Y/m/d\',strtotime($data.datesign)).'/'.$data.newname),'w'=>'1920x1080'])}">下载</a>
 				<a href="{:url('download',['id'=>authcode($data.id),'i'=>authcode('./data/bingwallpaper/'.date(\'Y/m/d\',strtotime($data.datesign)).'/'.$data.newname),'w'=>'1440x900'])}">下载</a>
 				<a href="{:url('download',['id'=>authcode($data.id),'i'=>authcode('./data/bingwallpaper/'.date(\'Y/m/d\',strtotime($data.datesign)).'/'.$data.newname),'w'=>'1366x768'])}">下载</a>
 				<a href="{:url('download',['id'=>authcode($data.id),'i'=>authcode('./data/bingwallpaper/'.date(\'Y/m/d\',strtotime($data.datesign)).'/'.$data.newname),'w'=>'1024x768'])}">下载</a>
 			</div>
-			<div class="layui-col-xs6 layui-col-sm6 layui-col-md3" style="text-align: right;">	
+			<div class="layui-col-xs4 layui-col-sm6 layui-col-md4" style="text-align: right;">	
 				{if condition="is_numeric($data.nextid)"}
 					<a href="{:url('index/Bing/details',['id'=>authcode($data.nextid)])}" title="下一个">下一个 <i class="layui-icon">&#xe602;</i></a>
 				{else }
