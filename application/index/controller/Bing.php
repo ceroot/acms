@@ -64,6 +64,10 @@ class Bing extends Extend
         // $gg = $_SERVER['HTTP_USER_AGENT'];
         // dump($gg);
         // die;
+        //
+        //
+        dump(config('view_replace_str'));
+        die;
 
         // 使用 QueryList 取得数据
         $data = QueryList::get('http://cn.bing.com/cnhp/life', [], [
@@ -856,14 +860,14 @@ class Bing extends Extend
         return $found;
     }
 
-    public function index($limit = 12)
+    public function index($limit = 15)
     {
         // dump('bing');
-        // $data = model('BingWallpaper')->order('datesign', 'desc')->paginate($limit, '', [
-        //     'type'     => '\page\Layui',
-        //     'var_page' => 'page',
-        // ]);
-        $data = model('BingWallpaper')->order('datesign', 'desc')->paginate($limit);
+        $data = model('BingWallpaper')->order('datesign', 'desc')->paginate($limit, '', [
+            'type'     => '\page\Bootstrap',
+            'var_page' => 'page',
+        ]);
+        // $data = model('BingWallpaper')->order('datesign', 'desc')->paginate($limit);
         $newdata = [];
         foreach ($data as $value) {
             $datesign         = $value['datesign'];
@@ -988,7 +992,7 @@ class Bing extends Extend
             header('Content-Disposition: attachment; filename="' . $fileName . '"');
             header("Content-Length: " . filesize($file));
             readfile($file);
-        }else{
+        } else {
 
             if ($w == '1440x900') {
                 $wValue = '1440';

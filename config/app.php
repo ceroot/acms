@@ -100,12 +100,12 @@ return [
     // 请求缓存有效期
     'request_cache_expire'   => null,
 
-    // 视图输出字符串内容替换
-    'view_replace_str'       => [
-        '__IMAGES__'  => '/static/images',
-        '__LIBS__'    => '/static/libs',
-        '__CONSOLE__' => '/static/console',
-    ],
+    // 视图输出字符串内容替换'view_replace_str'       => [
+    // 'tpl_replace_string'     => [
+    //     '__IMAGES__'  => '/static/images',
+    //     '__LIBS__'    => '/static/libs',
+    //     '__CONSOLE__' => '/static/console',
+    // ],
     // 默认跳转页面对应的模板文件
     // 'dispatch_success_tmpl'  => Env::get('think_path') . 'tpl/dispatch_jump.tpl',
     // 'dispatch_error_tmpl'    => Env::get('think_path') . 'tpl/dispatch_jump.tpl',

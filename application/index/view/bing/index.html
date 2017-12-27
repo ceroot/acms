@@ -8,14 +8,14 @@
 <title>bing 每日图片欣赏</title>
 <meta name="description" content="">
 <meta name="keywords" content="">
-<!-- LayUi -->
-<link rel="stylesheet" type="text/css" href="./static/libs/bootstrap/4.0.0/css/bootstrap.min.css" media="all">
-<link rel="stylesheet" type="text/css" href="./static/libs/font-awesome/4.7.0/css/font-awesome.min.css" media="all">
+<!-- bootstrap -->
+<link rel="stylesheet" type="text/css" href="__LIBS__/bootstrap/4.0.0/css/bootstrap.min.css" media="all">
+<link rel="stylesheet" type="text/css" href="__LIBS__/font-awesome/4.7.0/css/font-awesome.min.css" media="all">
 <style type="text/css">
 	p,h4{ margin:0; padding:0; }
 	a{ color: #23527c; text-decoration: none; }
-	.bing-area{}
-	.bing-area .bing-box{ list-style: none; border:1px solid #ddd; border-radius: 5px; display: inline-block; padding: 5px; width: 356px; margin-bottom: 20px; }
+	.bing-area{ /*display: none;*/ }
+	.bing-area .bing-box{ list-style: none; border:1px solid #ddd; border-radius: 5px; display: inline-block; padding: 5px; width: 350px; margin-bottom: 20px; }
 	.bing-area .bing-box:hover{ border:1px solid #23527c;}
 	.bing-area .bing-box .item{ color: #666 }
 	.bing-area .bing-box .img-box{ max-height: 199.35px; overflow: hidden; }
@@ -31,8 +31,14 @@
 </style>
 </head>
 <body>
-    
-</body>
+<div class="container">
+	<nav aria-label="breadcrumb" role="navigation">
+	  	<ol class="breadcrumb">
+		    <li class="breadcrumb-item"><a href="/">首页</a></li>
+		    <li class="breadcrumb-item">Bing 每日图片欣赏</li>
+	  	</ol>
+	</nav>
+</div>
 <div class="container">
 	<div class="bing-area">
 		<div class="row">
@@ -58,11 +64,12 @@
 	</div>
 </div>
 
-<div class="container"><div>{$page|raw}</div></div>
-<script type="text/javascript" src="./static/libs/jquery/jquery-3.2.1.min.js"></script>
+<div class="container" style="overflow: hidden; overflow-x: auto;"><nav aria-label="Page navigation">{$page|raw}</nav></div>
+</body>
+<script type="text/javascript" src="__LIBS__/jquery/jquery-3.2.1.min.js"></script>
 <!-- bootstrap -->
-<script type="text/javascript" src="./static/libs/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="./static/libs/lazyload/2.x/lazyload.min.js"></script>
+<script type="text/javascript" src="__LIBS__/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="__LIBS__/lazyload/2.x/lazyload.min.js"></script>
 <script type="text/javascript">
 	$(function(){
 		//https://appelsiini.net/projects/lazyload/

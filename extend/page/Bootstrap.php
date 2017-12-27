@@ -9,7 +9,7 @@
 // | Author: zhangyajun <448901948@qq.com>
 // +----------------------------------------------------------------------
 
-namespace think\paginator\driver;
+namespace page;
 
 use think\Paginator;
 
@@ -57,29 +57,39 @@ class Bootstrap extends Paginator
      */
     protected function getLinks()
     {
-        if ($this->simple)
+        if ($this->simple) {
             return '';
+        }
 
         $block = [
             'first'  => null,
             'slider' => null,
-            'last'   => null
+            'last'   => null,
         ];
 
-        $side   = 3;
+        $side   = 2; // 3
         $window = $side * 2;
 
         if ($this->lastPage < $window + 6) {
+            // dump('d1');
             $block['first'] = $this->getUrlRange(1, $this->lastPage);
+            // } elseif ($this->currentPage <= $window) {
         } elseif ($this->currentPage <= $window) {
+            // dump('d2');
+            // $block['first'] = $this->getUrlRange(1, $window + 2);
             $block['first'] = $this->getUrlRange(1, $window + 2);
             $block['last']  = $this->getUrlRange($this->lastPage - 1, $this->lastPage);
-        } elseif ($this->currentPage > ($this->lastPage - $window)) {
+            // } elseif ($this->currentPage > ($this->lastPage - $window)) {
+        } elseif ($this->currentPage > ($this->lastPage - $window + 2)) {
+            // dump('d3');
             $block['first'] = $this->getUrlRange(1, 2);
-            $block['last']  = $this->getUrlRange($this->lastPage - ($window + 2), $this->lastPage);
+            // $block['last']  = $this->getUrlRange($this->lastPage - ($window + 2), $this->lastPage);
+            $block['last'] = $this->getUrlRange($this->lastPage - 2, $this->lastPage);
         } else {
-            $block['first']  = $this->getUrlRange(1, 2);
-            $block['slider'] = $this->getUrlRange($this->currentPage - $side, $this->currentPage + $side);
+            // dump('d4');
+            $block['first'] = $this->getUrlRange(1, 2);
+            // $block['slider'] = $this->getUrlRange($this->currentPage - $side, $this->currentPage + $side);
+            $block['slider'] = $this->getUrlRange($this->currentPage - 1, $this->currentPage + 1);
             $block['last']   = $this->getUrlRange($this->lastPage - 1, $this->lastPage);
         }
 
@@ -117,7 +127,7 @@ class Bootstrap extends Paginator
                 );
             } else {
                 return sprintf(
-                    '<ul class="pagination">%s %s %s</ul>',
+                    '<ul class="pagination pagination-sm">%s %s %s</ul>',
                     $this->getPreviousButton(),
                     $this->getLinks(),
                     $this->getNextButton()
@@ -135,7 +145,7 @@ class Bootstrap extends Paginator
      */
     protected function getAvailablePageWrapper($url, $page)
     {
-        return '<li><a href="' . htmlentities($url) . '">' . $page . '</a></li>';
+        return '<li class="page-item"><a class="page-link" href="' . htmlentities($url) . '">' . $page . '</a></li>';
     }
 
     /**
@@ -146,7 +156,8 @@ class Bootstrap extends Paginator
      */
     protected function getDisabledTextWrapper($text)
     {
-        return '<li class="disabled"><span>' . $text . '</span></li>';
+        return '<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">' . $text . '</a></li>';
+        // return '<li class="page-item disabled"><span>' . $text . '</span></li>';
     }
 
     /**
@@ -157,7 +168,8 @@ class Bootstrap extends Paginator
      */
     protected function getActivePageWrapper($text)
     {
-        return '<li class="active"><span>' . $text . '</span></li>';
+        return '<li class="page-item active"><a class="page-link" href="javascript:;">' . $text . '</a></li>';
+        // return '<li class="page-item active"><span>' . $text . '</span></li>';
     }
 
     /**

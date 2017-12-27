@@ -15,21 +15,28 @@
 
 return [
     // 模板引擎类型 支持 php think 支持扩展
-    'type'         => 'Think',
+    'type'               => 'Think',
     // 模板路径
-    'view_path'    => '',
+    'view_path'          => '',
     // 模板后缀
-    'view_suffix'  => 'html',
+    'view_suffix'        => 'html',
     // 模板文件名分隔符
-    'view_depr'    => DIRECTORY_SEPARATOR,
+    'view_depr'          => DIRECTORY_SEPARATOR,
     // 模板引擎普通标签开始标记
-    'tpl_begin'    => '{',
+    'tpl_begin'          => '{',
     // 模板引擎普通标签结束标记
-    'tpl_end'      => '}',
+    'tpl_end'            => '}',
     // 标签库标签开始标记
-    'taglib_begin' => '{',
+    'taglib_begin'       => '{',
     // 标签库标签结束标记
-    'taglib_end'   => '}',
+    'taglib_end'         => '}',
     //全局的视图根目录
     // 'view_base'    => Env::get('root_path') . './template/',
+    'tpl_replace_string' => [
+        '__IMAGES__'  => '/static/images',
+        '__CSS__'     => '/static/css',
+        '__LIBS__'    => '/static/libs',
+        '__CONSOLE__' => '/static/console',
+        // '{@libs}'     => '/static/libs',
+    ],
 ];
