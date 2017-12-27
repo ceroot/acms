@@ -862,6 +862,9 @@ class Bing extends Extend
 
     public function index($limit = 15)
     {
+        if (request()->isMobile()) {
+            $limit = 30;
+        }
         // dump('bing');
         $data = model('BingWallpaper')->order('datesign', 'desc')->paginate($limit, '', [
             'type'     => '\page\Bootstrap',
@@ -923,7 +926,12 @@ class Bing extends Extend
             $where = [
                 ['id', '<>', $data['id']],
             ];
-            $groom = $model->where($where)->where('title', 'like', $whereLike, 'OR')->limit(8)->select();
+
+            $limit = 8;
+            if (request()->isMobile()) {
+                $limit = 12;
+            }
+            $groom = $model->where($where)->where('title', 'like', $whereLike, 'OR')->limit($limit)->select();
 
         }
 

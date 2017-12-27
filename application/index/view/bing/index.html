@@ -15,27 +15,28 @@
 	p,h4{ margin:0; padding:0; }
 	a{ color: #23527c; text-decoration: none; }
 	.bing-area{ /*display: none;*/ }
-	.bing-area .bing-box{ list-style: none; border:1px solid #ddd; border-radius: 5px; display: inline-block; padding: 5px; width: 350px; margin-bottom: 20px; }
+	.bing-area .bing-box{ list-style: none; border:1px solid #ddd; border-radius: 5px; display: inline-block; padding: 5px; padding-bottom: 16px; width: 350px; height: 100%; position: relative; }
 	.bing-area .bing-box:hover{ border:1px solid #23527c;}
-	.bing-area .bing-box .item{ color: #666 }
+	.bing-area .bing-box .item{ color: #666; position: absolute; bottom: 3px;}
 	.bing-area .bing-box .img-box{ max-height: 199.35px; overflow: hidden; }
-	.bing-area .bing-box h6{ padding-bottom: 5px; overflow: hidden; white-space:nowrap;}
+	.bing-area .bing-box h6{ padding-bottom: 5px; padding-top: .2rem; overflow: hidden; white-space:nowrap;}
 	.bing-area .bing-box h6 a{ font-weight: 600; }
 	.bing-area img{ width: 100%; }
 	.text-align-r{ text-align: right; }
 
 	@media screen and (max-width: 575.99px) {
-	  .bing-area .bing-box{border: 0; border-radius: 0; border-bottom:1px solid #ddd; display:block; padding:0; width: auto; max-height:auto; }
+	  .bing-area .bing-box{border: 0; border-radius: 0; border-bottom:1px solid #ddd; display:block; padding:0; position: static; width: auto; height: auto; max-height:auto; }
 	  .bing-area .bing-box .img-box{ max-height:auto; }
+	  .bing-area .bing-box .item{ position: static;}
 	}
 </style>
 </head>
 <body>
 <div class="container">
-	<nav aria-label="breadcrumb" role="navigation">
+	<nav aria-label="breadcrumb" role="navigation" style="font-size: .875rem;">
 	  	<ol class="breadcrumb">
-		    <li class="breadcrumb-item"><a href="/">首页</a></li>
-		    <li class="breadcrumb-item">Bing 每日图片欣赏</li>
+		    <li class="breadcrumb-item"><i class="fa fa-home"></i><a href="/">首页</a></li>
+		    <li class="breadcrumb-item"><i class="fa fa-file-image-o"></i> Bing 每日图片欣赏</li>
 	  	</ol>
 	</nav>
 </div>
@@ -44,6 +45,7 @@
 		<div class="row">
 	  		{volist name='list' id='lists'}
 		    	<div class="col-12 col-md-4">
+		    		<div style="padding-bottom: 20px; height: 100%;">
 		    		<div class="bing-box">
 		    			<div class="img-box">
 				    	  	<a href="{:url('index/Bing/details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">
@@ -58,6 +60,7 @@
 				    		<span class="pull-right"><i class="fa fa-clock-o fa-fw" title="发布时间"></i> {$lists.datesign|strtotime|date='Y-m-d'}</span>
 				    	</div>
 				    </div>
+					</div>
 		    	</div>
 	    	{/volist}
 		</div>

@@ -26,7 +26,7 @@
 	.bing-area .bing-box:hover{ border:1px solid #23527c;}
 	.bing-area .bing-box .item{ color: #666; }
 	.bing-area .bing-box .img-box{ overflow: hidden;}
-	.bing-area .bing-box h6{overflow: hidden; white-space:nowrap; margin-bottom: .15rem;}
+	.bing-area .bing-box h6{ margin-bottom: .15rem;}
 	.bing-area .bing-box h6 a{ font-size: .875rem; }
 	.bing-area img{ width: 100%; }
 	.text-align-r{ text-align: right; }
@@ -38,20 +38,21 @@
 	.area p.text{text-indent: 28px;}
 
 	@media screen and (max-width: 575.99px) {
+		.area h4{ font-size: 1.35rem; }
 		.area p img{ width: 100%; }  
-	  	.bing-area .bing-box{border: 0; border-radius: 0; border-bottom:1px solid #ddd; display:block; padding:0; width: auto; max-height:auto; max-width: none; }
-	  	.bing-area .bing-box .img-box{ max-height:auto; max-width:none; }
-	  	.bing-area .bing-box .item{font-size: .75rem; }
+	  	.bing-area .bing-box{border: 0; border-radius: 0; border-bottom:1px solid #ddd; display:block; padding-bottom: .55rem; width: auto; max-height:auto; max-width: none; height: 100%; position: relative; }
+	  	.bing-area .bing-box .img-box{ max-height:auto; max-width:none; padding-top: .5rem; }
+	  	.bing-area .bing-box .item{font-size: .75rem; position: absolute; bottom: .15rem; }
 	}
 </style>
 
 </head>
 <body>
 	<div class="container">
-		<nav aria-label="breadcrumb" role="navigation">
+		<nav aria-label="breadcrumb" role="navigation" style="font-size: .875rem;">
 		  	<ol class="breadcrumb">
-			    <li class="breadcrumb-item"><a href="/">首页</a></li>
-			    <li class="breadcrumb-item"><a href="/bing">Bing 每日图片欣赏</a></li>
+			    <li class="breadcrumb-item"><i class="fa fa-home"></i><a href="/">首页</a></li>
+			    <li class="breadcrumb-item"><i class="fa fa-file-image-o"></i> <a href="/bing">Bing 每日图片欣赏</a></li>
 			    <li class="breadcrumb-item active" aria-current="page">{$data.title}</li>
 		  	</ol>
 		</nav>
