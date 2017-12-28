@@ -1734,9 +1734,9 @@ class Bing extends Extend
         if ($scenic) {
             $imgOld      = $scenic[0]['rms_img']; // 取得图片 url
             $detailsName = md5(microtime() . $imgOld) . '.jpg'; // 图片名称带后缀
-            $imgTemp         = $this->saveRemoteFile($imgOld, $detailsName, $this->tempPath); // 执行临时文件保存操作
+            $imgTemp     = $this->saveRemoteFile($imgOld, $detailsName, $this->tempPath); // 执行临时文件保存操作
+            $imgPath     = $this->savePath . $detailsName;
 
-            $imgPath = $this->savePath . $detailsName;
             // 图片1迁移
             if (is_file($imgTemp)) {
                 $image = \think\Image::open($imgTemp);
