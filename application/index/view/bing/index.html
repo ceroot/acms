@@ -17,16 +17,16 @@
 	.bing-area{ /*display: none;*/ }
 	.bing-area .bing-box{ list-style: none; border:1px solid #ddd; border-radius: 5px; display: inline-block; padding: 5px; padding-bottom: 16px; width: 350px; height: 100%; position: relative; }
 	.bing-area .bing-box:hover{ border:1px solid #23527c;}
-	.bing-area .bing-box .item{ color: #666; position: absolute; bottom: 3px;}
-	.bing-area .bing-box .img-box{ max-height: 199.35px; overflow: hidden; }
+	.bing-area .bing-box .item{ color: #666; position: absolute; bottom: 3px; left: 0; width: 100%; padding-left: 5px; padding-right: 5px;}
+	.bing-area .bing-box .img-box{ max-height: 199.35px; overflow: hidden; text-align: center; }
 	.bing-area .bing-box h6{ padding-bottom: 5px; padding-top: .2rem; overflow: hidden; white-space:nowrap;}
 	.bing-area .bing-box h6 a{ font-weight: 600; }
-	.bing-area img{ width: 100%; }
+	.bing-area img{ max-width: 100%; }
 	.text-align-r{ text-align: right; }
 
 	@media screen and (max-width: 575.99px) {
 	  .bing-area .bing-box{border: 0; border-radius: 0; border-bottom:1px solid #ddd; display:block; padding:0; position: static; width: auto; height: auto; max-height:auto; }
-	  .bing-area .bing-box .img-box{ max-height:auto; }
+	  .bing-area .bing-box .img-box{ max-height:auto; text-align: center; }
 	  .bing-area .bing-box .item{ position: static;}
 	}
 </style>
@@ -50,7 +50,7 @@
 		    		<div class="bing-box">
 		    			<div class="img-box">
 				    	  	<a href="{:url('index/Bing/details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">
-					    		<img class="lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$lists.datesign|strtotime|date='Y/m/d/'}{$lists.newname}" src="./data/bingwallpaper/default.jpg" alt="{$lists.title}" />
+					    		<img class="lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$lists.datesign|strtotime|date='Y/m/d/'}{$lists.newname}" src="./data/bingwallpaper/default.gif" alt="{$lists.title}" />
 					    	</a>
 				    	</div>
 				    	{notempty name="$lists.item_ttl"}<p style="font-size: 90%;"><i class="fa fa-deaf fa-fw" title=""></i>{$lists.item_ttl}</p>{/notempty}

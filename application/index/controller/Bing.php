@@ -103,9 +103,9 @@ class Bing extends Extend
      */
     public function qcloud_cos($bucketName, $path, $srcPath, $filename)
     {
-        // if ($this->isLocal(request()->ip())) {
-        //     return false;
-        // }
+        if ($this->isLocal(request()->ip())) {
+            return false;
+        }
 
         // statFolder
         $statRet = Cosapi::statFolder($bucketName, $path);
@@ -1734,13 +1734,19 @@ class Bing extends Extend
         if ($scenic) {
             $imgOld      = $scenic[0]['rms_img']; // 取得图片 url
             $detailsName = md5(microtime() . $imgOld) . '.jpg'; // 图片名称带后缀
-            $img         = $this->saveRemoteFile($imgOld, $detailsName, $this->tempPath); // 执行临时文件保存操作
+            $imgTemp         = $this->saveRemoteFile($imgOld, $detailsName, $this->tempPath); // 执行临时文件保存操作
 
+            $imgPath = $this->savePath . $detailsName;
             // 图片1迁移
-            if (is_file($img)) {
-                $image = \think\Image::open($img);
-                $image->save($this->savePath . $detailsName);
-                unlink($img);
+            if (is_file($imgTemp)) {
+                $image = \think\Image::open($imgTemp);
+                $image->save($imgPath);
+                unlink($imgTemp); // 删除临时文件
+
+                // 腾讯对象存储
+                if(is_file($imgPath)){
+                    $this->qcloud_cos($this->qCloudBucketName, $this->qcloudCosPath, $imgPath, $detailsName);
+                }
             }
 
             $details[3]['datesign']    = $this->datesign;

@@ -14,7 +14,7 @@
 
 <style type="text/css">
 	body{font-size:14px; font-size:.875rem;}
-	.area img.big{ width: 100%; }
+	.area img.big{ max-width: 100%; }
 	.area h4{}
 	.area h5{ margin-bottom: .5rem; }
 	.area p{ margin-bottom: 1rem; }
@@ -22,13 +22,14 @@
 	p,h4{ margin:0; padding:0; }
 	a{ color: #23527c; text-decoration: none; }
 	.bing-area{}
-	.bing-area .bing-box{ list-style: none; border:1px solid #ddd; border-radius: .35rem; padding: .35rem;  max-width: 265.5px; position: relative; padding-bottom: 26px; }
+	.bing-area .box-area{height: 100%; padding-bottom: 20px;}
+	.bing-area .bing-box{ list-style: none; border:1px solid #ddd; border-radius: .35rem; padding: .35rem;  max-width: 265.5px; position: relative; padding-bottom: 26px; height: 100%; }
 	.bing-area .bing-box:hover{ border:1px solid #23527c;}
-	.bing-area .bing-box .item{ color: #666; position: absolute; bottom: 5px; }
-	.bing-area .bing-box .img-box{ overflow: hidden;}
+	.bing-area .bing-box .item{ color: #666; position: absolute; bottom: 5px; left: 0; padding-left: 5px; padding-right: 5px; width: 100%; }
+	.bing-area .bing-box .img-box{ overflow: hidden; text-align: center;}
 	.bing-area .bing-box h6{ margin-bottom: .15rem; max-height: 42px; overflow: hidden; padding-top: 5px; padding-bottom: 5px;}
 	.bing-area .bing-box h6 a{ font-size: .875rem; }
-	.bing-area img{ width: 100%; }
+	.bing-area img{ max-width: 100%; }
 	.text-align-r{ text-align: right; }
 
 	.area .title-item{border-bottom: 1px solid #ddd; margin-bottom: .2rem; padding-bottom: .7rem; text-align: center; color: #444; font-size: 90%; line-height: 1.3rem; padding-top: .5rem}
@@ -39,10 +40,11 @@
 
 	@media screen and (max-width: 575.99px) {
 		.area h4{ font-size: 1.35rem; }
-		.area p img{ width: 100%; }  
-	  	.bing-area .bing-box{border: 0; border-radius: 0; border-bottom:1px solid #ddd; display:block; padding-bottom: .55rem; width: auto; max-height:auto; max-width: none; height: 100%; position: relative; }
+		.area p img{ max-width: 100%; } 
+		.bing-area .box-area{ padding-bottom: 0px;}
+	  	.bing-area .bing-box{border: 0; border-radius: 0; border-bottom:1px solid #ddd; width: auto; max-width: none;}
 	  	.bing-area .bing-box .img-box{ max-height:auto; max-width:none; padding-top: .5rem; }
-	  	.bing-area .bing-box .item{font-size: .75rem; position: absolute; bottom: .15rem; }
+	  	.bing-area .bing-box .item{font-size: .75rem;}
 	}
 </style>
 
@@ -57,28 +59,20 @@
 		  	</ol>
 		</nav>
 	</div>
-	<div class="container" style="display: none;">
-		<img src="http://bing-10015504.file.myqcloud.com/200905/Arlington_EN-US114955413.jpg"/>
-		<img src="http://bing-10015504.file.myqcloud.com/2017/12/27/5511a25c922f20cfa1280b3200cdb24e.jpg"/>
-		<!-- <img src="http://bing-10015504.cos.myqcloud.com/2017/12/27/5511a25c922f20cfa1280b3200cdb24e.jpg"/> -->
-		<!-- <img src="http://web.file.myqcloud.com/files/v1/2017/12/27/5511a25c922f20cfa1280b3200cdb24e.jpg"/> -->
-		<!-- <img src="http://bing-10015504.cossh.myqcloud.com/2017/12/27/5511a25c922f20cfa1280b3200cdb24e.jpg"/> -->
-		
-	</div>
 	<div class="container area">
 		<h4 style="text-align: center;">{$data.title}</h4>
 		<div class="title-item">
 			<i class="fa fa-clock-o fa-fw" title="发布时间"></i>{$data.datesign|strtotime|date='Y-m-d'}&nbsp;&nbsp;<i class="fa fa-eye fa-fw" title="浏览次数"></i> {$data.viewcount}&nbsp;&nbsp;<i class="fa fa-download fa-fw" title="下载次数"></i>{$data.downcount}{notempty name="$data.item_ttl"}&nbsp;&nbsp;<i class="fa fa-deaf fa-fw" title=""></i>{$data.item_ttl}{/notempty}{notempty name="$data.author"}&nbsp;&nbsp;<i class="fa fa-copyright fa-fw" title="版权"></i>{$data.author}{/notempty}（图片来源于必应搜索） 
 		</div>
-		<div style="padding-top: 15px; padding-bottom: 10px;">
-			<img class="big lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$data.datesign|strtotime|date='Y/m/d'}/{$data.newname}" src="" alt="{$data.title}">
+		<div style="padding-top: 15px; padding-bottom: 10px; text-align: center;">
+			<img class="big lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$data.datesign|strtotime|date='Y/m/d'}/{$data.newname}" src="/data/bingwallpaper/default.gif" alt="{$data.title}">
 		</div>
 		<p class="text">{$data.description}</p>
 		{notempty name="$data.first"}
 			<h5>{$data.first.title}&nbsp;<small>{$data.first.resume}</small></h5>
 			<p class="text">{$data.first.description}</p>
 			<p class="img" style="color: #727272">
-				<img class="lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$data.datesign|strtotime|date='Y/m/d'}/{$data.first.img}" src="" alt="{$data.first.title}|{$data.first.resume}"/><br/>
+				<img class="lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$data.datesign|strtotime|date='Y/m/d'}/{$data.first.img}" src="/data/bingwallpaper/default.gif" alt="{$data.first.title}|{$data.first.resume}"/><br/>
 				{$data.item_tt}，{$data.item_ts}
 			</p>
 		{/notempty}
@@ -91,7 +85,7 @@
 		{notempty name="$data.details"}
 			{foreach name="$data.details" item="brief"}
 				<h5>{$brief.title}&nbsp;<small>{$brief.resume}</small></h5>
-				<p class="img"><img class="lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$data.datesign|strtotime|date='Y/m/d'}/{$brief.img}" src="" alt="{$brief.title}|{$brief.resume}"></p>
+				<p class="img"><img class="lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$data.datesign|strtotime|date='Y/m/d'}/{$brief.img}" src="/data/bingwallpaper/default.gif" alt="{$brief.title}|{$brief.resume}"></p>
 				<p class="text">{$brief.description}</p>
 			{/foreach}
 		{/notempty}
@@ -132,11 +126,11 @@
 				<div class="row">
 			  		{volist name='groom' id='lists'}
 				    	<div class="col-6 col-md-3">
-				    		<div style="height: 100%; padding-bottom: 20px;">
-					    		<div class="bing-box" style="height: 100%">
+				    		<div class="box-area">
+					    		<div class="bing-box">
 					    			<div class="img-box">
 							    	  	<a href="{:url('index/Bing/details',['id'=>authcode($lists.id)])}" target="_blank" title="{$lists.title}">
-								    		<img class="lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$lists.datesign|strtotime|date='Y/m/d/'}thumb_{$lists.newname}" src="/data/bingwallpaper/default.jpg" alt="{$lists.title}" />
+								    		<img class="lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$lists.datesign|strtotime|date='Y/m/d/'}thumb_{$lists.newname}" src="/data/bingwallpaper/default.gif" alt="{$lists.title}" />
 								    	</a>
 							    	</div>
 							    	<h6>
