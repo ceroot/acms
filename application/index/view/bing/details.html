@@ -32,7 +32,7 @@
 	.bing-area img{ max-width: 100%; }
 	.text-align-r{ text-align: right; }
 
-	.area .title-item{border-bottom: 1px solid #ddd; margin-bottom: .2rem; padding-bottom: .7rem; text-align: center; color: #444; font-size: 90%; line-height: 1.3rem; padding-top: .5rem}
+	.area .title-item{border-bottom: 1px solid #ddd; margin-bottom: .75rem; padding-bottom: .7rem; text-align: center; color: #444; font-size: 90%; line-height: 1.3rem; padding-top: .5rem}
 	.area h5{ border-bottom: 1px solid #f1f1f1; }
 	.area h5 small{color: #333; font-weight: normal; font-size: .75rem;}
 	.area p.img{text-align: center;}
@@ -64,7 +64,10 @@
 		<div class="title-item">
 			<i class="fa fa-clock-o fa-fw" title="发布时间"></i>{$data.datesign|strtotime|date='Y-m-d'}&nbsp;&nbsp;<i class="fa fa-eye fa-fw" title="浏览次数"></i> {$data.viewcount}&nbsp;&nbsp;<i class="fa fa-download fa-fw" title="下载次数"></i>{$data.downcount}{notempty name="$data.item_ttl"}&nbsp;&nbsp;<i class="fa fa-deaf fa-fw" title=""></i>{$data.item_ttl}{/notempty}{notempty name="$data.author"}&nbsp;&nbsp;<i class="fa fa-copyright fa-fw" title="版权"></i>{$data.author}{/notempty}（图片来源于必应搜索） 
 		</div>
-		<div style="padding-top: 15px; padding-bottom: 10px; text-align: center;">
+		<div class="alert alert-secondary" role="alert" style="text-indent: 28px;">
+		  	{$data.description}
+		</div>
+		<div style=" padding-bottom: 10px; text-align: center;">
 			<img class="big lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$data.datesign|strtotime|date='Y/m/d'}/{$data.newname}" src="/data/bingwallpaper/default.gif" alt="{$data.title}">
 		</div>
 		<p class="text">{$data.description}</p>
