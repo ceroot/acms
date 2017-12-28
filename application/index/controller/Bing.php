@@ -22,6 +22,8 @@ namespace app\index\controller;
 use app\common\controller\Extend;
 use QL\QueryList;
 use traits\controller\Jump;
+use Qcloud_cos\Auth;
+use Qcloud_cos\Cosapi;
 
 class Bing extends Extend
 {
@@ -38,6 +40,9 @@ class Bing extends Extend
     protected $savePath; // 保存目录，到天
     protected $bingwallpaperPath; // bing 目录
     //http://www.istartedsomething.com/bingimages/
+
+    protected $qcloudCosPath;
+    protected $qCloudBucketName;
 
     /**
      * [initialize 控制器初始化]
@@ -57,75 +62,55 @@ class Bing extends Extend
         make_dir($this->basePath); // 创建保存目录
         make_dir($this->savePath); // 创建保存目录
 
+        $this->qcloudCosPath = '/'.$this->year.'/'.$this->month.'/'.$this->day;
+        $this->qCloudBucketName = 'bing';
+
     }
 
     public function test()
     {
-        // $gg = $_SERVER['HTTP_USER_AGENT'];
-        // dump($gg);
-        // die;
-        //
-        //
-        dump(config('view_replace_str'));
-        die;
-
-        // 使用 QueryList 取得数据
-        $data = QueryList::get('http://cn.bing.com/cnhp/life', [], [
-            'headers' => [
-                'Referer'    => 'https://querylist.cc/',
-                'User-Agent' => 'iPhone/1.0',
-                'Accept'     => 'application/json',
-                'X-Foo'      => ['Bar', 'Baz'],
-                //'Cookie'     => 'abc=111;xxx=222',
-            ],
-        ])->rules([
-            'hplatt1'              => ['.hplaDft .hplatBlue .hplatt', 'text'],
-            'hplats1'              => ['.hplaDft .hplatBlue .hplats', 'text'],
-            'hplatxt'              => ['.hplaDft:eq(1) .hplatxt:eq(0)', 'text'],
-            'hplai rms_img'        => ['.hplaDft:eq(1) .rms_img', 'src'],
-            'rms_img'              => ['#hplaDL img.rms_img', 'src'],
-            'hplaTtl'              => ['#hplaT .hplaTtl', 'text'],
-            'hplaAttr'             => ['#hplaT .hplaAttr', 'text'],
-            'hplatt'               => ['.hplaCata .hplatt', 'text'],
-            'hplats'               => ['.hplaCata .hplats', 'text'],
-
-            'description'          => ['.hplaCata #hplaSnippet', 'text'],
-
-            'brief0_title'         => ['.hplaCata .hplac:eq(0) .hplactt', 'text'],
-            'brief0_description'   => ['.hplaCata .hplac:eq(0) .hplactc', 'text'],
-            'brief1_title'         => ['.hplaCata .hplac:eq(1) .hplactt', 'text'],
-            'brief1_description'   => ['.hplaCata .hplac:eq(1) .hplactc', 'text'],
-            'brief2_title'         => ['.hplaCata .hplac:eq(2) .hplactt', 'text'],
-            'brief2_description'   => ['.hplaCata .hplac:eq(2) .hplactc', 'text'],
-            'brief3_title'         => ['.hplaCata .hplac:eq(3) .hplactt', 'text'],
-            'brief3_description'   => ['.hplaCata .hplac:eq(3) .hplactc', 'text'],
-
-            'details0_title'       => ['.hplaCard:eq(0) .hplatt span', 'text'],
-            'details0_resume'      => ['.hplaCard:eq(0) .hplats', 'text'],
-            'details0_img'         => ['.hplaCard:eq(0) .rms_img', 'src'],
-            'details0_description' => ['.hplaCard:eq(0) .hplatxt', 'text'],
-            'details1_title'       => ['.hplaCard:eq(1) .hplatt span', 'text'],
-            'details1_resume'      => ['.hplaCard:eq(1) .hplats', 'text'],
-            'details1_img'         => ['.hplaCard:eq(1) .rms_img', 'src'],
-            'details1_description' => ['.hplaCard:eq(1) .hplatxt', 'text'],
-
-        ])->query()->getData();
-
-        $scenic = $data->all(); // 取得数据
-        // dump($scenic);
-        $gg = $_SERVER['HTTP_USER_AGENT'];
-        dump($gg);
-        die;
-        $url = 'http://cn.bing.com/az/hprichbg/rb/PowysCounty_ZH-CN11115693548_1366x768.jpg';
-        dump(parse_url($url, PHP_URL_PATH));
-        dump(pathinfo(parse_url($url, PHP_URL_PATH)));
-        echo pathinfo(parse_url($url)['path'])['extension'];
-
-        echo pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION);
-
+        
+        $bucketName = 'bing';
+        // $path = '/'.date('Y/m/d');
+        $srcPath = './data/bingwallpaper/default.jpg';
+        $filename = 'test1.jpg';
+        $this->qcloud_cos($bucketName,$this->qcloudCosPath,$srcPath,$filename);
         die;
 
     }
+
+    // 腾讯对象存储函数
+    /*
+     * 参数: 
+        @string: $bucketName  bucket 名称
+        @string: $path 目录地址;
+        @string: $srcPath  源文件地址
+        @string: $filename 文件名称;
+    */
+    public function qcloud_cos($bucketName,$path,$srcPath,$filename){
+
+    // dump($path);
+    
+    // statFolder
+    $statRet = Cosapi::statFolder($bucketName, $path);
+
+    //var_dump($statRet);
+    // 判断目录是否存在，不正在进行创建
+    if($statRet['code']!=0){
+        //创建目录
+        $createFolderRet = Cosapi::createFolder($bucketName, $path);
+        //var_dump($createFolderRet);
+    }
+// dump($statRet);die;
+    //上传文件
+    // $srcPath  = '/home/wwwroot/ceroot/domain/bing/web/201602230102.jpg';
+    $dstPath  = $path.'/'.$filename;
+
+    $uploadRet = Cosapi::upload($srcPath, $bucketName, $dstPath);
+    // echo '<br/>';
+    //dump($uploadRet);
+    //return $uploadRet;
+}
 
     public function ee()
     {
@@ -1431,12 +1416,17 @@ class Bing extends Extend
         $bigImgPath = $this->saveRemoteFile($oldurlbig, $newname, $this->savePath);
 
         if (is_file($bigImgPath)) {
+            $thumb = 'thumb-' . $newname;
             $image = \think\Image::open($bigImgPath); // 实例化图像
-            $image->thumb(640, 640)->save($this->savePath . 'thumb-' . $newname); // 缩略图本地开始
+            $image->thumb(640, 640)->save($this->savePath . $thumb); // 缩略图本地开始
             //$image->save($savepathbig . $newnamebig, $picformat1, 90, true); // 保存 1920 X 1080
             //$image->save($savepathcnbig . $newnamecnbig, $picformat1, 90, true); // 保存 1920 X 1080 带中文
             copy($bigImgPath, $savepathbig . $newnamebig); // 使用 copy 不改变文件大小
             copy($bigImgPath, $savepathcnbig . $newnamecnbig); // 使用 copy 不改变文件大小
+
+            // 腾讯对象存储
+            $this->qcloud_cos($this->qCloudBucketName,$this->qcloudCosPath,$bigImgPath,$newname);
+            $this->qcloud_cos($this->qCloudBucketName,$this->qcloudCosPath,$this->savePath . $thumb,$thumb);
         }
 
         $data['datesign']    = $this->datesign;
@@ -1532,14 +1522,24 @@ class Bing extends Extend
         if (is_file($img1)) {
             $image = \think\Image::open($img1);
             $image->save($this->savePath . $detailsName1);
-            unlink($img1);
+
+            // 腾讯对象存储
+            $imgLocalPath = $this->savePath . $detailsName1;
+            $this->qcloud_cos($this->qCloudBucketName,$this->qcloudCosPath,$imgLocalPath,$detailsName1);
+            
+            unlink($img1); // 删除临时文件
         }
 
         // 图片2迁移
         if (is_file($img2)) {
             $image = \think\Image::open($img2);
             $image->save($this->savePath . $detailsName2);
-            unlink($img2);
+
+            // 腾讯对象存储
+            $imgLocalPath = $this->savePath . $detailsName2;
+            $this->qcloud_cos($this->qCloudBucketName,$this->qcloudCosPath,$imgLocalPath,$detailsName2);
+            
+            unlink($img2); // 删除临时文件
         }
 
         // 详情数据
