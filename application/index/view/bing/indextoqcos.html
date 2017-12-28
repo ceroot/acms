@@ -50,7 +50,7 @@
 		    		<div class="bing-box">
 		    			<div class="img-box">
 				    	  	<a href="{:url('index/Bing/details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">
-					    		<img class="lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$lists.datesign|strtotime|date='Y/m/d/'}{$lists.newname}" src="./data/bingwallpaper/default.jpg" alt="{$lists.title}" />
+					    		<img class="lazyload" data-src="http://bing-10015504.cossh.myqcloud.com/{$lists.datesign|strtotime|date='Y/m/d/'}{$lists.newname}" src="/data/bingwallpaper/default.jpg" alt="{$lists.title}" />
 					    	</a>
 				    	</div>
 				    	{notempty name="$lists.item_ttl"}<p style="font-size: 90%;"><i class="fa fa-deaf fa-fw" title=""></i>{$lists.item_ttl}</p>{/notempty}
@@ -69,11 +69,6 @@
 </div>
 
 <div class="container" style="overflow: hidden; overflow-x: auto;"><nav aria-label="Page navigation">{$page|raw}</nav></div>
-<div class="container-full">
-	<footer style="margin-top: 20px; text-align: center; margin-bottom: 10px;">
-		<a href="/" title="笨翁">笨翁</a>
-	</footer>
-</div>
 </body>
 <script type="text/javascript" src="__LIBS__/jquery/jquery-3.2.1.min.js"></script>
 <!-- bootstrap -->

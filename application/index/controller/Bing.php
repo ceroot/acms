@@ -20,10 +20,10 @@
 namespace app\index\controller;
 
 use app\common\controller\Extend;
-use QL\QueryList;
-use traits\controller\Jump;
 use Qcloud_cos\Auth;
 use Qcloud_cos\Cosapi;
+use QL\QueryList;
+use traits\controller\Jump;
 
 class Bing extends Extend
 {
@@ -62,55 +62,70 @@ class Bing extends Extend
         make_dir($this->basePath); // 创建保存目录
         make_dir($this->savePath); // 创建保存目录
 
-        $this->qcloudCosPath = '/'.$this->year.'/'.$this->month.'/'.$this->day;
+        $this->qcloudCosPath    = '/' . $this->year . '/' . $this->month . '/' . $this->day;
         $this->qCloudBucketName = 'bing';
 
     }
 
     public function test()
     {
-        
-        $bucketName = 'bing';
-        // $path = '/'.date('Y/m/d');
-        $srcPath = './data/bingwallpaper/default.jpg';
-        $filename = 'test1.jpg';
-        $this->qcloud_cos($bucketName,$this->qcloudCosPath,$srcPath,$filename);
+
+        $ip = request()->ip();
+        dump($ip);
+        // dump($this->isLocal($ip));
+        dump($this->isLocal($ip));
+        return preg_match('%^127\.|10\.|192\.168|172\.(1[6-9]|2|3[01])%', $ip);
         die;
 
     }
 
+    /**
+     * [ isLocal 判断 ip 是内网还是外网 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-12-28T10:34:40+0800
+     * @param    [type]                   $ip [ip 地址]
+     * @return   boolean                      [description]
+     */
+    public function isLocal($ip)
+    {
+        return preg_match('%^127\.|10\.|192\.168|172\.(1[6-9]|2|3[01])%', $ip); // 正则方式
+        //return !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE); // PHP 自带判断私有ip 方法
+    }
+
     // 腾讯对象存储函数
     /*
-     * 参数: 
-        @string: $bucketName  bucket 名称
-        @string: $path 目录地址;
-        @string: $srcPath  源文件地址
-        @string: $filename 文件名称;
-    */
-    public function qcloud_cos($bucketName,$path,$srcPath,$filename){
+     * 参数:
+    @string: $bucketName  bucket 名称
+    @string: $path 目录地址;
+    @string: $srcPath  源文件地址
+    @string: $filename 文件名称;
+     */
+    public function qcloud_cos($bucketName, $path, $srcPath, $filename)
+    {
+        // if ($this->isLocal(request()->ip())) {
+        //     return false;
+        // }
 
-    // dump($path);
-    
-    // statFolder
-    $statRet = Cosapi::statFolder($bucketName, $path);
+        // statFolder
+        $statRet = Cosapi::statFolder($bucketName, $path);
 
-    //var_dump($statRet);
-    // 判断目录是否存在，不正在进行创建
-    if($statRet['code']!=0){
-        //创建目录
-        $createFolderRet = Cosapi::createFolder($bucketName, $path);
-        //var_dump($createFolderRet);
+        //var_dump($statRet);
+        // 判断目录是否存在，不正在进行创建
+        if ($statRet['code'] != 0) {
+            //创建目录
+            $createFolderRet = Cosapi::createFolder($bucketName, $path);
+            //var_dump($createFolderRet);
+        }
+        // dump($statRet);die;
+        //上传文件
+        // $srcPath  = '/home/wwwroot/ceroot/domain/bing/web/201602230102.jpg';
+        $dstPath = $path . '/' . $filename;
+
+        $uploadRet = Cosapi::upload($srcPath, $bucketName, $dstPath);
+        //dump($uploadRet);
+        //return $uploadRet;
     }
-// dump($statRet);die;
-    //上传文件
-    // $srcPath  = '/home/wwwroot/ceroot/domain/bing/web/201602230102.jpg';
-    $dstPath  = $path.'/'.$filename;
-
-    $uploadRet = Cosapi::upload($srcPath, $bucketName, $dstPath);
-    // echo '<br/>';
-    //dump($uploadRet);
-    //return $uploadRet;
-}
 
     public function ee()
     {
@@ -872,6 +887,117 @@ class Bing extends Extend
         return $this->fetch();
     }
 
+    public function indexto($limit = 500)
+    {
+        set_time_limit(0);
+        $data = model('BingWallpaper')->order('datesign', 'desc')->paginate($limit, '', [
+            'type'     => '\page\Bootstrap',
+            'var_page' => 'page',
+        ]);
+        // $data = model('BingWallpaper')->order('datesign', 'desc')->paginate($limit);
+        $newdata = [];
+        foreach ($data as $value) {
+            $datesign         = $value['datesign'];
+            $value['brief']   = model('BingBranchBrief')->where('datesign', $datesign)->select();
+            $value['details'] = model('BingBranchDetails')->where('datesign', $datesign)->select();
+            $value['id']      = authcode($value['id']);
+            $newdata[]        = $value;
+
+            $newname   = $value['newname'];
+            $strtotime = strtotime($datesign);
+            $_savepath = $this->bingwallpaperPath . date('Y/m/d/', $strtotime);
+            $thumbFile = $_savepath . 'thumb_' . $newname;
+            // dump($thumbFile);
+            if (!is_file($thumbFile) && is_file($_savepath . $newname)) {
+                // $image = \think\Image::open($_savepath . $newname);
+                // $image->save($_savepath . $imgName);
+                $image = \think\Image::open($_savepath . $newname); // 实例化图像
+                $image->thumb(640, 640)->save($thumbFile); // 缩略图本地开始
+                // dump($datesign);
+            }
+            // if ($value['details']) {
+            //     foreach ($value['details'] as $val) {
+            //         $img = $val['img'];
+            //         //dump($img);
+            //     }
+            // }
+
+        }
+        $page = $data->render();
+
+        $this->assign('list', $newdata);
+        $this->assign('page', $page);
+        return $this->fetch();
+    }
+
+    public function indextoqcos($limit = 60)
+    {
+        set_time_limit(0);
+        $where = [
+            ['id', '>', 2988],
+        ];
+        $data = model('BingWallpaper')->where($where)->order('datesign', 'asc')->paginate($limit, '', [
+            'type'     => '\page\Bootstrap',
+            'var_page' => 'page',
+        ]);
+        // dump($data);die;
+        // $data = model('BingWallpaper')->order('datesign', 'desc')->paginate($limit);
+        $newdata = [];
+        foreach ($data as $value) {
+            $datesign         = $value['datesign'];
+            $value['brief']   = model('BingBranchBrief')->where('datesign', $datesign)->select();
+            $value['details'] = model('BingBranchDetails')->where('datesign', $datesign)->select();
+            $value['id']      = authcode($value['id']);
+            $newdata[]        = $value;
+
+            $newname   = $value['newname'];
+            $strtotime = strtotime($datesign);
+            $_savepath = $this->bingwallpaperPath . date('Y/m/d/', $strtotime);
+
+            $thumbName = 'thumb_' . $newname;
+            $thumbFile = $_savepath . $thumbName;
+
+            $qcosPath = '/' . date('Y/m/d', $strtotime);
+
+            // dump($thumbFile);
+            if (!is_file($thumbFile) && is_file($_savepath . $newname)) {
+                // $image = \think\Image::open($_savepath . $newname);
+                // $image->save($_savepath . $imgName);
+                $image = \think\Image::open($_savepath . $newname); // 实例化图像
+                $image->thumb(640, 640)->save($thumbFile); // 缩略图本地开始
+                // dump($datesign);
+            }
+            // dump($datesign);
+            // die;
+            if (is_file($_savepath . $newname)) {
+                $this->qcloud_cos($this->qCloudBucketName, $qcosPath, $_savepath . $newname, $newname);
+            }
+
+            if (is_file($thumbFile)) {
+                $this->qcloud_cos($this->qCloudBucketName, $qcosPath, $thumbFile, $thumbName);
+            }
+
+            if ($value['details']) {
+                foreach ($value['details'] as $val) {
+                    $img     = $val['img'];
+                    $imgPath = $_savepath . $img;
+                    if (is_file($imgPath)) {
+                        // dump($imgPath);
+                        $this->qcloud_cos($this->qCloudBucketName, $qcosPath, $imgPath, $img);
+                    }
+                }
+            }
+
+            // die;
+
+        }
+        $page = $data->render();
+
+        $this->assign('list', $newdata);
+        $this->assign('page', $page);
+        return $this->fetch();
+    }
+
     public function details($id)
     {
         // dump('details');
@@ -1416,7 +1542,7 @@ class Bing extends Extend
         $bigImgPath = $this->saveRemoteFile($oldurlbig, $newname, $this->savePath);
 
         if (is_file($bigImgPath)) {
-            $thumb = 'thumb-' . $newname;
+            $thumb = 'thumb_' . $newname;
             $image = \think\Image::open($bigImgPath); // 实例化图像
             $image->thumb(640, 640)->save($this->savePath . $thumb); // 缩略图本地开始
             //$image->save($savepathbig . $newnamebig, $picformat1, 90, true); // 保存 1920 X 1080
@@ -1425,8 +1551,12 @@ class Bing extends Extend
             copy($bigImgPath, $savepathcnbig . $newnamecnbig); // 使用 copy 不改变文件大小
 
             // 腾讯对象存储
-            $this->qcloud_cos($this->qCloudBucketName,$this->qcloudCosPath,$bigImgPath,$newname);
-            $this->qcloud_cos($this->qCloudBucketName,$this->qcloudCosPath,$this->savePath . $thumb,$thumb);
+            $this->qcloud_cos($this->qCloudBucketName, $this->qcloudCosPath, $bigImgPath, $newname);
+            $thumbPath = $this->savePath . $thumb;
+            if (is_file($thumbPath)) {
+                $this->qcloud_cos($this->qCloudBucketName, $this->qcloudCosPath, $thumbPath, $thumb);
+            }
+
         }
 
         $data['datesign']    = $this->datesign;
@@ -1525,8 +1655,8 @@ class Bing extends Extend
 
             // 腾讯对象存储
             $imgLocalPath = $this->savePath . $detailsName1;
-            $this->qcloud_cos($this->qCloudBucketName,$this->qcloudCosPath,$imgLocalPath,$detailsName1);
-            
+            $this->qcloud_cos($this->qCloudBucketName, $this->qcloudCosPath, $imgLocalPath, $detailsName1);
+
             unlink($img1); // 删除临时文件
         }
 
@@ -1537,8 +1667,8 @@ class Bing extends Extend
 
             // 腾讯对象存储
             $imgLocalPath = $this->savePath . $detailsName2;
-            $this->qcloud_cos($this->qCloudBucketName,$this->qcloudCosPath,$imgLocalPath,$detailsName2);
-            
+            $this->qcloud_cos($this->qCloudBucketName, $this->qcloudCosPath, $imgLocalPath, $detailsName2);
+
             unlink($img2); // 删除临时文件
         }
 

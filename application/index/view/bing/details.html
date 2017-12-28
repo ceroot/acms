@@ -22,7 +22,7 @@
 	p,h4{ margin:0; padding:0; }
 	a{ color: #23527c; text-decoration: none; }
 	.bing-area{}
-	.bing-area .bing-box{ list-style: none; border:1px solid #ddd; border-radius: .35rem; display: inline-block; padding: .35rem; margin-bottom: .875rem;  max-width: 265.5px; }
+	.bing-area .bing-box{ list-style: none; border:1px solid #ddd; border-radius: .35rem; padding: .35rem;  max-width: 265.5px; }
 	.bing-area .bing-box:hover{ border:1px solid #23527c;}
 	.bing-area .bing-box .item{ color: #666; }
 	.bing-area .bing-box .img-box{ overflow: hidden;}
@@ -71,14 +71,14 @@
 			<i class="fa fa-clock-o fa-fw" title="发布时间"></i>{$data.datesign|strtotime|date='Y-m-d'}&nbsp;&nbsp;<i class="fa fa-eye fa-fw" title="浏览次数"></i> {$data.viewcount}&nbsp;&nbsp;<i class="fa fa-download fa-fw" title="下载次数"></i>{$data.downcount}{notempty name="$data.item_ttl"}&nbsp;&nbsp;<i class="fa fa-deaf fa-fw" title=""></i>{$data.item_ttl}{/notempty}{notempty name="$data.author"}&nbsp;&nbsp;<i class="fa fa-copyright fa-fw" title="版权"></i>{$data.author}{/notempty}（图片来源于必应搜索） 
 		</div>
 		<div style="padding-top: 15px; padding-bottom: 10px;">
-			<img class="big lazyload" data-src="/data/bingwallpaper/{$data.datesign|strtotime|date='Y/m/d'}/{$data.newname}" src="" alt="{$data.title}">
+			<img class="big lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$data.datesign|strtotime|date='Y/m/d'}/{$data.newname}" src="" alt="{$data.title}">
 		</div>
 		<p class="text">{$data.description}</p>
 		{notempty name="$data.first"}
 			<h5>{$data.first.title}&nbsp;<small>{$data.first.resume}</small></h5>
 			<p class="text">{$data.first.description}</p>
 			<p class="img" style="color: #727272">
-				<img class="lazyload" data-src="/data/bingwallpaper/{$data.datesign|strtotime|date='Y/m/d'}/{$data.first.img}" src="" alt="{$data.first.title}|{$data.first.resume}"/><br/>
+				<img class="lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$data.datesign|strtotime|date='Y/m/d'}/{$data.first.img}" src="" alt="{$data.first.title}|{$data.first.resume}"/><br/>
 				{$data.item_tt}，{$data.item_ts}
 			</p>
 		{/notempty}
@@ -91,7 +91,7 @@
 		{notempty name="$data.details"}
 			{foreach name="$data.details" item="brief"}
 				<h5>{$brief.title}&nbsp;<small>{$brief.resume}</small></h5>
-				<p class="img"><img class="lazyload" data-src="/data/bingwallpaper/{$data.datesign|strtotime|date='Y/m/d'}/{$brief.img}" src="" alt="{$brief.title}|{$brief.resume}"></p>
+				<p class="img"><img class="lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$data.datesign|strtotime|date='Y/m/d'}/{$brief.img}" src="" alt="{$brief.title}|{$brief.resume}"></p>
 				<p class="text">{$brief.description}</p>
 			{/foreach}
 		{/notempty}
@@ -132,26 +132,33 @@
 				<div class="row">
 			  		{volist name='groom' id='lists'}
 				    	<div class="col-6 col-md-3">
-				    		<div class="bing-box">
-				    			<div class="img-box">
-						    	  	<a href="{:url('index/Bing/details',['id'=>authcode($lists.id)])}" target="_blank" title="{$lists.title}">
-							    		<img class="lazyload" data-src="/resize?i={:authcode('./data/bingwallpaper/'.date('Y/m/d/',strtotime($lists.datesign)).$lists.newname)}&w=280" src="/data/bingwallpaper/default.jpg" alt="{$lists.title}" />
-							    	</a>
-						    	</div>
-						    	<h6>
-						    		<a href="{:url('index/Bing/details',['id'=>authcode($lists.id)])}" target="_blank" title="{$lists.title}">{$lists.title}</a>
-						    	</h6>
-						    	<div class="item">
-						    		<i class="fa fa-eye fa-fw"></i> {$lists.viewcount}
-						    			<span class="pull-right"><i class="fa fa-clock-o fa-fw" title="发布时间"></i> {$lists.datesign|strtotime|date='Y-m-d'}</span>
-						    	</div>
-						    </div>
+				    		<div style="height: 100%; padding-bottom: 20px;">
+					    		<div class="bing-box" style="height: 100%">
+					    			<div class="img-box">
+							    	  	<a href="{:url('index/Bing/details',['id'=>authcode($lists.id)])}" target="_blank" title="{$lists.title}">
+								    		<img class="lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$lists.datesign|strtotime|date='Y/m/d/'}thumb_{$lists.newname}" src="/data/bingwallpaper/default.jpg" alt="{$lists.title}" />
+								    	</a>
+							    	</div>
+							    	<h6>
+							    		<a href="{:url('index/Bing/details',['id'=>authcode($lists.id)])}" target="_blank" title="{$lists.title}">{$lists.title}</a>
+							    	</h6>
+							    	<div class="item">
+							    		<i class="fa fa-eye fa-fw"></i> {$lists.viewcount}
+							    			<span class="pull-right"><i class="fa fa-clock-o fa-fw" title="发布时间"></i> {$lists.datesign|strtotime|date='Y-m-d'}</span>
+							    	</div>
+							    </div>
+							</div>
 				    	</div>
 			    	{/volist}
 		    	</div>
 	    	</div>
 		</div>
 	{/notempty}
+	<div class="container-full">
+		<footer style="margin-top: 20px; text-align: center; margin-bottom: 10px;">
+			<a href="/" title="笨翁">笨翁</a>
+		</footer>
+	</div>
 </body>
 <script type="text/javascript" src="__LIBS__/jquery/jquery-3.2.1.min.js"></script>
 <!-- bootstrap -->
