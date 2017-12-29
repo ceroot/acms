@@ -1,0 +1,48 @@
+@charset "UTF-8";
+/**
+ * 
+ * @authors SpringYang (ceroot@163.com)
+ * @date    2017-12-29 12:05:20
+ * @version $Id$
+ */
+
+a{ color: #23527c; text-decoration: none; }
+
+
+nav{ font-size: .875rem; }
+
+.box-area{ height: 100%; padding-bottom: 1.25rem;}
+.box-area .box-content{ border:1px solid #ddd; border-radius: .25rem; padding: .25rem; padding-bottom: 1.25rem; height: 100%; position: relative; }
+.box-area .box-content:hover{ border:1px solid #23527c;}
+.box-area .box-content .box-body{}
+.box-area .box-content .box-body .img-box{ max-height: 199.35px; overflow: hidden; text-align: center; }
+.box-area .box-content .box-body .img-box img{max-width: 100%; }
+.box-area .box-content .box-body{}
+.box-area .box-content .box-footer{ color: #666; position: absolute; bottom: 3px; left: 0; width: 100%; padding-left: 5px; padding-right: 5px; font-size: .875rem}
+.box-area .box-content .box-body h6{ padding-top: .25rem; overflow: hidden; text-overflow: ellipsis; white-space:nowrap;}
+.box-area .box-content .box-body h6 a{ font-weight: 600; }
+
+.title-item{border-bottom: 1px solid #ddd; margin-bottom: .75rem; padding-bottom: .75rem; text-align: center; color: #444; font-size: 90%; line-height: 1.3rem; padding-top: .5rem}
+
+.details{}
+.details img{ max-width: 100%; }
+.details .description{ padding:1.5rem 2rem; padding-bottom: .5rem; margin-bottom: 1rem }
+.details .description .lead{font-size: .875rem; color: #777}
+.details p.text{text-indent: 1.75rem; font-size: .875rem;}
+.details p.img{ text-align: center; }
+.details p.img small{color: #727272;}
+.details h6{ border-bottom: 1px solid #f1f1f1; padding-bottom: .1rem; font-weight: 700 }
+.details h6 small{color: #333; font-weight: normal; font-size: .75rem;}
+.details .previ-next-tips{ font-size: .875rem; }
+
+.groom-area{}
+.groom-area h5{border-bottom: 2px solid #ddd; margin-top: 1.2rem; padding-left: .75rem; padding-bottom: .25rem; font-weight: 700;}
+
+@media screen and (max-width: 575.99px) {
+	.box-area{}
+  	.box-area .box-content{border: 0; border-radius: 0; border-bottom:1px solid #ddd; padding:0; padding-bottom: .25rem; position: static; width: auto; height: auto; max-height:auto; }
+  	.box-area .box-content .box-body .img-box{ max-height:auto; }
+  	.box-area .box-content .box-footer{ position: static; font-size: .75rem;}
+
+  	.details .description{ padding:1rem 1rem; height:3.75rem; overflow: hidden; text-overflow: ellipsis;}
+}

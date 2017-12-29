@@ -37,6 +37,7 @@ return [
         '__CSS__'     => '/static/css',
         '__LIBS__'    => '/static/libs',
         '__CONSOLE__' => '/static/console',
+        // '{@bingurl}'  => is_local() ? '/data/bingwallpaper/' : 'http://bing-10015504.file.myqcloud.com/',
         // '{@libs}'     => '/static/libs',
     ],
 ];

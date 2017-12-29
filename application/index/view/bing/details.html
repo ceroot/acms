@@ -11,151 +11,119 @@
 <!-- bootstrap -->
 <link rel="stylesheet" type="text/css" href="__LIBS__/bootstrap/4.0.0/css/bootstrap.min.css" media="all">
 <link rel="stylesheet" type="text/css" href="__LIBS__/font-awesome/4.7.0/css/font-awesome.min.css" media="all">
-
-<style type="text/css">
-	body{font-size:14px; font-size:.875rem;}
-	.area img.big{ max-width: 100%; }
-	.area h4{}
-	.area h5{ margin-bottom: .5rem; }
-	.area p{ margin-bottom: 1rem; }
-
-	p,h4{ margin:0; padding:0; }
-	a{ color: #23527c; text-decoration: none; }
-	.bing-area{}
-	.bing-area .box-area{height: 100%; padding-bottom: 20px;}
-	.bing-area .bing-box{ list-style: none; border:1px solid #ddd; border-radius: .35rem; padding: .35rem;  max-width: 265.5px; position: relative; padding-bottom: 26px; height: 100%; }
-	.bing-area .bing-box:hover{ border:1px solid #23527c;}
-	.bing-area .bing-box .item{ color: #666; position: absolute; bottom: 5px; left: 0; padding-left: 5px; padding-right: 5px; width: 100%; }
-	.bing-area .bing-box .img-box{ overflow: hidden; text-align: center;}
-	.bing-area .bing-box h6{ margin-bottom: .15rem; max-height: 42px; overflow: hidden; padding-top: 5px; padding-bottom: 5px;}
-	.bing-area .bing-box h6 a{ font-size: .875rem; }
-	.bing-area img{ max-width: 100%; }
-	.text-align-r{ text-align: right; }
-
-	.area .title-item{border-bottom: 1px solid #ddd; margin-bottom: .75rem; padding-bottom: .7rem; text-align: center; color: #444; font-size: 90%; line-height: 1.3rem; padding-top: .5rem}
-	.area h5{ border-bottom: 1px solid #f1f1f1; }
-	.area h5 small{color: #333; font-weight: normal; font-size: .75rem;}
-	.area p.img{text-align: center;}
-	.area p.text{text-indent: 28px;}
-
-	@media screen and (max-width: 575.99px) {
-		.area h4{ font-size: 1.35rem; }
-		.area p img{ max-width: 100%; } 
-		.bing-area .box-area{ padding-bottom: 0px;}
-	  	.bing-area .bing-box{border: 0; border-radius: 0; border-bottom:1px solid #ddd; width: auto; max-width: none;}
-	  	.bing-area .bing-box .img-box{ max-height:auto; max-width:none; padding-top: .5rem; }
-	  	.bing-area .bing-box .item{font-size: .75rem;}
-	}
-</style>
-
+<link rel="stylesheet" type="text/css" href="__CSS__/bw.bing.css">
 </head>
 <body>
-	<div class="container">
-		<nav aria-label="breadcrumb" role="navigation" style="font-size: .875rem;">
-		  	<ol class="breadcrumb">
-			    <li class="breadcrumb-item"><i class="fa fa-home"></i><a href="/">首页</a></li>
-			    <li class="breadcrumb-item"><i class="fa fa-file-image-o"></i> <a href="/bing">Bing 每日图片欣赏</a></li>
-			    <li class="breadcrumb-item active" aria-current="page">{$data.title}</li>
-		  	</ol>
-		</nav>
-	</div>
-	<div class="container area">
-		<h4 style="text-align: center;">{$data.title}</h4>
-		<div class="title-item">
-			<i class="fa fa-clock-o fa-fw" title="发布时间"></i>{$data.datesign|strtotime|date='Y-m-d'}&nbsp;&nbsp;<i class="fa fa-eye fa-fw" title="浏览次数"></i> {$data.viewcount}&nbsp;&nbsp;<i class="fa fa-download fa-fw" title="下载次数"></i>{$data.downcount}{notempty name="$data.item_ttl"}&nbsp;&nbsp;<i class="fa fa-deaf fa-fw" title=""></i>{$data.item_ttl}{/notempty}{notempty name="$data.author"}&nbsp;&nbsp;<i class="fa fa-copyright fa-fw" title="版权"></i>{$data.author}{/notempty}（图片来源于必应搜索） 
+	<div class="details">
+		<div class="container">
+			<nav aria-label="breadcrumb" role="navigation">
+			  	<ol class="breadcrumb">
+				    <li class="breadcrumb-item"><i class="fa fa-home"></i><a href="/">首页</a></li>
+				    <li class="breadcrumb-item"><i class="fa fa-file-image-o"></i> <a href="/bing">Bing 每日图片欣赏</a></li>
+				    <li class="breadcrumb-item active" aria-current="page">{$data.title}</li>
+			  	</ol>
+			</nav>
 		</div>
-		<div class="alert alert-secondary" role="alert" style="text-indent: 28px;">
-		  	{$data.description}
+		<div class="container">
+			<h4 class="text-center">{$data.title}</h4>
+			<div class="title-item">
+				<i class="fa fa-clock-o fa-fw" title="发布时间"></i>{$data.datesign|strtotime|date='Y-m-d'}&nbsp;&nbsp;<i class="fa fa-eye fa-fw" title="浏览次数"></i> {$data.viewcount}&nbsp;&nbsp;<i class="fa fa-download fa-fw" title="下载次数"></i>{$data.downcount}{notempty name="$data.item_ttl"}&nbsp;&nbsp;<i class="fa fa-deaf fa-fw" title=""></i>{$data.item_ttl}{/notempty}{notempty name="$data.author"}&nbsp;&nbsp;<i class="fa fa-copyright fa-fw" title="版权"></i>{$data.author}{/notempty}（图片来源于必应搜索） 
+			</div>
+			<div class="jumbotron description">
+			  	<p class="lead">{$data.description}</p>
+			</div>
+			<div class="mb-3 text-center">
+				<img class="big lazyload" data-src="{$imgbaseurl}{$data.datesign|strtotime|date='Y/m/d'}/{$data.newname}" src="/data/bingwallpaper/default.gif" alt="{$data.title}">
+			</div>
+			<p class="text">{$data.description}</p>
+			{notempty name="$data.first"}
+				<h6>{$data.first.title}&nbsp;<small>{$data.first.resume}</small></h6>
+				<p class="text">{$data.first.description}</p>
+				<p class="img">
+					<img class="lazyload mx-auto d-block" data-src="{$imgbaseurl}{$data.datesign|strtotime|date='Y/m/d'}/{$data.first.img}" src="/data/bingwallpaper/default.gif" alt="{$data.first.title}|{$data.first.resume}"/>
+					<small>{$data.item_tt}，{$data.item_ts}</small>
+				</p>
+			{/notempty}
+			{notempty name="$data.brief"}
+				{foreach name="$data.brief" item="brief"}
+					<h6>{$brief.title}</h6>
+					<p class="text">{$brief.description}</p>
+				{/foreach}
+			{/notempty}
+			{notempty name="$data.details"}
+				{foreach name="$data.details" item="brief"}
+					<h6>{$brief.title}&nbsp;<small>{$brief.resume}</small></h6>
+					<p class="img"><img class="lazyload mx-auto d-block" data-src="{$imgbaseurl}{$data.datesign|strtotime|date='Y/m/d'}/{$brief.img}" src="/data/bingwallpaper/default.gif" alt="{$brief.title}|{$brief.resume}"></p>
+					<p class="text">{$brief.description}</p>
+				{/foreach}
+			{/notempty}
 		</div>
-		<div style=" padding-bottom: 10px; text-align: center;">
-			<img class="big lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$data.datesign|strtotime|date='Y/m/d'}/{$data.newname}" src="/data/bingwallpaper/default.gif" alt="{$data.title}">
-		</div>
-		<p class="text">{$data.description}</p>
-		{notempty name="$data.first"}
-			<h5>{$data.first.title}&nbsp;<small>{$data.first.resume}</small></h5>
-			<p class="text">{$data.first.description}</p>
-			<p class="img" style="color: #727272">
-				<img class="lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$data.datesign|strtotime|date='Y/m/d'}/{$data.first.img}" src="/data/bingwallpaper/default.gif" alt="{$data.first.title}|{$data.first.resume}"/><br/>
-				{$data.item_tt}，{$data.item_ts}
-			</p>
-		{/notempty}
-		{notempty name="$data.brief"}
-			{foreach name="$data.brief" item="brief"}
-				<h5>{$brief.title}</h5>
-				<p class="text">{$brief.description}</p>
-			{/foreach}
-		{/notempty}
-		{notempty name="$data.details"}
-			{foreach name="$data.details" item="brief"}
-				<h5>{$brief.title}&nbsp;<small>{$brief.resume}</small></h5>
-				<p class="img"><img class="lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$data.datesign|strtotime|date='Y/m/d'}/{$brief.img}" src="/data/bingwallpaper/default.gif" alt="{$brief.title}|{$brief.resume}"></p>
-				<p class="text">{$brief.description}</p>
-			{/foreach}
-		{/notempty}
-	</div>
-	<div class="container">
-		<div class="row">
-			<div class="col-12">
-				<div style="text-align: center; padding-top: 20px;">
-					下载壁纸：
-					<a class="btn btn-primary btn-sm btn-info" href="{:url('index/Bing/download',['id'=>authcode($data.id),'i'=>authcode('./data/bingwallpaper/'.date(\'Y/m/d\',strtotime($data.datesign)).'/'.$data.newname),'w'=>'1920x1080'])}" title="下载 1920x1080">1920x1080</a>
-					<a class="btn btn-primary btn-sm btn-info" href="{:url('index/Bing/download',['id'=>authcode($data.id),'i'=>authcode('./data/bingwallpaper/'.date(\'Y/m/d\',strtotime($data.datesign)).'/'.$data.newname),'w'=>'1440x900'])}" title="下载 1440x900">1440x900</a>
-					<a class="btn btn-primary btn-sm btn-info" href="{:url('index/Bing/download',['id'=>authcode($data.id),'i'=>authcode('./data/bingwallpaper/'.date(\'Y/m/d\',strtotime($data.datesign)).'/'.$data.newname),'w'=>'1366x768'])}" title="下载 1366x768">1366x768</a>
+		<div class="container">
+			<div class="row">
+				<div class="col-12">
+					<div class="text-center mt-4">
+						下载壁纸：
+						<a class="btn btn-primary btn-sm btn-info" href="{:url('index/Bing/download',['id'=>authcode($data.id),'i'=>authcode('./data/bingwallpaper/'.date(\'Y/m/d\',strtotime($data.datesign)).'/'.$data.newname),'w'=>'1920x1080'])}" title="下载 1920x1080">1920x1080</a>
+						<a class="btn btn-primary btn-sm btn-info" href="{:url('index/Bing/download',['id'=>authcode($data.id),'i'=>authcode('./data/bingwallpaper/'.date(\'Y/m/d\',strtotime($data.datesign)).'/'.$data.newname),'w'=>'1440x900'])}" title="下载 1440x900">1440x900</a>
+						<a class="btn btn-primary btn-sm btn-info" href="{:url('index/Bing/download',['id'=>authcode($data.id),'i'=>authcode('./data/bingwallpaper/'.date(\'Y/m/d\',strtotime($data.datesign)).'/'.$data.newname),'w'=>'1366x768'])}" title="下载 1366x768">1366x768</a>
+					</div>
 				</div>
-			</div>
-			<div class="w-100" style="height: 20px;"></div>
-			<div class="col-6">
-				{if condition="is_numeric($data.previd)"}
-					<a href="{:url('index/Bing/details',['id'=>authcode($data.previd)])}" title="上一个"><i class="fa fa-angle-left fa-fw"></i>上一个</a>
-				{else }
-					{$data.previd}
-				{/if}
-			</div>
-			<div class="col-6">
-				<span class="pull-right">
-					{if condition="is_numeric($data.nextid)"}
-						<a href="{:url('index/Bing/details',['id'=>authcode($data.nextid)])}" title="下一个">下一个<i class="fa fa-angle-right fa-fw"></i></a>
+				<div class="w-100 mt-4"></div>
+				<div class="col-6">
+					{if condition="is_numeric($data.previd)"}
+						<a href="{:url('index/Bing/details',['id'=>authcode($data.previd)])}" title="上一个"><i class="fa fa-angle-left fa-fw"></i>上一个</a>
 					{else }
-						{$data.nextid}
+						<span class="previ-next-tips">{$data.previd}</span>
 					{/if}
-				</span>
+				</div>
+				<div class="col-6">
+					<span class="pull-right">
+						{if condition="is_numeric($data.nextid)"}
+							<a href="{:url('index/Bing/details',['id'=>authcode($data.nextid)])}" title="下一个">下一个<i class="fa fa-angle-right fa-fw"></i></a>
+						{else }
+							<span class="previ-next-tips">{$data.nextid}</span>
+						{/if}
+					</span>
+				</div>
 			</div>
 		</div>
 	</div>
 	{notempty name="$groom"}
-		<div class="container">
-			<h5 style="border-bottom: 2px solid #ddd; margin-top: 1.2rem; padding-left: 10px; padding-bottom: .25rem; font-weight: 900;">壁纸推荐</h5>
-			<div class="bing-area">
-				<div class="row">
-			  		{volist name='groom' id='lists'}
-				    	<div class="col-6 col-md-3">
-				    		<div class="box-area">
-					    		<div class="bing-box">
+		<div class="container groom-area">
+			<h5 class="mt-3">壁纸推荐</h5>
+			<div class="row">
+		  		{volist name='groom' id='lists'}
+			    	<div class="col-6 col-md-3">
+			    		<div class="box-area">
+				    		<div class="box-content">
+				    			<div class="box-body">
 					    			<div class="img-box">
-							    	  	<a href="{:url('index/Bing/details',['id'=>authcode($lists.id)])}" target="_blank" title="{$lists.title}">
-								    		<img class="lazyload" data-src="http://bing-10015504.file.myqcloud.com/{$lists.datesign|strtotime|date='Y/m/d/'}thumb_{$lists.newname}" src="/data/bingwallpaper/default.gif" alt="{$lists.title}" />
+							    	  	<a href="{:url('index/Bing/details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">
+								    		<img class="lazyload" data-src="{$imgbaseurl}{$lists.datesign|strtotime|date='Y/m/d/'}{$lists.newname}" src="./data/bingwallpaper/default.gif" alt="{$lists.title}" />
 								    	</a>
 							    	</div>
+							    	{notempty name="$lists.item_ttl"}<small><i class="fa fa-deaf fa-fw" title=""></i>{$lists.item_ttl}</small>{/notempty}
 							    	<h6>
-							    		<a href="{:url('index/Bing/details',['id'=>authcode($lists.id)])}" target="_blank" title="{$lists.title}">{$lists.title}</a>
+							    		<a href="{:url('index/Bing/details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">{$lists.title}</a>
 							    	</h6>
-							    	<div class="item">
-							    		<i class="fa fa-eye fa-fw"></i> {$lists.viewcount}
-							    			<span class="pull-right"><i class="fa fa-clock-o fa-fw" title="发布时间"></i> {$lists.datesign|strtotime|date='Y-m-d'}</span>
-							    	</div>
 							    </div>
-							</div>
-				    	</div>
-			    	{/volist}
+						    	<div class="box-footer">
+						    		<i class="fa fa-eye fa-fw"></i> {$lists.viewcount}
+						    		<span class="pull-right"><i class="fa fa-clock-o fa-fw" title="发布时间"></i> {$lists.datesign|strtotime|date='Y-m-d'}</span>
+						    	</div>
+						    </div>
+						</div>
 		    	</div>
+		    	{/volist}
 	    	</div>
 		</div>
 	{/notempty}
 	<div class="container-full">
-		<footer style="margin-top: 20px; text-align: center; margin-bottom: 10px;">
+		<footer class="mt-4 mt-4 text-center">
 			<a href="/" title="笨翁">笨翁</a>
 		</footer>
 	</div>
+
 </body>
 <script type="text/javascript" src="__LIBS__/jquery/jquery-3.2.1.min.js"></script>
 <!-- bootstrap -->
