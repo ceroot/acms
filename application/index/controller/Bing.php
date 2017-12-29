@@ -797,7 +797,7 @@ class Bing extends Extend
             return false;
         };
 
-        $fileContent = url_get_content($url);
+        $fileContent = url_get_contents($url);
         make_dir($savePath);
         $saveFilePath = $savePath . $picName;
         $saveFile     = fopen($saveFilePath, 'w');
@@ -1410,7 +1410,7 @@ class Bing extends Extend
      */
     public function getWallpaperData($type = 0)
     {
-        $sourcecode = url_get_content('http://cn.bing.com/HPImageArchive.aspx?idx=0&n=1'); // 采集网址
+        $sourcecode = url_get_contents('http://cn.bing.com/HPImageArchive.aspx?idx=0&n=1'); // 采集网址
 
         $oldurl    = ''; // 原来 url 地址
         $oldurlbig = ''; // 原来 1920X1080 url 地址

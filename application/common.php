@@ -49,15 +49,15 @@ if (!function_exists('is_local')) {
 }
 
 /**
- * [ url_get_content 取得 url 内容 ]
+ * [ url_get_contents 取得 url 内容 ]
  * @author SpringYang
  * @email    ceroot@163.com
  * @dateTime 2017-12-28T10:34:40+0800
  * @param    string                  $url [url 地址]
  * @return   string                       [返回内容 ]
  */
-if (!function_exists('url_get_content')) {
-    function url_get_content($url)
+if (!function_exists('url_get_contents')) {
+    function url_get_contents($url)
     {
         if (function_exists("curl_init")) {
             $ch      = curl_init();
