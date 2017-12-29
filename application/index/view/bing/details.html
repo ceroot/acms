@@ -33,14 +33,14 @@
 			  	<p class="lead">{$data.description}</p>
 			</div>
 			<div class="mb-3 text-center">
-				<img class="big lazyload" data-src="{$imgbaseurl}{$data.datesign|strtotime|date='Y/m/d'}/{$data.newname}" src="/data/bingwallpaper/default.gif" alt="{$data.title}">
+				<img class="big lazyload" data-src="{$imgbaseurl}{$data.datesign|strtotime|date='Y/m/d'}/{$data.newname}" src="{$imgbaseurl}default.gif" alt="{$data.title}">
 			</div>
 			<p class="text">{$data.description}</p>
 			{notempty name="$data.first"}
 				<h6>{$data.first.title}&nbsp;<small>{$data.first.resume}</small></h6>
 				<p class="text">{$data.first.description}</p>
 				<p class="img">
-					<img class="lazyload mx-auto d-block" data-src="{$imgbaseurl}{$data.datesign|strtotime|date='Y/m/d'}/{$data.first.img}" src="/data/bingwallpaper/default.gif" alt="{$data.first.title}|{$data.first.resume}"/>
+					<img class="lazyload mx-auto d-block" data-src="{$imgbaseurl}{$data.datesign|strtotime|date='Y/m/d'}/{$data.first.img}" src="{$imgbaseurl}default.gif" alt="{$data.first.title}|{$data.first.resume}"/>
 					<small>{$data.item_tt}，{$data.item_ts}</small>
 				</p>
 			{/notempty}
@@ -53,7 +53,7 @@
 			{notempty name="$data.details"}
 				{foreach name="$data.details" item="brief"}
 					<h6>{$brief.title}&nbsp;<small>{$brief.resume}</small></h6>
-					<p class="img"><img class="lazyload mx-auto d-block" data-src="{$imgbaseurl}{$data.datesign|strtotime|date='Y/m/d'}/{$brief.img}" src="/data/bingwallpaper/default.gif" alt="{$brief.title}|{$brief.resume}"></p>
+					<p class="img"><img class="lazyload mx-auto d-block" data-src="{$imgbaseurl}{$data.datesign|strtotime|date='Y/m/d'}/{$brief.img}" src="{$imgbaseurl}default.gif" alt="{$brief.title}|{$brief.resume}"></p>
 					<p class="text">{$brief.description}</p>
 				{/foreach}
 			{/notempty}
@@ -99,7 +99,7 @@
 				    			<div class="box-body">
 					    			<div class="img-box">
 							    	  	<a href="{:url('index/Bing/details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">
-								    		<img class="lazyload" data-src="{$imgbaseurl}{$lists.datesign|strtotime|date='Y/m/d/'}{$lists.newname}" src="./data/bingwallpaper/default.gif" alt="{$lists.title}" />
+								    		<img class="lazyload" data-src="{$imgbaseurl}{$lists.datesign|strtotime|date='Y/m/d/'}{$lists.newname}" src="{$imgbaseurl}default.gif" alt="{$lists.title}" />
 								    	</a>
 							    	</div>
 							    	{notempty name="$lists.item_ttl"}<small><i class="fa fa-deaf fa-fw" title=""></i>{$lists.item_ttl}</small>{/notempty}

@@ -19,6 +19,7 @@
 namespace app\common\structure;
 
 use app\common\traits\Models;
+use think\facade\Request;
 
 class Tools
 {
@@ -38,6 +39,75 @@ class Tools
     public function test()
     {
         return 123;
+    }
+
+    /**
+     * [ checkRemoteFileExists 判断远程文件是否存在 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-12-29T16:55:19+0800
+     * @param    [type]                   $url [远程文件 url]
+     * @return   [type]                        [description]
+     */
+    public static function checkRemoteFileExists($url)
+    {
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_NOBODY, true); // 不取回数据
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'GET'); // 不加这个会返回403，加了才返回正确的200，原因不明
+
+        $result = curl_exec($curl); // 发送请求
+        $found  = false;
+        // 如果请求没有发送失败
+        if ($result !== false) {
+            // 再检查http响应码是否为 200
+            $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            if ($statusCode == 200) {
+                $found = true;
+            }
+        }
+        curl_close($curl);
+        return $found;
+    }
+
+    /**
+     * [ saveRemoteFile 保存远程文件 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-12-29T16:54:47+0800
+     * @param    string                   $url       [远程文件 url]
+     * @param    string                   $fileName  [要保存的文件名称（带后缀）]
+     * @param    string                   $savePath  [description]
+     * @return   string                              [返回保存在本地的路径]
+     */
+    public static function saveRemoteFile($url, $fileName, $savePath = '')
+    {
+        if (!self::checkRemoteFileExists($url)) {
+            // throw new \think\exception\HttpException(404, '远程文件不存在');
+            return false;
+        };
+
+        $fileContent = url_get_contents($url);
+        make_dir($savePath);
+        $saveFilePath = $savePath . $fileName;
+        $saveFile     = fopen($saveFilePath, 'w');
+        fwrite($saveFile, $fileContent);
+        fclose($saveFile);
+        return $saveFilePath;
+    }
+
+    /**
+     * [ isLocal 判断 ip 是内网还是外网 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-12-28T10:34:40+0800
+     * @param    [type]                   $ip [ip 地址]
+     * @return   boolean                      [description]
+     */
+    public static function isLocal($ip = null)
+    {
+        $ip = $ip ?: Request::ip();
+        return preg_match('%^127\.|10\.|192\.168|172\.(1[6-9]|2|3[01])%', $ip); // 正则方式
+        //return !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE); // PHP 自带判断私有ip 方法
     }
 
     /**
@@ -141,7 +211,7 @@ class Tools
             return [];
         }
 
-        $arr = Data::channelList($data, 0, '', $fieldPri, $fieldPid);
+        $arr = self::channelList($data, 0, '', $fieldPri, $fieldPid);
         foreach ($arr as $k => $v) {
             $str = "";
             if ($v['_level'] > 2) {

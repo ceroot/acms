@@ -107,29 +107,34 @@ class Start extends Controller
         // $head     = curl_exec($ch);
         // $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         // curl_close($ch);
+        //
+        //         debug('begin');
+        // // ...其他代码段
+        // debug('end');
+        // // ...也许这里还有其他代码
+        // // 进行统计区间
+        // echo debug('begin','end').'s';
+        // echo debug('begin','end',6).'s';
+        // echo debug('begin','end','m').'kb';
 
-        $ip = '111.121.123.62';
-        // for file_get_contents
+        debug('begin');
         $startTime = explode(' ', microtime());
         $startTime = $startTime[0] + $startTime[1];
-        for ($i = 1; $i <= 10; $i++) {
-            echo getCity($ip) . "</br>";
+        for ($i = 1; $i <= 10000; $i++) {
+            echo $i;
         }
         $endTime   = explode(' ', microtime());
         $endTime   = $endTime[0] + $endTime[1];
         $totalTime = $endTime - $startTime;
-        echo 'file_get_contents:' . number_format($totalTime, 10, '.', "") . " seconds</br>";
-
-        //for curl
-        $startTime2 = explode(' ', microtime());
-        $startTime2 = $startTime2[0] + $startTime2[1];
-        for ($i = 1; $i <= 10; $i++) {
-            echo getCityCurl($ip) . "</br>";
-        }
-        $endTime2   = explode(' ', microtime());
-        $endTime2   = $endTime2[0] + $endTime2[1];
-        $totalTime2 = $endTime2 - $startTime2;
-        echo "curl:" . number_format($totalTime2, 10, '.', "") . " seconds";
+        debug('end');
+        echo '<br><br><br>';
+        echo 'time:' . number_format($totalTime, 10, '.', "") . " seconds</br>";
+        echo '<br><br><br>';
+        echo 'time:' . debug('begin', 'end') . 's';
+        echo '<br><br><br>';
+        echo 'time:' . debug('begin', 'end', 10) . 's';
+        echo '<br><br><br>';
+        echo debug('begin', 'end', 'm') . 'kb';
 
         die;
         $url    = 'http://ip.taobao.com/service/getIpInfo.php?ip=1.204.54.195';

@@ -20,6 +20,7 @@
 namespace app\index\controller;
 
 use app\common\controller\Extend;
+use app\facade\Tools;
 use Qcloud_cos\Auth;
 use Qcloud_cos\Cosapi;
 use QL\QueryList;
@@ -65,8 +66,10 @@ class Bing extends Extend
         $this->qcloudCosPath    = '/' . $this->year . '/' . $this->month . '/' . $this->day;
         $this->qCloudBucketName = 'bing';
 
-        $imgbaseurl = is_local() ? '/data/bingwallpaper/' : 'https://bing-10015504.file.myqcloud.com/';
+        $imgbaseurl = Tools::isLocal() ? '/data/bingwallpaper/' : 'https://bing-10015504.file.myqcloud.com/';
         $this->assign('imgbaseurl', $imgbaseurl);
+
+        Tools::test();
 
     }
 
@@ -75,7 +78,7 @@ class Bing extends Extend
 
         $ip = request()->ip();
 
-        dump(is_local($ip));
+        dump(Tools::isLocal($ip));
         return preg_match('%^127\.|10\.|192\.168|172\.(1[6-9]|2|3[01])%', $ip);
         die;
 
@@ -91,7 +94,7 @@ class Bing extends Extend
      */
     public function qcloud_cos($bucketName, $path, $srcPath, $filename)
     {
-        if (is_local(request()->ip())) {
+        if (Tools::isLocal(request()->ip())) {
             return false;
         }
 
@@ -264,7 +267,7 @@ class Bing extends Extend
                 make_dir($savepath);
 
                 $oldurlbig  = 'http://www.istartedsomething.com/bingimages/resize.php?i=' . $oldname . '&w=1366';
-                $bigImgPath = $this->saveRemoteFile($oldurlbig, $newname, $savepath);
+                $bigImgPath = Tools::saveRemoteFile($oldurlbig, $newname, $savepath);
 
             }
 
@@ -791,46 +794,9 @@ class Bing extends Extend
 
     }
 
-    public function saveRemoteFile($url, $picName, $savePath = '')
-    {
-        if (!$this->check_remote_file_exists($url)) {
-            return false;
-        };
-
-        $fileContent = url_get_contents($url);
-        make_dir($savePath);
-        $saveFilePath = $savePath . $picName;
-        $saveFile     = fopen($saveFilePath, 'w');
-        fwrite($saveFile, $fileContent);
-        fclose($saveFile);
-        return $saveFilePath;
-    }
-
-    public function check_remote_file_exists($url)
-    {
-        $curl = curl_init($url);
-        // 不取回数据
-        curl_setopt($curl, CURLOPT_NOBODY, true);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'GET'); // 不加这个会返回403，加了才返回正确的200，原因不明
-
-        // 发送请求
-        $result = curl_exec($curl);
-        $found  = false;
-        // 如果请求没有发送失败
-        if ($result !== false) {
-            // 再检查http响应码是否为200
-            $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            if ($statusCode == 200) {
-                $found = true;
-            }
-        }
-        curl_close($curl);
-
-        return $found;
-    }
-
     public function index($limit = 15)
     {
+        // debug('begin');
         if (request()->isMobile()) {
             $limit = 30;
         }
@@ -853,6 +819,8 @@ class Bing extends Extend
 
         $this->assign('list', $newdata);
         $this->assign('page', $page);
+        // debug('end');
+        // dump(debug('begin', 'end'));
         return $this->fetch();
     }
 
@@ -1292,7 +1260,7 @@ class Bing extends Extend
 
                 $imgUrl  = 'https://www.4ui.cn' . $value['img' . $i];
                 $imgName = md5(microtime() . $imgUrl) . '.jpg';
-                $imgPath = $this->saveRemoteFile($imgUrl, $imgName, $this->tempPath); // 执行临时文件保存操作
+                $imgPath = Tools::saveRemoteFile($imgUrl, $imgName, $this->tempPath); // 执行临时文件保存操作
 
                 // 图片1迁移
                 if (is_file($imgPath)) {
@@ -1495,7 +1463,7 @@ class Bing extends Extend
 
         // 执行保存并返回保存图像的路径
         // $bigImgPath = $this->save_pic($oldurlbig, $newname, $this->savePath);
-        $bigImgPath = $this->saveRemoteFile($oldurlbig, $newname, $this->savePath);
+        $bigImgPath = Tools::saveRemoteFile($oldurlbig, $newname, $this->savePath);
 
         if (is_file($bigImgPath)) {
             $thumb = 'thumb_' . $newname;
@@ -1601,8 +1569,8 @@ class Bing extends Extend
         $detailsName1 = md5(microtime() . $imgOld1) . '.jpg'; // 图片名称带后缀
         $detailsName2 = md5(microtime() . $imgOld2) . '.jpg'; // 图片名称带后缀
 
-        $img1 = $this->saveRemoteFile($imgOld1, $detailsName1, $this->tempPath); // 执行临时文件保存操作
-        $img2 = $this->saveRemoteFile($imgOld2, $detailsName2, $this->tempPath); // 执行临时文件保存操作
+        $img1 = Tools::saveRemoteFile($imgOld1, $detailsName1, $this->tempPath); // 执行临时文件保存操作
+        $img2 = Tools::saveRemoteFile($imgOld2, $detailsName2, $this->tempPath); // 执行临时文件保存操作
 
         // 图片1迁移
         if (is_file($img1)) {
@@ -1690,7 +1658,7 @@ class Bing extends Extend
         if ($scenic) {
             $imgOld      = $scenic[0]['rms_img']; // 取得图片 url
             $detailsName = md5(microtime() . $imgOld) . '.jpg'; // 图片名称带后缀
-            $imgTemp     = $this->saveRemoteFile($imgOld, $detailsName, $this->tempPath); // 执行临时文件保存操作
+            $imgTemp     = Tools::saveRemoteFile($imgOld, $detailsName, $this->tempPath); // 执行临时文件保存操作
             $imgPath     = $this->savePath . $detailsName;
 
             // 图片1迁移

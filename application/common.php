@@ -32,23 +32,6 @@ if (!function_exists('ip2int')) {
 }
 
 /**
- * [ is_local 判断 ip 是内网还是外网 ]
- * @author SpringYang
- * @email    ceroot@163.com
- * @dateTime 2017-12-28T10:34:40+0800
- * @param    [type]                   $ip [ip 地址]
- * @return   boolean                      [description]
- */
-if (!function_exists('is_local')) {
-    function is_local($ip = null)
-    {
-        $ip = $ip ?: Request::ip();
-        return preg_match('%^127\.|10\.|192\.168|172\.(1[6-9]|2|3[01])%', $ip); // 正则方式
-        //return !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE); // PHP 自带判断私有ip 方法
-    }
-}
-
-/**
  * [ url_get_contents 取得 url 内容 ]
  * @author SpringYang
  * @email    ceroot@163.com
@@ -74,39 +57,6 @@ if (!function_exists('url_get_contents')) {
             }
         }
         return $file_contents;
-    }
-}
-
-/**
- * [ check_remote_file_exists 判断远程文件是否存在 ]
- * @author SpringYang
- * @email    ceroot@163.com
- * @dateTime 2017-12-29T16:55:19+0800
- * @param    [type]                   $url [远程文件 url]
- * @return   [type]                        [description]
- */
-if (!function_exists('check_remote_file_exists')) {
-    function check_remote_file_exists($url)
-    {
-        $curl = curl_init($url);
-        // 不取回数据
-        curl_setopt($curl, CURLOPT_NOBODY, true);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'GET'); // 不加这个会返回403，加了才返回正确的200，原因不明
-
-        // 发送请求
-        $result = curl_exec($curl);
-        $found  = false;
-        // 如果请求没有发送失败
-        if ($result !== false) {
-            // 再检查http响应码是否为200
-            $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            if ($statusCode == 200) {
-                $found = true;
-            }
-        }
-        curl_close($curl);
-
-        return $found;
     }
 }
 

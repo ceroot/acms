@@ -32,7 +32,7 @@
 			    			<div class="box-body">
 				    			<div class="img-box">
 						    	  	<a href="{:url('index/Bing/details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">
-							    		<img class="lazyload" data-src="{$imgbaseurl}{$lists.datesign|strtotime|date='Y/m/d/'}{$lists.newname}" src="./data/bingwallpaper/default.gif" alt="{$lists.title}" />
+							    		<img class="lazyload" data-src="{$imgbaseurl}{$lists.datesign|strtotime|date='Y/m/d/'}{$lists.newname}" src="{$imgbaseurl}default.gif" alt="{$lists.title}" />
 							    	</a>
 						    	</div>
 						    	{notempty name="$lists.item_ttl"}<small><i class="fa fa-deaf fa-fw" title=""></i>{$lists.item_ttl}</small>{/notempty}
