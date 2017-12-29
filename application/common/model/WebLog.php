@@ -32,7 +32,7 @@ class WebLog extends Extend
     {
         $ip     = long2ip($data['create_ip']);
         $url    = 'http://ip.taobao.com/service/getIpInfo.php?ip=' . $ip;
-        $result = file_get_contents($url);
+        $result = url_get_contents($url);
         $result = json_decode($result, true);
         if ($result['code'] !== 0 || !is_array($result['data'])) {
             return false;

@@ -194,7 +194,7 @@ final class Dir
                 self::copy($v, $to, $strip_space);
             } else {
                 if ($strip_space) {
-                    $data = file_get_contents($v);
+                    $data = $this->url_get_contents($v);
                     file_put_contents($to, strip_space($data));
                 } else {
                     copy($v, $to);
@@ -203,6 +203,25 @@ final class Dir
             }
         }
         return true;
+    }
+
+    public function url_get_contents($url)
+    {
+        if (function_exists("curl_init")) {
+            $ch      = curl_init();
+            $timeout = 30;
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+            $file_contents = curl_exec($ch);
+            curl_close($ch);
+        } else {
+            $is_auf = ini_get('allow_url_fopen') ? true : false;
+            if ($is_auf) {
+                $file_contents = file_get_contents($url);
+            }
+        }
+        return $file_contents;
     }
 
     /**
