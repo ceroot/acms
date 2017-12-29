@@ -65,32 +65,20 @@ class Bing extends Extend
         $this->qcloudCosPath    = '/' . $this->year . '/' . $this->month . '/' . $this->day;
         $this->qCloudBucketName = 'bing';
 
+        $imgbaseurl = is_local() ? '/data/bingwallpaper/' : 'https://bing-10015504.file.myqcloud.com/';
+        $this->assign('imgbaseurl', $imgbaseurl);
+
     }
 
     public function test()
     {
 
         $ip = request()->ip();
-        dump($ip);
-        // dump($this->isLocal($ip));
-        dump($this->isLocal($ip));
+
+        dump(is_local($ip));
         return preg_match('%^127\.|10\.|192\.168|172\.(1[6-9]|2|3[01])%', $ip);
         die;
 
-    }
-
-    /**
-     * [ isLocal 判断 ip 是内网还是外网 ]
-     * @author SpringYang
-     * @email    ceroot@163.com
-     * @dateTime 2017-12-28T10:34:40+0800
-     * @param    [type]                   $ip [ip 地址]
-     * @return   boolean                      [description]
-     */
-    public function isLocal($ip)
-    {
-        return preg_match('%^127\.|10\.|192\.168|172\.(1[6-9]|2|3[01])%', $ip); // 正则方式
-        //return !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE); // PHP 自带判断私有ip 方法
     }
 
     // 腾讯对象存储函数
@@ -103,7 +91,7 @@ class Bing extends Extend
      */
     public function qcloud_cos($bucketName, $path, $srcPath, $filename)
     {
-        if ($this->isLocal(request()->ip())) {
+        if (is_local(request()->ip())) {
             return false;
         }
 
@@ -809,32 +797,13 @@ class Bing extends Extend
             return false;
         };
 
-        $fileContent = $this->url_get_content($url);
+        $fileContent = url_get_content($url);
         make_dir($savePath);
         $saveFilePath = $savePath . $picName;
         $saveFile     = fopen($saveFilePath, 'w');
         fwrite($saveFile, $fileContent);
         fclose($saveFile);
         return $saveFilePath;
-    }
-
-    public function url_get_content($url)
-    {
-        if (function_exists("curl_init")) {
-            $ch      = curl_init();
-            $timeout = 30;
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-            $file_contents = curl_exec($ch);
-            curl_close($ch);
-        } else {
-            $is_auf = ini_get('allow_url_fopen') ? true : false;
-            if ($is_auf) {
-                $file_contents = file_get_contents($url);
-            }
-        }
-        return $file_contents;
     }
 
     public function check_remote_file_exists($url)
@@ -1441,7 +1410,7 @@ class Bing extends Extend
      */
     public function getWallpaperData($type = 0)
     {
-        $sourcecode = $this->url_get_content('http://cn.bing.com/HPImageArchive.aspx?idx=0&n=1'); // 采集网址
+        $sourcecode = url_get_content('http://cn.bing.com/HPImageArchive.aspx?idx=0&n=1'); // 采集网址
 
         $oldurl    = ''; // 原来 url 地址
         $oldurlbig = ''; // 原来 1920X1080 url 地址
@@ -1744,7 +1713,7 @@ class Bing extends Extend
                 unlink($imgTemp); // 删除临时文件
 
                 // 腾讯对象存储
-                if(is_file($imgPath)){
+                if (is_file($imgPath)) {
                     $this->qcloud_cos($this->qCloudBucketName, $this->qcloudCosPath, $imgPath, $detailsName);
                 }
             }

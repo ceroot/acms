@@ -26,10 +26,54 @@ use think\facade\Request;
 if (!function_exists('ip2int')) {
     function ip2int($ip = '')
     {
-        if ($ip == '') {
-            $ip = Request::ip();
-        }
+        $ip = $ip ?: Request::ip();
         return sprintf("%u", ip2long($ip));
+    }
+}
+
+/**
+ * [ is_local 判断 ip 是内网还是外网 ]
+ * @author SpringYang
+ * @email    ceroot@163.com
+ * @dateTime 2017-12-28T10:34:40+0800
+ * @param    [type]                   $ip [ip 地址]
+ * @return   boolean                      [description]
+ */
+if (!function_exists('is_local')) {
+    function is_local($ip = null)
+    {
+        $ip = $ip ?: Request::ip();
+        return preg_match('%^127\.|10\.|192\.168|172\.(1[6-9]|2|3[01])%', $ip); // 正则方式
+        //return !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE); // PHP 自带判断私有ip 方法
+    }
+}
+
+/**
+ * [ url_get_content 取得 url 内容 ]
+ * @author SpringYang
+ * @email    ceroot@163.com
+ * @dateTime 2017-12-28T10:34:40+0800
+ * @param    string                  $url [url 地址]
+ * @return   string                       [返回内容 ]
+ */
+if (!function_exists('url_get_content')) {
+    function url_get_content($url)
+    {
+        if (function_exists("curl_init")) {
+            $ch      = curl_init();
+            $timeout = 30;
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+            $file_contents = curl_exec($ch);
+            curl_close($ch);
+        } else {
+            $is_auf = ini_get('allow_url_fopen') ? true : false;
+            if ($is_auf) {
+                $file_contents = file_get_contents($url);
+            }
+        }
+        return $file_contents;
     }
 }
 
@@ -856,7 +900,7 @@ if (!function_exists('get_keywords')) {
         $pscws->set_rule($extendPath . 'scws/lib/rules.utf8.ini');
         $pscws->set_ignore(true);
         $pscws->send_text($str);
-        $words = $pscws->get_tops($lenght);//return $str;
+        $words = $pscws->get_tops($lenght); //return $str;
         $pscws->close();
 
         $end  = end($words);
