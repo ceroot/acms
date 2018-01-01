@@ -11,6 +11,7 @@ a{ color: #23527c; text-decoration: none; }
 
 nav{ font-size: .875rem; }
 
+
 .box-area{ height: 100%; padding-bottom: 1.25rem;}
 .box-area .box-content{ border:1px solid #ddd; border-radius: .25rem; padding: .25rem; padding-bottom: 1.25rem; height: 100%; position: relative; }
 .box-area .box-content:hover{ border:1px solid #23527c;}

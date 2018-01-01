@@ -1,0 +1,121 @@
+{extend name="mould:base" /}
+{block name="title"}{/block}
+{block name="css"}
+<style type="text/css">
+      <style>
+    .thumb {margin-left:5px; margin-top:15px; height:128px}
+    #prevModal {width:100%; height:100%; text-align:center; display:none;}
+    #img_prev {max-width:98%; max-height:98%; margin: 10px auto}
+    .cover img{ width: 120px; height: 80px; }
+  </style>
+</style>
+{/block}
+{block name="content"}
+
+<form action="{:url('renew')}" method="post" class="layui-form">
+    {:widget('Widgets/form', ['type'=>'select','title'=>'所属分类','name'=>'cid','value'=>$one.cid,'datalist'=>$category])}
+    {:widget('Widgets/form', ['type'=>'text','title'=>'内容标题','name'=>'title','value'=>$one.title,'elementid'=>'title','placeholder'=>'内容标题','layverify'=>'required','inline'=>0])}
+    {:widget('Widgets/form', ['type'=>'text','title'=>'内容关键字','name'=>'keywords','value'=>$one.keywords,'elementid'=>'keywords','placeholder'=>'内容关键字','aux'=>'（以英文逗号隔开，如果不填，系统自动获取）','inline'=>0])}
+    {:widget('Widgets/form', ['type'=>'textarea','title'=>'内容描述','name'=>'description','value'=>$one.description,'elementid'=>'description','placeholder'=>'内容关键字','aux'=>'（内容简介，如果不填，系统自动获取，限制在120个字以内）'])}
+
+    <div class="layui-form-item layui-form-text form-group-sm">
+        <label class="layui-form-label">封面</label>
+        <div class="layui-input-block">
+            <div class="layui-upload" style="height: 82px;">
+                <div class="cover" style="display: inline-block; width: 120px; height: 80px; border:1px solid #ccc; vertical-align: bottom;">
+                    {notempty name="$one.cover"}
+                        <img src="/data/images/{$one.cover}"/>
+                    {/notempty}
+                </div>
+                <div style="display: inline-block; margin-left: 15px; vertical-align: bottom;">
+                    <button type="button" class="layui-btn" id="test1">选择图片</button>
+                    <button type="button" class="layui-btn" id="delete" style="display: none; margin-left: 15px">移除</button>
+                    <input type="hidden" name="cover" value="">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">内容</label>
+        <div class="layui-input-block">
+            <script id="content" class="ueditor" name="content" type="text/plain">
+                {$one.content|raw}
+            </script>
+            
+        </div>
+    </div>
+
+    {:widget('Widgets/button', ['name'=>'id','value'=>$one.editid])}
+</form>
+
+{/block}
+{block name="script"}
+<script type="text/javascript" src="__LIBS__/ueditor/1.4.3.2/ueditor.config.js"></script>
+<script type="text/javascript" src="__LIBS__/ueditor/1.4.3.2/ueditor.all.js"></script>
+<script type="text/javascript">
+$(function(){
+    var ue = UE.getEditor('content',{
+        zIndex:898,
+        topOffset:48,
+        // initialFrameHeight:'500',
+        // toolbarTopOffset:50,
+        maximumWords:50000
+    });
+
+    UE.getEditor('content').addListener('beforefullscreenchange',function(event,isFullScreen){
+        if(isFullScreen){
+            // alert('全屏');
+            $('body').find('.edui-editor').css({'top':0});
+        }else{
+            // alert('默认');
+            $('body').find('.edui-editor').css({'top':48+'px'});
+        }
+    });
+});
+layui.use('upload', function(){
+    var $ = layui.jquery
+    ,upload = layui.upload;
+    
+    //普通图片上传
+    var uploadInst = upload.render({
+        elem: '#test1'
+        ,url: '/upload/'
+        ,accept: 'images'
+        ,auto: false
+        ,choose: function(obj){
+            var files = obj.pushFile();
+            obj.preview(function(index, file, result){
+                var tr = $(['<img class="layui-upload-img" src="' + result + '">'].join(''));
+                var _delete = $('#delete');
+                var _coverInput = $('input[name="cover"]');
+
+                $('.cover').html(tr); //图片链接（base64）
+                _coverInput.val(result);
+                _delete.show();
+                _delete.on('click',function(){
+                    delete files[index]; //删除对应的文件
+                    tr.remove();
+                    _delete.hide();
+                    _coverInput.val('');
+                });
+
+                $('.cover img').on('click',function(result){
+                    var w = $(window).width() - 360, h = $(window).height() - 200;
+                    var _src = $('.cover img').attr('src');
+                    var _html = '<img src="' + _src + '" width="' + w + '">';
+                    layer.open({
+                        title: false,
+                        type: 1,
+                        area: [w, h], //宽高
+                        content: _html
+                    });
+                });
+            });
+        }
+    });
+  
+});
+
+</script>
+{/block}

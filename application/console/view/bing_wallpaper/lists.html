@@ -1,0 +1,17 @@
+{extend name="mould:base" /}
+{block name="title"}{/block}
+{block name="content"}
+<table class="layui-hide" id="table_list" lay-filter="#table_list" data-url="{:url('lists')}">
+  <thead>
+    <tr>
+      <th lay-data="{checkbox: true, fixed: true}"></th>
+      <th lay-data="{field:'id',title:'ID', width:70, sort: true}">ID</th>
+      <th lay-data="{field:'datesign',title:'日期标识', width:100, sort: true}">日期标识</th>
+      <th lay-data="{field:'title',title:'标题'}">标题</th>
+      <th lay-data="{fixed:'right', title:'操作', width:200, align:'center', toolbar: '#toolbar'}">操作</th>
+    </tr>
+  </thead>
+</table>
+{:widget('Widgets/updatestatus')}
+{:widget('Widgets/tabletoolbar',['v'=>1,'e'=>1,'d'=>0])}
+{/block}

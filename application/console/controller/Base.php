@@ -23,23 +23,36 @@ class Base extends Extend
 
         $this->app->cache->has('instantiation_controller') || $this->error('出错');
 
-        $instantiation_controller = cache('instantiation_controller');
+        $instantiation_controller = $this->app->cache->get('instantiation_controller');
 
         // 判断是否需要实例化的控制器
         if (in_array(strtolower(toUnderline($this->app->request->controller())), $instantiation_controller)) {
+            $this->app->cache->set('d1',date('Y-m-d H:i:s'));
             $this->model = $this->app->model($this->app->request->controller()); // 实例化控制器
             $this->pk    = $this->model->getPk(); // 取得主键字段名
             $this->id    = deauthcode($this->app->request->param($this->pk)); // id解密
         }
     }
 
-    public function test()
+    public function test($type = 0)
     {
-        $result = model('action')->find();
-        dump($result);die;
-        // session('dd', null);
-        dump(session('dd'));
-        dump(session('paramss'));
+        dump($this->app->cache->get('d1'));
+        dump($this->app->cache->get('d2'));
+        dump($this->app->cache->get('d3'));
+        dump($this->app->cache->get('d4'));
+        dump($this->app->cache->get('d5'));
+        dump($this->app->cache->get('d6'));
+        dump($this->app->cache->get('d7'));
+
+        if($type){
+            cache('d1',null);
+            cache('d2',null);
+            cache('d3',null);
+            cache('d4',null);
+            cache('d5',null);
+            cache('d6',null);
+            cache('d7',null);
+        }
     }
 
     /**
@@ -64,7 +77,9 @@ class Base extends Extend
      */
     protected function menusView($template = '', $value = [])
     {
+        $this->app->cache->set('d6',date('Y-m-d H:i:s'));
         $menus = $this->getMenus();
+        $this->app->cache->set('d7',date('Y-m-d H:i:s'));
         $this->assign('menus', $menus); // 一级菜单输出
         $this->assign('second', $menus['second']); // 二级菜单输出
         $this->assign('title', $menus['showtitle']); // 标题输出
@@ -116,20 +131,31 @@ class Base extends Extend
      */
     public function details()
     {
+            cache('d1',null);
+            cache('d2',null);
+            cache('d3',null);
+            cache('d4',null);
+            cache('d5',null);
+            cache('d6',null);
+            cache('d7',null);
+
+        $this->app->cache->set('d2',date('Y-m-d H:i:s'));
+        // dump($this->app->cache->get('d2'));
+        // die;
         if (!$this->id) {
             return $this->error('参数错误');
         }
         if ($this->isWithTrashed()) {
+            $this->app->cache->set('d3',date('Y-m-d H:i:s'));
             $one = $this->model::withTrashed()->find($this->id);
         } else {
+            $this->app->cache->set('d4',date('Y-m-d H:i:s'));
             $one = $this->model::get($this->id);
         }
+        // dump(1);die;
+        $this->app->cache->set('d5',date('Y-m-d H:i:s'));
         $this->assign('one', $one);
         // dump($one);die;
-
-        if (request()->isAjax()) {
-
-        }
         return $this->menusView();
     }
 

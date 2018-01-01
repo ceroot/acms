@@ -98,13 +98,13 @@
 				    		<div class="box-content">
 				    			<div class="box-body">
 					    			<div class="img-box">
-							    	  	<a href="{:url('index/Bing/details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">
+							    	  	<a href="{:url('index/Bing/details',['id'=>authcode($lists.id)])}" target="_blank" title="{$lists.title}">
 								    		<img class="lazyload" data-src="{$imgbaseurl}{$lists.datesign|strtotime|date='Y/m/d/'}{$lists.newname}" src="{$imgbaseurl}default.gif" alt="{$lists.title}" />
 								    	</a>
 							    	</div>
 							    	{notempty name="$lists.item_ttl"}<small><i class="fa fa-deaf fa-fw" title=""></i>{$lists.item_ttl}</small>{/notempty}
 							    	<h6>
-							    		<a href="{:url('index/Bing/details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">{$lists.title}</a>
+							    		<a href="{:url('index/Bing/details',['id'=>authcode($lists.id)])}" target="_blank" title="{$lists.title}">{$lists.title}</a>
 							    	</h6>
 							    </div>
 						    	<div class="box-footer">
@@ -126,20 +126,22 @@
 
 </body>
 <script type="text/javascript" src="__LIBS__/jquery/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <!-- bootstrap -->
 <script type="text/javascript" src="__LIBS__/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="__LIBS__/lazyload/2.x/lazyload.min.js"></script>
+<script type="text/javascript" src="https://hm.baidu.com/hm.js?9d431989a95c98f4e1d5353cadad4487"></script>
 <script type="text/javascript">
 	$(function(){
 		lazyload();
 	});
 	
-	var _hmt = _hmt || [];
-	(function() {
-	  var hm = document.createElement("script");
-	  hm.src = "https://hm.baidu.com/hm.js?9d431989a95c98f4e1d5353cadad4487";
-	  var s = document.getElementsByTagName("script")[0]; 
-	  s.parentNode.insertBefore(hm, s);
-	})();
+	// var _hmt = _hmt || [];
+	// (function() {
+	//   var hm = document.createElement("script");
+	//   hm.src = "https://hm.baidu.com/hm.js?9d431989a95c98f4e1d5353cadad4487";
+	//   var s = document.getElementsByTagName("script")[0]; 
+	//   s.parentNode.insertBefore(hm, s);
+	// })();
 </script>
 </html>
