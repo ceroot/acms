@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------+
 /**
  *
- * @filename  Document.php
+ * @filename  Article.php
  * @authors   SpringYang
  * @email     ceroot@163.com
  * @QQ        525566309
@@ -21,7 +21,7 @@ namespace app\console\controller;
 
 use app\console\controller\Base;
 
-class Document extends Base {
+class Article extends Base {
 	public function initialize() {
 		parent::initialize();
 

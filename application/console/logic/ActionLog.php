@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | CYCMS                                                                |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2017 http://www.benweng.com All rights reserved.       |
+// | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
 // | Authors: SpringYang [ceroot@163.com]                                 |
 // +----------------------------------------------------------------------+
@@ -82,13 +82,13 @@ class ActionLog extends Model
             if (!empty($action_log)) {
 
                 if (preg_match_all('/\[(\S+?)\]/', $action_log, $match)) {
-                    $log['user_id']  = $user_id;
-                    $log['record']   = $record_id;
-                    $log['model']    = $model;
-                    $log['time']     = time();
+                    $log['user_id'] = $user_id;
+                    $log['record'] = $record_id;
+                    $log['model'] = $model;
+                    $log['time'] = time();
                     $log['table_id'] = $model . '|' . $record_id;
-                    $log['type']     = Session::get('log_text');
-                    $log['data']     = array('user_id' => $user_id, 'model' => $model, 'record' => $record_id, 'time' => time());
+                    $log['type'] = Session::get('log_text');
+                    $log['data'] = array('user_id' => $user_id, 'model' => $model, 'record' => $record_id, 'time' => time());
 
                     foreach ($match[1] as $key => $value) {
                         //dump($value);
@@ -117,12 +117,12 @@ class ActionLog extends Model
 
         // 数据组合
         $data['action_id'] = $action_info['id'];
-        $data['user_id']   = $user_id;
-        $data['model']     = $model;
-        $data['method']    = Request::method();
+        $data['user_id'] = $user_id;
+        $data['model'] = $model;
+        $data['method'] = Request::method();
         $data['record_id'] = $record_id;
-        $data['url']       = Request::url();
-        $data['device']    = get_visit_source();
+        $data['url'] = Request::url();
+        $data['device'] = get_visit_source();
 
         // $data['create_time'] = time();
         // $data['create_ip']   = ip2int();

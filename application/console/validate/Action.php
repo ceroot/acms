@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | CYCMS                                                                |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2017 http://www.benweng.com All rights reserved.       |
+// | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
 // | Authors: SpringYang [ceroot@163.com]                                 |
 // +----------------------------------------------------------------------+
@@ -24,13 +24,13 @@ use think\Validate;
 class Action extends Validate
 {
     protected $rule = [
-        'name'  => 'require|unique:action',
+        'name' => 'require|unique:action',
         'title' => 'require',
     ];
 
     protected $message = [
-        'name.require'  => '行为标识必填',
-        'name.unique'   => '行为标识已存在',
+        'name.require' => '行为标识必填',
+        'name.unique' => '行为标识已存在',
         'title.require' => '行为标题必填',
         // 'title.unique'  => '行为标题已存在',
     ];

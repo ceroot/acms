@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | CYCMS                                                                |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2017 http://www.benweng.com All rights reserved.       |
+// | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
 // | Authors: SpringYang [ceroot@163.com]                                 |
 // +----------------------------------------------------------------------+
@@ -21,6 +21,7 @@ namespace app\common\validate;
 
 use think\Validate;
 
-class Document extends Validate {
+class Document extends Validate
+{
 
 }
