@@ -41,6 +41,8 @@ class Base extends Extend
 
     public function test($type = 0)
     {
+        $m = model('article');
+        dump($m->select());
         dump($this->app->cache->get('d1'));
         dump($this->app->cache->get('d2'));
         dump($this->app->cache->get('d3'));
@@ -136,29 +138,17 @@ class Base extends Extend
      */
     public function details()
     {
-        cache('d1', null);
-        cache('d2', null);
-        cache('d3', null);
-        cache('d4', null);
-        cache('d5', null);
-        cache('d6', null);
-        cache('d7', null);
 
-        $this->app->cache->set('d2', date('Y-m-d H:i:s'));
-        // dump($this->app->cache->get('d2'));
         // die;
         if (!$this->id) {
             return $this->error('参数错误');
         }
         if ($this->isWithTrashed()) {
-            $this->app->cache->set('d3', date('Y-m-d H:i:s'));
             $one = $this->model::withTrashed()->find($this->id);
         } else {
-            $this->app->cache->set('d4', date('Y-m-d H:i:s'));
             $one = $this->model::get($this->id);
         }
-        // dump(1);die;
-        $this->app->cache->set('d5', date('Y-m-d H:i:s'));
+
         $this->assign('one', $one);
         // dump($one);die;
         return $this->menusView();

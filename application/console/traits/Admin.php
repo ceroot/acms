@@ -124,7 +124,7 @@ trait Admin
             $list  = $this->model->where($map)->order($order)->paginate($pageLimit, false, ['page' => $page, 'list_rows' => $pageLimit]);
             $count = $this->model->where($map)->order($order)->count(); // 总计数
         }
-        dump($list);
+        // dump($list);
 
         // 给数组添加编辑 editid 并加密，本来是想在里自动实现的，可是模型里自动实现的在layui里无法输出，所以在这里再做一次操作
         $newList     = [];
