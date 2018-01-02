@@ -20,6 +20,15 @@ Route::rule('bing/details/:id', 'index/Bing/details');
 Route::rule('bing/download/:id', 'index/Bing/download');
 Route::rule('new/:id', 'index/News/read');
 
+// Route::domain('bing', function () {
+//     // 动态注册域名的路由规则
+//     Route::rule('details/:id', 'index/Bing/details');
+//     Route::rule('download/:id', 'index/Bing/download');
+//     Route::bind('index/Bing');
+// });
+
+// Route::domain('bing', '\app\index\controller\Bing');
+
 Route::rule('resize', function ($i, $w) {
     $image = deauthcode($i); // 解密
     // $image = 'https://www.benweng.com/data/bingwallpaper/2017/12/20/PowysCounty_ZH-CN11115693548.jpg';
