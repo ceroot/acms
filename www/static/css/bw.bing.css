@@ -39,7 +39,7 @@ nav{ font-size: .875rem; }
 .groom-area{}
 .groom-area h5{border-bottom: 2px solid #ddd; margin-top: 1.2rem; padding-left: .75rem; padding-bottom: .25rem; font-weight: 700;}
 
-footer{ font-size:.75rem; }
+footer{ font-size:.75rem; line-height: 1.25rem; border-top: 1px solid #ddd }
 
 @media screen and (max-width: 575.99px) {
 	.box-area{}
