@@ -223,6 +223,20 @@ trait Admin
         }
     }
 
+    public function dtest()
+    {
+        $data['title']       = '标题';
+        $data['cid']         = 43;
+        $data['keywords']    = 'keywords';
+        $data['description'] = 'description';
+        $data['source']      = 'source';
+        $data['file']        = 'ddd';
+        // $data['template']    = 'template';
+
+        $status = $this->model->save($data);
+        dump($status);
+    }
+
     /**
      * [ _renew 通用更新数据操作方法的数据处理 ]
      * @author SpringYang <ceroot@163.com>
@@ -331,9 +345,8 @@ trait Admin
                 }
 
                 // 数据保存
-                // return $data;
                 $status = $this->model->save($data);
-                // return 5;
+                // return $status;
 
             }
 
@@ -420,6 +433,10 @@ trait Admin
                     make_dir($allPathTemp);
                 }
 
+                if (!file_exists($allPathImages)) {
+                    make_dir($allPathImages);
+                }
+
                 $filename     = md5(time()) . '.' . $type; // md5加密后的文件名（带后缀）
                 $filePathTemp = $allPathTemp . $filename; // 文件的位置
                 if (file_put_contents($filePathTemp, base64_decode(str_replace($result[1], '', $coverData)))) {
@@ -439,8 +456,7 @@ trait Admin
                         $data['md5']         = md5_file($filePath);
                         $data['sha1']        = sha1($filePath);
 
-                        $db = db('picture');
-                        return $db->insertGetId($data);
+                        return Db::name('picture')->insertGetId($data);
 
                     }
                 } else {
@@ -487,6 +503,7 @@ trait Admin
      */
     private function documentExtend($data = null)
     {
+        // return 123;
 
         $name   = Db::name('Model')->getFieldById($data['model_id'], 'name');
         $db     = Db::name('document_' . $name);
@@ -494,13 +511,16 @@ trait Admin
         $id     = $data['id'];
 
         $tempData['id'] = $id;
-
+        // return 12;
         switch ($name) {
             case 'article':
                 // 对 ueditor 内容数据的处理
+                // return $data;
+                // return ueditor_handle($data['content'], $data['title']);
                 $data['content'] = ueditor_handle($data['content'], $data['title']);
 
                 $tempData['content'] = $data['content'];
+                // return 23;
 
                 if ($this->app->request->has($this->pk)) {
                     $contentSqlTemp = $dbtemp->getFieldById($id, 'content');
@@ -511,6 +531,8 @@ trait Admin
                 # code...
                 break;
         }
+
+        // return 222;
 
         if ($this->app->request->has($this->pk)) {
             // 执行更新
@@ -535,6 +557,7 @@ trait Admin
                 $status = $db->insertGetId($tempData);
             }
         } else {
+            // return $tempData;
             $status = $db->insertGetId($tempData);
         }
 

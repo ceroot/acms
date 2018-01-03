@@ -37,6 +37,7 @@
         <div class="layui-input-block">
         	<input type="hidden" name="action[]" value="end" checked='checked'>
 			<button class="layui-btn layui-btn-sm" type="submit">更新缓存</button>
+			<a class="layui-btn layui-btn-sm reset" href="javascript:;">重置更新缓存</a>
         </div>
         <div class="layui-form-mid layui-word-aux"></div>
     </div>
@@ -51,7 +52,7 @@ $(function(){
 		$(this).closest('.layui-input-block').append(_html);
 	});
 
-	$('form button').on('click',function(e){
+	$('form button[type="submit"]').on('click',function(e){
 		e.preventDefault();
 		var _self  = $(this);
 		var _form  = _self.closest('form');
@@ -84,6 +85,25 @@ $(function(){
 		});
 		// alert(_url);
 		return false;
+	});
+
+	$('body').on('click','.reset',function(){
+		// alert();
+		$.ajax({
+			type:'post',
+			url:'{:url('resetcache')}',
+			data:'',
+			dataType:'json',
+			success:function(data){
+				console.log(data);
+				if(data.code){
+					layer.msg(data.msg);
+					// alert(data.msg);
+				}else{
+					
+				}
+			}
+		});
 	});
 });
 </script>

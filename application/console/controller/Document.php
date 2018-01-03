@@ -20,6 +20,7 @@
 namespace app\console\controller;
 
 use app\console\controller\Base;
+use think\Db;
 
 class Document extends Base
 {
@@ -27,27 +28,15 @@ class Document extends Base
     {
         parent::initialize();
 
-        $category = $this->app->model('category')->where('status', 1)->select();
+        $category = Db::name('category')->where('status', 1)->select();
         $this->assign('category', $category);
 
-        $db         = db('model');
-        $model_id   = $db->getFieldByName('document', 'id');
-        $model_list = db('model')->where('extend', $model_id)->select();
-        // dump($model_list);
+        $model_id   = Db::name('model')->getFieldByName('document', 'id');
+        $model_list = Db::name('model')->where('extend', $model_id)->select();
+        // dump($model_list);die;
         $this->assign('model_list', $model_list);
         // die;
 
     }
 
-    /**
-     * [ renew 通用更新数据操作方法 ]
-     * @author   SpringYang <ceroot@163.com>
-     * @dateTime 2017-10-27T15:43:40+0800
-     * @return   [type]                   [description]
-     */
-    public function renew11()
-    {
-        return 123;
-        return $this->_renew();
-    }
 }
