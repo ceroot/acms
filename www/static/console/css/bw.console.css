@@ -666,3 +666,6 @@ label.layui-form-label{ width: 110px; }
 
 /* 小表格里的小按钮 20171018*/
 .layui-table-view .layui-table[lay-size="sm"] .layui-table-cell .layui-btn-mini{ height: 18px; line-height: 18px; }
+
+
+.cover img{ width: 120px; height: 80px; }

@@ -1046,9 +1046,10 @@ var tableOperation = {
             });
 
             // 再次运行 layui 之后，相关组件才有作用
-            layui.use(['form','element'], function(){
+            layui.use(['form','element','upload'], function(){
                 var form = layui.form;
                 var element = layui.element;
+                var upload = layui.upload;
 
                 form.render();
                 element.init();
