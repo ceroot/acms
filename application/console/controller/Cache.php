@@ -53,10 +53,15 @@ class Cache extends Base
 
         if ($this->app->request->isAjax()) {
 
-            $data   = $this->app->request->param('action/a');
-            $action = $this->app->cache->remember('action', function () use ($data) {
-                return $data;
-            });
+            // $action = $this->app->cache->remember('action', function () use ($dataA) {
+            //     return $dataA;
+            // });
+            if (!$this->app->cache->has('action')) {
+                $action = $this->app->request->param('action/a');
+                $this->app->cache->set('action', $action);
+            } else {
+                $action = $this->app->cache->get('action');
+            }
 
             $current = array_shift($action);
             $this->app->cache->set('action', $action);
