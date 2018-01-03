@@ -1,6 +1,7 @@
 <?php
 namespace app\console\traits;
 
+use think\Db;
 use think\facade\Hook;
 use think\facade\Request;
 use traits\controller\Jump;
@@ -188,6 +189,20 @@ trait Admin
                     $one['group_id'] = $gdata['group_id'];
                     unset($one[toUnderline($relationName)]); // 去掉关联数据
                     break;
+                case 'document':
+                    if ($this->isWithTrashed()) {
+                        $one = $this->model->withTrashed()->find($this->id);
+                    } else {
+                        $one = $this->model->find($this->id); // 取得数据
+                    }
+
+                    $model_id       = $this->model->getFieldById($this->id, 'model_id');
+                    $modelName      = db('Model')->getFieldById($model_id, 'name');
+                    $tempData       = db('document_' . $modelName)->find($this->id);
+                    $one['content'] = $tempData['content'];
+                    // dump($one['cover_id']);
+                    $one['cover_id'] = db('picture')->getFieldById($one['cover_id'], 'path');
+                    break;
                 default:
                     if ($this->isWithTrashed()) {
                         $one = $this->model->withTrashed()->find($this->id);
@@ -197,6 +212,9 @@ trait Admin
                     $one = $one->getData();
                     break;
             }
+
+            // dump($one);
+            // die;
 
             $one['editid'] = authcode($one['id']); // 加密编辑 editid
 
@@ -213,21 +231,21 @@ trait Admin
      */
     protected function _renew()
     {
+        // return $this->model;
         if ($this->app->request->isPost()) {
             $data  = $this->app->request->param();
             $scene = 'add'; // 验证场景，默认是新增
             // return $data;
             switch (strtolower($this->app->request->controller())) {
-                case 'article':
+                case 'document':
                     // 封面图片处理
-                    if ($data['cover']) {
-                        $data['cover'] = $this->articleCover($data['cover']);
-
+                    if ($data['cover_id']) {
+                        $data['cover_id'] = $this->documentCover($data['cover_id']);
                     } else {
-                        unset($data['cover']);
+                        unset($data['cover_id']);
+
                     }
-                    // 对 ueditor 内容数据的处理
-                    $data['content'] = ueditor_handle($data['content'], $data['title']);
+                    // return $data;
                     if (!$data['description']) {
                         $data['description'] = get_description($data['content']);
                     }
@@ -253,8 +271,8 @@ trait Admin
                 }
 
                 // 各种模式下对数据的处理
-                switch ($this->app->request->controller()) {
-                    case 'Model':
+                switch (strtolower($this->app->request->controller())) {
+                    case 'model':
                         if (input('param.field_sort/a')) {
                             $data['field_sort'] = json_encode($data['field_sort']);
                         }
@@ -264,21 +282,7 @@ trait Admin
                             $data['attribute_list'] = '';
                         }
                         break;
-                    case 'Article':
-                        $old_file_cover = $this->model->getFieldById($this->id, 'cover');
-                        if ($old_file_cover) {
-                            $this->app->session->set('old_file', $old_file_cover);
-                        }
-
-                        $contentForm = $data['content'];
-                        if ($contentForm) {
-                            // $contentSql = $this->model->where('id', $data[$pk])->value('content');
-                            $contentSql = $this->model->getFieldById($this->id, 'content');
-                            if (!empty($contentSql)) {
-                                // 对比判断并删除操作
-                                $del_file = del_file($contentForm, $contentSql);
-                            }
-                        }
+                    case 'document':
 
                         break;
                     default:
@@ -291,9 +295,19 @@ trait Admin
                 // 数据验证
                 $validate = $this->app->validate($this->app->request->controller());
                 if (!$validate->scene('edit')->check($data)) {
+                    switch (strtolower($this->app->request->controller())) {
+                        case 'document':
+                            $this->documentCover($data['cover_id'], 3);
+                            break;
+
+                        default:
+                            # code...
+                            break;
+                    }
+
                     return $this->error($validate->getError());
                 }
-
+                // return $data;
                 // 数据保存
                 $status = $this->model->save($data, [$this->pk => $this->id]);
 
@@ -303,6 +317,16 @@ trait Admin
                 // return $data;
                 $validate = $this->app->validate($this->app->request->controller());
                 if (!$validate->check($data)) {
+                    switch (strtolower($this->app->request->controller())) {
+                        case 'document':
+                            $this->documentCover($data['cover_id'], 3);
+                            break;
+
+                        default:
+                            # code...
+                            break;
+                    }
+
                     return $this->error($validate->getError());
                 }
 
@@ -324,8 +348,8 @@ trait Admin
                 $pk        = $this->pk; // 取得数据库主键名称
                 $record_id = $this->model->$pk; // 数据 id 值
 
-                switch ($this->app->request->controller()) {
-                    case 'AuthRule':
+                switch (strtolower($this->app->request->controller())) {
+                    case 'authrule':
                         $this->model->updateCache(); // 更新规则缓存
 
                         // 新增时是否添加日志记录标记
@@ -333,32 +357,23 @@ trait Admin
                             $this->app->model('Action')->add_for_rule();
                         }
                         break;
-                    case 'Manager': // 管理员操作时的操作
+                    case 'manager': // 管理员操作时的操作
                         // return $data;
                         model('AuthGroupAccess')->saveData($record_id);
                         break;
-                    case 'Config': // 清空配置数据缓存
+                    case 'config': // 清空配置数据缓存
                         cache('db_config_data', null);
                         break;
-                    case 'Model': // 清除模型缓存数据
+                    case 'model': // 清除模型缓存数据
                         cache('document_model_list', null);
                         break;
-                    case 'Article': // 内容管理时的数据处理
-                        // 封面图片处理
-                        if ($this->app->request->param('cover')) {
-                            $this->articleCover($data['cover'], 2);
+                    case 'document': // 文档管理时的数据处理
 
-                            // 删除旧封面处理
-                            if ($this->app->session->has('old_file')) {
-                                $old_file_cover = $this->app->session->pull('old_file');
-                                $images_path    = './data/images/';
-                                $old_file_path  = $images_path . $old_file_cover;
-                                if (file_exists($old_file_path)) {
-                                    unlink($old_file_path);
-                                }
-                            }
+                        $data = $this->model;
+                        // return $data;
 
-                        }
+                        // 文档类型处理
+                        $data['documentExtend'] = $this->documentExtend($data);
                         // return $data;
                         break;
                     default:
@@ -378,15 +393,15 @@ trait Admin
     }
 
     /**
-     * [ articleCover 内容管理对封面图片的处理 ]
+     * [ documentCover 内容管理对封面图片的处理 ]
      * @author SpringYang
      * @email    ceroot@163.com
      * @dateTime 2017-11-30T09:46:32+0800
-     * @param    string                   $coverData [封面图像数据，type为1时是base64数据，type为2时是文件路径]
-     * @param    int                      $type       [状态，1为开始（默认），2为成功之后]
+     * @param    string                   $coverData  [封面图像数据，type为1时是base64数据，type为2时是文件路径]
+     * @param    int                      $type       [状态，1为开始（默认），2为成功之后，3为不成功时删除数据]
      * @return   string                               []
      */
-    private function articleCover($coverData = null, $type = 1)
+    private function documentCover($coverData = null, $type = 1)
     {
         $pathTemp   = '../data/temp/'; // 临时文件夹路径
         $pathImages = './data/images/'; // 图像文件文件夹路径
@@ -395,20 +410,39 @@ trait Admin
             //匹配出图片的格式
             if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $coverData, $result)) {
                 $type     = $result[2]; // 图像格式
-                $pathTemp = '../data/temp/'; // 临时文件夹路径
                 $dateFile = date('Ymd', time()) . '/'; // 日期目录
 
-                $allPath = $pathTemp . $dateFile; // 全部路径
+                $allPathTemp   = $pathTemp . $dateFile; // 全部路径
+                $allPathImages = $pathImages . $dateFile;
 
                 //检查是否有该文件夹，如果没有就创建，并给予最高权限
-                if (!file_exists($allPath)) {
-                    make_dir($allPath);
+                if (!file_exists($allPathTemp)) {
+                    make_dir($allPathTemp);
                 }
 
-                $filename = md5(time()) . '.' . $type; // md5加密后的文件名（带后缀）
-                $filePath = $allPath . $filename; // 文件的位置
-                if (file_put_contents($filePath, base64_decode(str_replace($result[1], '', $coverData)))) {
-                    return $dateFile . $filename;
+                $filename     = md5(time()) . '.' . $type; // md5加密后的文件名（带后缀）
+                $filePathTemp = $allPathTemp . $filename; // 文件的位置
+                if (file_put_contents($filePathTemp, base64_decode(str_replace($result[1], '', $coverData)))) {
+                    if (file_exists($filePathTemp)) {
+
+                        $image = \think\Image::open($filePathTemp);
+                        if ($image) {
+                            $filePath = $allPathImages . $filename;
+                            // 按照原图的比例生成一个最大为150*150的缩略图并保存为封面图像
+                            if ($image->thumb(400, 400)->save($filePath)) {
+                                unlink($filePathTemp); // 删除临时文件
+                            };
+                        }
+
+                        $data['path']        = $dateFile . $filename;
+                        $data['create_time'] = time();
+                        $data['md5']         = md5_file($filePath);
+                        $data['sha1']        = sha1($filePath);
+
+                        $db = db('picture');
+                        return $db->insertGetId($data);
+
+                    }
                 } else {
                     return 0;
                 }
@@ -431,13 +465,80 @@ trait Admin
                 if ($image) {
                     $filePath = $allPath . $filename;
                     // 按照原图的比例生成一个最大为150*150的缩略图并保存为封面图像
-                    if ($image->thumb(150, 150)->save($filePath)) {
+                    if ($image->thumb(400, 400)->save($filePath)) {
                         unlink($tempFilePath); // 删除临时文件
                     };
+
                 }
             }
+        } elseif ($type == 3) {
+            db('picture')->delete($coverData);
         }
 
+    }
+
+    /**
+     * [ documentExtend 文档类型处理 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-03T12:18:42+0800
+     * @param    [type]                   $data [description]
+     * @return   [type]                         [description]
+     */
+    private function documentExtend($data = null)
+    {
+
+        $name   = Db::name('Model')->getFieldById($data['model_id'], 'name');
+        $db     = Db::name('document_' . $name);
+        $dbtemp = Db::name('document_' . $name); // 之因为这样做，是因为要得到更新前的内容时实例化了
+        $id     = $data['id'];
+
+        $tempData['id'] = $id;
+
+        switch ($name) {
+            case 'article':
+                // 对 ueditor 内容数据的处理
+                $data['content'] = ueditor_handle($data['content'], $data['title']);
+
+                $tempData['content'] = $data['content'];
+
+                if ($this->app->request->has($this->pk)) {
+                    $contentSqlTemp = $dbtemp->getFieldById($id, 'content');
+                }
+
+                break;
+            default:
+                # code...
+                break;
+        }
+
+        if ($this->app->request->has($this->pk)) {
+            // 执行更新
+            if ($db->find($id)) {
+                $status = $db->update($tempData);
+
+                if ($status) {
+                    switch ($name) {
+                        case 'article':
+                            $contentForm = $data['content'];
+                            if ($contentForm && $contentSqlTemp) {
+                                // 对比判断并删除操作
+                                $del_file = del_file($contentForm, $contentSqlTemp);
+                            }
+                            break;
+                        default:
+                            # code...
+                            break;
+                    }
+                }
+            } else {
+                $status = $db->insertGetId($tempData);
+            }
+        } else {
+            $status = $db->insertGetId($tempData);
+        }
+
+        return $status;
     }
 
     /**
