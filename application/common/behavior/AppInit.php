@@ -33,14 +33,11 @@ class AppInit
     // 配置信息处理
     private function config()
     {
-        // 判断是否存在
-        if (!Cache::has('db_config_data')) {
-            $Config = new \app\common\model\Config;
-            $config = $Config->cache_config();
-        }
-
-        // 读取数据库中的配置并加入配置
-        $config = Cache::get('db_config_data');
+        // 判断数据库中的配置是否存在，不存在设置并返回
+        $config = Cache::remember('db_config_data', function () {
+            $ConfigModel = new \app\common\model\Config;
+            return $ConfigModel->cache_config();
+        });
 
         // 配置输出
         foreach ($config as $key => $value) {

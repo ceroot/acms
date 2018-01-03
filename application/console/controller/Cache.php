@@ -30,6 +30,16 @@ class Cache extends Base
 
     }
 
+    public function ctest()
+    {
+        $value  = 'value';
+        $action = $this->app->cache->remember('action', function () use ($value) {
+            return $value;
+        });
+
+        dump($action);
+    }
+
     /**
      * [ cache 更新缓存 ]
      * @author SpringYang
@@ -43,12 +53,10 @@ class Cache extends Base
 
         if ($this->app->request->isAjax()) {
 
-            if (!$this->app->cache->has('action')) {
-                $action = $this->app->request->param('action/a');
-                $this->app->cache->set('action', $action);
-            } else {
-                $action = $this->app->cache->get('action');
-            }
+            $data   = $this->app->request->param('action/a');
+            $action = $this->app->cache->remember('action', function () use ($data) {
+                return $data;
+            });
 
             $current = array_shift($action);
             $this->app->cache->set('action', $action);
@@ -91,7 +99,7 @@ class Cache extends Base
                         $msg = '临时目录更新成功...';
                         break;
                     case 'sdk_config':
-                        cache('oauth_sdk_config', null);
+                        $this->app->cache->rm('oauth_sdk_config');
                         $msg = '第三方登录SDK缓存更新成功...';
                         break;
                     case 'other':
@@ -102,10 +110,11 @@ class Cache extends Base
                         //Dir::del(RUNTIME_PATH . 'temp');
                         //Dir::del(RUNTIME_PATH . 'data');
                         //Dir::del(RUNTIME_PATH . 'logs');
-                        //Dir::del($runTimePath . 'cache');
-                        //Dir::create($runTimePath . 'cache');
+                        Dir::del($runTimePath . 'cache');
+                        Dir::create($runTimePath . 'cache');
                         Dir::del($runTimePath . 'temp');
                         Dir::create($runTimePath . 'temp');
+                        // $this->app->cache->clear();
                         $msg = '其它项更新成功';
                         break;
                     default:
@@ -133,7 +142,7 @@ class Cache extends Base
 
     public function resetcache()
     {
-        $this->app->cache->set('action', null);
+        $this->app->cache->rm('action');
         return $this->success('重置成功');
     }
 }

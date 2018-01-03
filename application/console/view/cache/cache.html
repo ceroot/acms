@@ -75,7 +75,7 @@ $(function(){
 				if(data.code){
 					_self.click();
 					var _html  = '<p>'+data.msg+'</p>';
-					$('body').find('input[value="' + data.data.type + '"]').siblings('div.status').find('i.status-ok').show();
+					$('body').find('input[value="' + data.data.type + '"]').siblings('div.status').find('i.status-ok').fadeIn();
 					showstatus.html(_html);
 				}else{
 					var _html  = '<p>'+data.msg+'</p>';
@@ -98,7 +98,7 @@ $(function(){
 				console.log(data);
 				if(data.code){
 					layer.msg(data.msg);
-					// alert(data.msg);
+					$('body').find('i.status-ok').fadeOut();
 				}else{
 					
 				}

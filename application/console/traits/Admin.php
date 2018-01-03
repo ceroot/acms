@@ -372,19 +372,16 @@ trait Admin
                         break;
                     case 'manager': // 管理员操作时的操作
                         // return $data;
-                        model('AuthGroupAccess')->saveData($record_id);
+                        $this->app->model('AuthGroupAccess')->saveData($record_id);
                         break;
                     case 'config': // 清空配置数据缓存
-                        cache('db_config_data', null);
+                        $this->app->cache->rm('db_config_data');
                         break;
                     case 'model': // 清除模型缓存数据
-                        cache('document_model_list', null);
+                        $this->app->cache->rm('document_model_list');
                         break;
                     case 'document': // 文档管理时的数据处理
-
                         $data = $this->model;
-                        // return $data;
-
                         // 文档类型处理
                         $data['documentExtend'] = $this->documentExtend($data);
                         // return $data;
@@ -488,7 +485,7 @@ trait Admin
                 }
             }
         } elseif ($type == 3) {
-            db('picture')->delete($coverData);
+            Db::name('picture')->delete($coverData);
         }
 
     }
