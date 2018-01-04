@@ -1,10 +1,12 @@
 {extend name="mould:base" /}
 {block name="title"}管理员列表{/block}
 {block name="content"}
-<div class="layui-btn-group">
-    <button class="layui-btn" id="export">立即备份</button>
-    <a class="layui-btn optimize" id="optimize" href="{:url('optimize')}">优化表</a>
-    <a class="layui-btn repair" id="repair" href="{:url('repair')}">修复表</a>
+<div class="table-item-search-area">
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-sm" id="export">立即备份</button>
+        <a class="layui-btn layui-btn-sm optimize" id="optimize" href="{:url('optimize')}">优化表</a>
+        <a class="layui-btn layui-btn-sm repair" id="repair" href="{:url('repair')}">修复表</a>
+    </div>
 </div>
 <form id="export-form" method="post" class="layui-form" action="{:Url::build('export')}">
     <table class="layui-table" lay-skin="line">

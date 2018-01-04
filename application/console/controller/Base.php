@@ -36,6 +36,7 @@ class Base extends Extend
 
     public function test($type = 0)
     {
+        return $this->menusView();
         // $tableFields = $this->app->getTableFields('cy_' . $this->app->request->controller()); // 取得表字段
         $tableFields = \Db::getTableFields('cy_' . $this->model->getName());
         dump($tableFields);

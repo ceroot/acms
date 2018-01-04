@@ -431,6 +431,14 @@ function _init(){
                     //支持所有基础参数
                 }); 
                 // console.log(cols);
+                var __height = $('body').find('nav.navbar').height();
+                // __height += $('body').find('.content-header > h1').height();
+                __height += parseInt($('body').find('.content-body').css('padding-top'));  
+                if($('body').find('.table-item-search-area').length>0){
+                    __height += $('body').find('.table-item-search-area').height();
+                }
+                __height += 20;
+                // console.log(__height);
                 table.render({
                     elem: elem_id
                     ,url: url
@@ -454,7 +462,7 @@ function _init(){
                       
                     // }
                     //,width: 1000
-                    ,height: 'full-245'
+                    ,height: 'full-'+__height
                     //,skin: 'line' //行边框风格
                     ,even: true //开启隔行背景
                     ,size:'sm'
@@ -1040,16 +1048,18 @@ var tableOperation = {
         $.get(_href, {}, function(result, textStatus, xhr) {
             var _reg = /<form action="[^>]*>([\s\S]*?)<\/form>/;
             var _content = result.match(_reg);
+            var vv = '<script type="text/javascript">$(function(){ueditor();});</script>';
             // alert(_content[0]);
             var index = layer.open({
                 title:'编辑内容',
                 type: 1,
                 skin: 'layui-layer-rim', //加上边框
                 //area: ['800px', '500px'], //宽高
-                content: '<div class="edit-content">' + _content[0] + '</div>',
+                content: '<div class="edit-content">' + _content[0] + '</div>' + vv,
                 maxmin: true,
                 end:function(){
-
+                    // ueditor();
+                    // alert(1);
                 }
             });
 
@@ -1125,4 +1135,26 @@ var tableOperation = {
         
     }
 };
+
+function ueditor(){
+    var ue = UE.getEditor('content',{
+        zIndex:898,
+        topOffset:48,
+        // initialFrameHeight:'500',
+        // toolbarTopOffset:50,
+        maximumWords:50000
+    });
+
+    UE.getEditor('content').addListener('beforefullscreenchange',function(event,isFullScreen){
+        if(isFullScreen){
+            // alert('全屏');
+            $('body').find('.edui-editor').css({'top':0});
+        }else{
+            // alert('默认');
+            $('body').find('.edui-editor').css({'top':48+'px'});
+        }
+    });
+}
+
+
 

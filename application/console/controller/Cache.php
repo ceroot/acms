@@ -56,6 +56,13 @@ class Cache extends Base
             // $action = $this->app->cache->remember('action', function () use ($dataA) {
             //     return $dataA;
             // });
+            if (\Cache::get('stopTag') == 'other') {
+                $msg = '缓存更新成功...';
+                $this->app->cache->rm('action'); // 删除 action 缓存
+                $this->app->cache->rm('stopTag'); // 删除 stopTag 缓存
+                return $this->error($msg);
+            }
+
             if (!$this->app->cache->has('action')) {
                 $action = $this->app->request->param('action/a');
                 $this->app->cache->set('action', $action);
@@ -121,6 +128,7 @@ class Cache extends Base
                         Dir::create($runTimePath . 'temp');
                         // $this->app->cache->clear();
                         $msg = '其它项更新成功';
+                        \Cache::set('stopTag', $current);
                         break;
                     default:
 
@@ -131,12 +139,12 @@ class Cache extends Base
                 $data['type'] = $current;
                 return $this->success($msg, '', $data);
             } else {
-                $msg = '缓存更新成功...';
-                $this->app->cache->rm('action'); // 删除 action 缓存
+                //$msg = '缓存更新成功...';
+                //$this->app->cache->rm('action'); // 删除 action 缓存
 
                 // 日志记录
                 //action_log(1);
-                return $this->error($msg);
+                //return $this->error($msg);
             }
 
         } else {
@@ -148,6 +156,7 @@ class Cache extends Base
     public function resetcache()
     {
         $this->app->cache->rm('action');
+        $this->app->cache->rm('stopTag');
         return $this->success('重置成功');
     }
 }

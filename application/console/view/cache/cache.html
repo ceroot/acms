@@ -73,10 +73,13 @@ $(function(){
 			success:function(data){
 				console.log(data);
 				if(data.code){
-					_self.click();
 					var _html  = '<p>'+data.msg+'</p>';
 					$('body').find('input[value="' + data.data.type + '"]').siblings('div.status').find('i.status-ok').fadeIn();
 					showstatus.html(_html);
+					setTimeout(function () {
+						_self.click();
+					}, 200);
+					
 				}else{
 					var _html  = '<p>'+data.msg+'</p>';
 					showstatus.html(_html);
@@ -88,7 +91,6 @@ $(function(){
 	});
 
 	$('body').on('click','.reset',function(){
-		// alert();
 		$.ajax({
 			type:'post',
 			url:'{:url('resetcache')}',
@@ -99,6 +101,7 @@ $(function(){
 				if(data.code){
 					layer.msg(data.msg);
 					$('body').find('i.status-ok').fadeOut();
+					$('body').find('.showstatus').text('');
 				}else{
 					
 				}

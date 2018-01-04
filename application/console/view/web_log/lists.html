@@ -1,7 +1,7 @@
 {extend name="mould:base" /}
 {block name="title"}{/block}
 {block name="content"}
-<div style="overflow: auto;">
+<div class="table-item-search-area">
   <div class="search-area" style="float: right;">
     搜索ID：
     <div class="layui-inline">
@@ -9,10 +9,10 @@
     </div>
     控制器：
     <div class="layui-inline">
-      <input name="controller" class="layui-input" data-like="1">
+      <input name="controller" class="layui-input layui-input-sm" data-like="1">
     </div>
-    <button class="layui-btn" data-type="search">搜索</button>
-    <button class="layui-btn" data-type="allShow">全部</button>
+    <button class="layui-btn layui-btn-sm" data-type="search">搜索</button>
+    <button class="layui-btn layui-btn-sm" data-type="allShow">全部</button>
   </div>
 </div>
 <table class="layui-hide" id="table_list" lay-filter="#table_list" data-url="{:url('lists')}">

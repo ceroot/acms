@@ -458,7 +458,7 @@ a:visited {
 .content-main .content-body{
 	padding-left: 16px;
 	padding-top: 55px;
-	padding-bottom: 65px;
+	/*padding-bottom: 65px;*/
 	margin-right:16px;
 }
 
@@ -669,3 +669,6 @@ label.layui-form-label{ width: 110px; }
 
 
 .cover img{ width: 120px; height: 80px; }
+
+.table-item-search-area{ overflow: auto; }
+.table-item-search-area > .search-area > .layui-inline >input{ height: 30px; }

@@ -1,0 +1,119 @@
+{extend name="mould:base" /}
+{block name="title"}{/block}
+{block name="css"}
+<style type="text/css">
+      <style>
+    .thumb {margin-left:5px; margin-top:15px; height:128px}
+    #prevModal {width:100%; height:100%; text-align:center; display:none;}
+    #img_prev {max-width:98%; max-height:98%; margin: 10px auto}
+
+  </style>
+</style>
+{/block}
+{block name="content"}
+
+<form action="{:url('renew')}" method="post" class="layui-form">
+   <script id="content" class="ueditor" name="content" type="text/plain">
+                
+            </script>
+<script type="text/javascript">
+
+layui.use('upload', function(){
+    var $ = layui.jquery
+    ,upload = layui.upload;
+    
+    //普通图片上传
+    var uploadInst = upload.render({
+        elem: '#test1'
+        ,url: '/upload/'
+        ,accept: 'images'
+        ,auto: false
+        ,choose: function(obj){
+            var files = obj.pushFile();
+            obj.preview(function(index, file, result){
+                var tr = $(['<img class="layui-upload-img" src="' + result + '">'].join(''));
+                var _delete = $('#delete');
+                var _coverInput = $('input[name="cover_id"]');
+
+                $('.cover').html(tr); //图片链接（base64）
+                _coverInput.val(result);
+                _delete.show();
+                _delete.on('click',function(){
+                    delete files[index]; //删除对应的文件
+                    tr.remove();
+                    _delete.hide();
+                    _coverInput.val('');
+                });
+
+                $('.cover img').on('click',function(result){
+                    var w = $(window).width() - 360, h = $(window).height() - 200;
+                    var _src = $('.cover img').attr('src');
+                    var _html = '<img src="' + _src + '" width="' + w + '">';
+                    layer.open({
+                        title: false,
+                        type: 1,
+                        area: [w, h], //宽高
+                        content: _html
+                    });
+                });
+            });
+        }
+    });
+  
+});
+
+</script>
+<script type="text/javascript" src="__LIBS__/ueditor/1.4.3.2/ueditor.config.js"></script>
+<script type="text/javascript" src="__LIBS__/ueditor/1.4.3.2/ueditor.all.js"></script>
+<script type="text/javascript">
+$(function(){
+    // var ue = UE.getEditor('content',{
+    //     zIndex:898,
+    //     topOffset:48,
+    //     // initialFrameHeight:'500',
+    //     // toolbarTopOffset:50,
+    //     maximumWords:50000
+    // });
+
+    // UE.getEditor('content').addListener('beforefullscreenchange',function(event,isFullScreen){
+    //     if(isFullScreen){
+    //         // alert('全屏');
+    //         $('body').find('.edui-editor').css({'top':0});
+    //     }else{
+    //         // alert('默认');
+    //         $('body').find('.edui-editor').css({'top':48+'px'});
+    //     }
+    // });
+});
+
+</script>
+</form>
+
+{/block}
+{block name="script"}
+<script type="text/javascript">
+layui.define(function(exports){ //提示：模块也可以依赖其它模块，如：layui.define('layer', callback);
+  var obj = {
+    hello: function(str){
+      alert('Hello '+ (str||'mymod'));
+    }
+  };
+  
+  //输出test接口
+  exports('mymod', obj);
+});
+layui.extend({
+  // ueditorconfig: '{/}__LIBS__/ueditor/1.4.3.2/ueditor.config.js' // {/}的意思即代表采用自有路径，即不跟随 base 路径
+  ueditor: '{/}http://127.0.0.1:888/static/libs/ueditor/1.4.3.2/ueditor.all.js'
+});
+
+layui.use(['config', 'ueditor'], function(){
+  var mymod = layui.mymod
+  ,mod1 = layui.mod1
+  ,mod2 = layui.mod2;
+  
+  mymod.hello('World!'); //弹出 Hello World!
+});
+
+</script>
+{/block}

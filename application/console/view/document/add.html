@@ -95,35 +95,19 @@ layui.use('upload', function(){
 });
 
 </script>
-<link href="/static/libs/ueditor/1.4.3.2/themes/default/css/ueditor.css" type="text/css" rel="stylesheet">
+<!-- <link href="/static/libs/ueditor/1.4.3.2/themes/default/css/ueditor.css" type="text/css" rel="stylesheet"> -->
 <script type="text/javascript" src="__LIBS__/ueditor/1.4.3.2/ueditor.config.js"></script>
 <script type="text/javascript" src="__LIBS__/ueditor/1.4.3.2/ueditor.all.js"></script>
-<script src="/static/libs/ueditor/1.4.3.2/lang/zh-cn/zh-cn.js" type="text/javascript" defer="defer"></script>
-<script type="text/javascript">
-$(function(){
-    var ue = UE.getEditor('content',{
-        zIndex:898,
-        topOffset:48,
-        // initialFrameHeight:'500',
-        // toolbarTopOffset:50,
-        maximumWords:50000
-    });
+<!-- <script src="/static/libs/ueditor/1.4.3.2/lang/zh-cn/zh-cn.js" type="text/javascript" defer="defer"></script> -->
 
-    UE.getEditor('content').addListener('beforefullscreenchange',function(event,isFullScreen){
-        if(isFullScreen){
-            // alert('全屏');
-            $('body').find('.edui-editor').css({'top':0});
-        }else{
-            // alert('默认');
-            $('body').find('.edui-editor').css({'top':48+'px'});
-        }
-    });
-});
-
-</script>
 </form>
 
 {/block}
 {block name="script"}
+<script type="text/javascript">
+$(function(){
+    ueditor();
+});
 
+</script>
 {/block}
