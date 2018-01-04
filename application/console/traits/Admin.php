@@ -197,11 +197,11 @@ trait Admin
                     }
 
                     $model_id       = $this->model->getFieldById($this->id, 'model_id');
-                    $modelName      = db('Model')->getFieldById($model_id, 'name');
-                    $tempData       = db('document_' . $modelName)->find($this->id);
+                    $modelName      = Db::name('Model')->getFieldById($model_id, 'name');
+                    $tempData       = Db::name('document_' . $modelName)->find($this->id);
                     $one['content'] = $tempData['content'];
                     // dump($one['cover_id']);
-                    $one['cover_id'] = db('picture')->getFieldById($one['cover_id'], 'path');
+                    $one['cover_id'] = Db::name('picture')->getFieldById($one['cover_id'], 'path');
                     break;
                 default:
                     if ($this->isWithTrashed()) {
@@ -252,20 +252,26 @@ trait Admin
             // return $data;
             switch (strtolower($this->app->request->controller())) {
                 case 'document':
+                    // 内容类型没有选时的处理
+                    $modelId  = $data['model_id'];
+                    $modelPid = Db::name('model')->getFieldById($modelId, 'extend'); // 取得继承模型 Id
+
+                    $extendModelName = Db::name('model')->getFieldById($modelPid, 'name'); // 取得继承模型名称
+                    $extendModelName == 'document' || $this->error('文档类型错误'); // 验证
+
+                    $modelCount = Db::name('model')->where('extend', $modelPid)->count(); // 统计子模型数
+
+                    $modelCount > 1 || $data['model_id'] = 2; // 如果没有默认为 2
+
                     // 封面图片处理
                     if ($data['cover_id']) {
                         $data['cover_id'] = $this->documentCover($data['cover_id']);
                     } else {
                         unset($data['cover_id']);
+                    }
 
-                    }
-                    // return $data;
-                    if (!$data['description']) {
-                        $data['description'] = get_description($data['content']);
-                    }
-                    if (!$data['keywords']) {
-                        $data['keywords'] = get_keywords($data['content']);
-                    }
+                    $data['description'] || $data['description'] = get_description($data['content']);
+                    $data['keywords'] || $data['keywords']       = get_keywords($data['content']);
                     # code...
                     break;
 
@@ -279,18 +285,17 @@ trait Admin
             // 判断是新增还是更新，如果有键值就是更新，如果没有键值就是新增
             if ($this->app->request->has($this->pk)) {
                 // return $data;
+                $this->id || $this->error('参数错误');
+
                 $data[$this->pk] = $this->id;
-                if (!$this->id) {
-                    return $this->error('参数错误');
-                }
 
                 // 各种模式下对数据的处理
                 switch (strtolower($this->app->request->controller())) {
                     case 'model':
-                        if (input('param.field_sort/a')) {
+                        if ($this->app->request->param('field_sort/a')) {
                             $data['field_sort'] = json_encode($data['field_sort']);
                         }
-                        if (input('param.attribute_list/a')) {
+                        if ($this->app->request->param('attribute_list/a')) {
                             $data['attribute_list'] = arr2str($data['attribute_list']);
                         } else {
                             $data['attribute_list'] = '';
@@ -426,13 +431,8 @@ trait Admin
                 $allPathImages = $pathImages . $dateFile;
 
                 //检查是否有该文件夹，如果没有就创建，并给予最高权限
-                if (!file_exists($allPathTemp)) {
-                    make_dir($allPathTemp);
-                }
-
-                if (!file_exists($allPathImages)) {
-                    make_dir($allPathImages);
-                }
+                file_exists($allPathTemp) || make_dir($allPathTemp);
+                file_exists($allPathImages) || make_dir($allPathImages);
 
                 $filename     = md5(time()) . '.' . $type; // md5加密后的文件名（带后缀）
                 $filePathTemp = $allPathTemp . $filename; // 文件的位置
@@ -466,9 +466,7 @@ trait Admin
             $filename = $tempArr[1]; // 文件名（带后缀）
             $allPath  = $pathImages . $dateFile; // 全部路径
             //检查是否有该文件夹，如果没有就创建，并给予最高权限
-            if (!file_exists($allPath)) {
-                make_dir($allPath);
-            }
+            file_exists($allPath) || make_dir($allPath);
 
             $tempFilePath = $pathTemp . $coverData; // 临时文件位置
 
@@ -512,12 +510,9 @@ trait Admin
         switch ($name) {
             case 'article':
                 // 对 ueditor 内容数据的处理
-                // return $data;
-                // return ueditor_handle($data['content'], $data['title']);
                 $data['content'] = ueditor_handle($data['content'], $data['title']);
 
                 $tempData['content'] = $data['content'];
-                // return 23;
 
                 if ($this->app->request->has($this->pk)) {
                     $contentSqlTemp = $dbtemp->getFieldById($id, 'content');
@@ -528,8 +523,6 @@ trait Admin
                 # code...
                 break;
         }
-
-        // return 222;
 
         if ($this->app->request->has($this->pk)) {
             // 执行更新

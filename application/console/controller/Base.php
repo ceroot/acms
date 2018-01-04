@@ -138,19 +138,9 @@ class Base extends Extend
      */
     public function details()
     {
-
-        // die;
-        if (!$this->id) {
-            return $this->error('参数错误');
-        }
-        if ($this->isWithTrashed()) {
-            $one = $this->model::withTrashed()->find($this->id);
-        } else {
-            $one = $this->model::get($this->id);
-        }
-
+        $this->id || $this->error('参数错误');
+        $one = $this->isWithTrashed() ? $this->model::withTrashed()->find($this->id) : $one = $this->model::get($this->id);
         $this->assign('one', $one);
-        // dump($one);die;
         return $this->menusView();
     }
 
