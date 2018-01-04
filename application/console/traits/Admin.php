@@ -429,7 +429,7 @@ trait Admin
 
                 $this->app->hook->listen('action_log', ['action' => $scene, 'record_id' => $record_id]); // 行为日志记录
 
-                $forward = $_SERVER['REQUEST_URI'];
+                $forward = '';
                 if ($this->app->cookie->has('__forward__')) {
                     $forward = $this->app->cookie->get('__forward__');
                     if ($forward == null) {
@@ -437,6 +437,7 @@ trait Admin
                     }
                     $this->app->cookie->delete('__forward__');
                 }
+
                 return $this->success($this->app->request->has($this->pk) ? '修改成功' : '新增成功', $forward);
             } else {
                 return $this->error('操作失败');

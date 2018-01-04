@@ -95,6 +95,7 @@ class Base extends Extend
             $count  = $redata['count']; // 总条数
             $data   = $redata['data']; // 当年
             // return $data;
+            $this->app->cookie->set('__forward__', $_SERVER['REQUEST_URI']);
             return $this->success('成功', '', $data, $count);
         } else {
             $this->app->cookie->set('__forward__', $_SERVER['REQUEST_URI']);
