@@ -27,7 +27,9 @@ trait Admin
         $pageLimit = Request::param('limit'); // 取得每页数量
         $search    = Request::param('search'); // 搜索标记
         $page      = Request::param('page');
-        $like      = Request::param('like'); // 字段模糊查询标记
+        $like      = Request::param('like');
+
+        // return $likeData;
         //
         //$data      = input('param.'); // 获得 post 数据
         //$pageLimit = input('param.limit'); // 取得每页数量
@@ -76,22 +78,49 @@ trait Admin
 
         // 查询条件
         if ($search) {
-            $tableFields = $this->model->getTableFields(); // 取得表字段
+            // 模糊查询条件处理
+            $likeData = [];
+            foreach ($data as $key => $value) {
+                if (strpos($key, '@like_@') !== false) {
+                    $likeData[] = $value;
+                }
+            }
+
+            // $tableFields = $this->model->getTableFields(); // 取得表字段
+            $tableFields = \Db::getTableFields(\Config::get('database.prefix') . toUnderline($this->app->request->controller()));
             // 重组 post 字段，只取键名
             $mapFields = [];
             foreach ($data as $key => $value) {
                 $mapFields[] = $key;
             }
+
             $intersect = array_intersect($mapFields, $tableFields); // 取得 post 字段与表字段差集，去掉多余的查询字段
+
             // 重组 post 数据
+            // foreach ($intersect as $value) {
+            //     if ($value == $like) {
+            //         $map[$value] = [$value, 'like', '%' . $data[$value] . '%'];
+            //     } else {
+            //         $map[$value] = [$value, '=', $data[$value]];
+            //     }
+            // }
+
+            // 相关条件处理
             foreach ($intersect as $value) {
-                if ($data[$value]) {
-                    $map[$value] = $data[$value];
+                $likTag = false; // 模糊标记
+                foreach ($likeData as $val) {
+                    if ($val == $value) {
+                        $likTag = true;
+                    }
                 }
-                if ($value == $like) {
-                    $map[$value] = array('like', '%' . $data[$value] . '%');
+                if ($likTag) {
+                    $map[$value] = [$value, 'like', '%' . $data[$value] . '%'];
+                } else {
+                    $map[$value] = [$value, '=', $data[$value]];
                 }
             }
+
+            // return $map;
             // 不同模型的处理
             switch (request()->controller()) {
                 case 'Manager':
@@ -116,7 +145,7 @@ trait Admin
         }
 
         $list = '';
-
+        // dump($map);
         // 超级管理员及软删除判断
         if ($this->isWithTrashed()) {
             $list  = $this->model->withTrashed()->where($map)->order($order)->paginate($pageLimit, false, ['page' => $page, 'list_rows' => $pageLimit]);
@@ -387,9 +416,11 @@ trait Admin
                         break;
                     case 'document': // 文档管理时的数据处理
                         $data = $this->model;
+
                         // 文档类型处理
-                        $data['documentExtend'] = $this->documentExtend($data);
-                        // return $data;
+                        if ($this->app->request->has('content')) {
+                            $data['documentExtend'] = $this->documentExtend($data);
+                        }
                         break;
                     default:
                         # code...
@@ -398,7 +429,15 @@ trait Admin
 
                 $this->app->hook->listen('action_log', ['action' => $scene, 'record_id' => $record_id]); // 行为日志记录
 
-                return $this->success($this->app->request->has($this->pk) ? '修改成功' : '新增成功', cookie('__forward__'));
+                $forward = $_SERVER['REQUEST_URI'];
+                if ($this->app->cookie->has('__forward__')) {
+                    $forward = $this->app->cookie->get('__forward__');
+                    if ($forward == null) {
+                        $forward = $_SERVER['REQUEST_URI'];
+                    }
+                    $this->app->cookie->delete('__forward__');
+                }
+                return $this->success($this->app->request->has($this->pk) ? '修改成功' : '新增成功', $forward);
             } else {
                 return $this->error('操作失败');
             }

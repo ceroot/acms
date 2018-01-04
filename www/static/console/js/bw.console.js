@@ -414,6 +414,11 @@ function _init(){
                 var elem_id = '#table_list'
                     ,url = $(elem_id).data('url')
                     ,cols = new Array();
+                var _curr = getQueryString('page'); // 取得当前页
+                var _limit = getQueryString('limit'); // 取得每页显示
+                _curr = _curr ? _curr : 1;
+                _limit = _limit ? _limit : 20;
+
                 // 取得元素
                 $(elem_id).find('thead>tr>th').each(function(index, el) {
                     var tmp = $(this).attr('lay-data');
@@ -433,10 +438,13 @@ function _init(){
                     //,request: {} //如果无需自定义请求参数，可不加该参数
                     //,response: {} //如果无需自定义数据响应名称，可不加该参数
                     //,limits: [30,60,90,150,300]
-                    //,limit: 60 //默认采用60
+                    ,limit: _limit //默认采用60
                     //,loading: true
                     ,cols: [cols]
-                    ,page: true
+                    // ,page: true
+                    ,page: {
+                        curr : _curr
+                    }
                     // ,page: { //详细参数可参考 laypage 组件文档
                     //     layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
                     //     //,curr: 5 //设定初始在第 5 页
@@ -515,7 +523,7 @@ function _init(){
                     }
                     ,search: function(){  // 查询
                         var search_area = $('.search-area')
-                            ,where = new Object();
+                            ,where = new Object()
                         where['search'] = true;
                         search_area.find('input').each(function(index, el) {
                             var _self = $(this)
@@ -523,12 +531,12 @@ function _init(){
                                 ,_value = _self.val();
                           
                             where[_name] = _value;
-                            var _like = _self.data('like'); // 模糊查询标记，目前只能有一个模糊查询元素
+
+                            var _like = _self.data('like'); // 模糊查询标记
                             if(_like){
-                              where['like'] = _name;
+                                where['@like_@'+_name] = _name;
                             }
                         });
-
                         console.log(where);
                       
                         var loading = layer.load();
@@ -762,7 +770,7 @@ function _init(){
                             //layer.msg(result.msg, {time: 5000, icon:6});
                             layer.msg(result.msg,{time:500,shift:0, icon:6},function(){
                                if(result.url){
-                                    //window.location.href = result.url;
+                                    window.location.href = result.url;
                                 } 
                             });
                         }else{

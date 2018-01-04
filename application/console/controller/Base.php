@@ -22,17 +22,12 @@ class Base extends Extend
         parent::initialize();
 
         $this->app->cache->has('instantiation_controller') || $this->error('出错');
-
         $instantiation_controller = $this->app->cache->get('instantiation_controller');
 
         // 判断是否需要实例化的控制器
         if (in_array(strtolower(toUnderline($this->app->request->controller())), $instantiation_controller)) {
-            $this->app->cache->set('d1', date('Y-m-d H:i:s'));
-            // dump($this->app->request->controller());
             $this->model = $this->app->model($this->app->request->controller()); // 实例化控制器
-            $data        = $this->model->select();
-            // dump($data);die;
-            $this->pk = $this->model->getPk(); // 取得主键字段名
+            $this->pk    = $this->model->getPk(); // 取得主键字段名
             if ($this->app->request->has($this->pk)) {
                 $this->id = deauthcode($this->app->request->param($this->pk)); // id解密
             }
@@ -41,25 +36,9 @@ class Base extends Extend
 
     public function test($type = 0)
     {
-        $m = model('article');
-        dump($m->select());
-        dump($this->app->cache->get('d1'));
-        dump($this->app->cache->get('d2'));
-        dump($this->app->cache->get('d3'));
-        dump($this->app->cache->get('d4'));
-        dump($this->app->cache->get('d5'));
-        dump($this->app->cache->get('d6'));
-        dump($this->app->cache->get('d7'));
-
-        if ($type) {
-            cache('d1', null);
-            cache('d2', null);
-            cache('d3', null);
-            cache('d4', null);
-            cache('d5', null);
-            cache('d6', null);
-            cache('d7', null);
-        }
+        // $tableFields = $this->app->getTableFields('cy_' . $this->app->request->controller()); // 取得表字段
+        $tableFields = \Db::getTableFields('cy_' . $this->model->getName());
+        dump($tableFields);
     }
 
     /**
@@ -84,9 +63,7 @@ class Base extends Extend
      */
     protected function menusView($template = '', $value = [])
     {
-        $this->app->cache->set('d6', date('Y-m-d H:i:s'));
         $menus = $this->getMenus();
-        $this->app->cache->set('d7', date('Y-m-d H:i:s'));
         $this->assign('menus', $menus); // 一级菜单输出
         $this->assign('second', $menus['second']); // 二级菜单输出
         $this->assign('title', $menus['showtitle']); // 标题输出
@@ -117,9 +94,10 @@ class Base extends Extend
             $redata = $this->_lists(); // 返回的数据
             $count  = $redata['count']; // 总条数
             $data   = $redata['data']; // 当年
+            // return $data;
             return $this->success('成功', '', $data, $count);
         } else {
-            cookie('__forward__', $_SERVER['REQUEST_URI']);
+            $this->app->cookie->set('__forward__', $_SERVER['REQUEST_URI']);
             return $this->menusView();
         }
     }

@@ -28,15 +28,12 @@ class Document extends Base
     {
         parent::initialize();
 
-        $category = Db::name('category')->where('status', 1)->select();
+        $category = Db::name('category')->where('status', 1)->field('id,pid,title')->select();
         $this->assign('category', $category);
 
         $model_id   = Db::name('model')->getFieldByName('document', 'id');
-        $model_list = Db::name('model')->where('extend', $model_id)->select();
-        // dump($model_list);die;
+        $model_list = Db::name('model')->where('extend', $model_id)->field('id,title')->select();
         $this->assign('model_list', $model_list);
-        // die;
-
     }
 
 }
