@@ -65,8 +65,8 @@ $(function(){
 		var _url   = _form.prop('action');
 		var _data  = _form.serialize();
 		var showstatus  = $('.showstatus');
-
-		if($('body').find('.status-ok:hidden').lenght == 0){
+		console.log($('body').find('.status-ok:hidden').length);
+		if($('body').find('.status-ok:hidden').length == 0){
 			$('body').find('div.status>i').hide();
 		}
 		
@@ -83,16 +83,18 @@ $(function(){
 			},
 			success:function(data){
 				console.log(data);
-				if(data.code){
-					var _html  = '<p>'+data.msg+'</p>';
-					$('body').find('input[value="' + data.data.type + '"]').siblings('div.status').find('i.status-loading').hide();
-					$('body').find('input[value="' + data.data.type + '"]').siblings('div.status').find('i.status-ok').fadeIn();
-					showstatus.html(_html);
-					storage.setItem('input_index',input_index + 1);
-					setTimeout(function () {
-						_self.click();
-					}, 200);
-					
+				if(data.data.type != 'other'){
+					if(data.code){
+						var _html  = '<p>'+data.msg+'</p>';
+						$('body').find('input[value="' + data.data.type + '"]').siblings('div.status').find('i.status-loading').hide();
+						$('body').find('input[value="' + data.data.type + '"]').siblings('div.status').find('i.status-ok').fadeIn();
+						showstatus.html(_html);
+						storage.setItem('input_index',input_index + 1);
+						setTimeout(function () {
+							_self.click();
+						}, 200);
+						
+					}
 				}else{
 					var _html  = '<p>'+data.msg+'</p>';
 					showstatus.html(_html);
