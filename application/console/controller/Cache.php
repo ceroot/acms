@@ -58,8 +58,8 @@ class Cache extends Base
             // });
             if (\Cache::get('stopTag') == 'other') {
                 $msg = '缓存更新成功...';
-                $this->app->cache->rm('action'); // 删除 action 缓存
-                $this->app->cache->rm('stopTag'); // 删除 stopTag 缓存
+                \Cache::rm('action'); // 删除 action 缓存
+                \Cache::rm('stopTag'); // 删除 stopTag 缓存
                 return $this->error($msg);
             }
 

@@ -76,11 +76,7 @@ class Bing extends Extend
     public function test()
     {
 
-        $ip = request()->ip();
-
-        dump(Tools::isLocal($ip));
-        return preg_match('%^127\.|10\.|192\.168|172\.(1[6-9]|2|3[01])%', $ip);
-        die;
+        return view();
 
     }
 
@@ -200,10 +196,16 @@ class Bing extends Extend
         $data['previd']   = $prevId;
         $data['nextid']   = $nextId;
         $data['keywords'] = $keywords;
+
+        $wxdata['timestamp'] = time();
+        $wxdata['nonce']     = md5(time());
+        $wxdata['signature'] = md5(md5(time()));
+
         // dump($data);
         // die;
         $this->assign('groom', $groom);
         $this->assign('data', $data);
+        $this->assign('wxdata', $wxdata);
         return $this->fetch();
 
     }

@@ -69,6 +69,11 @@
 					</div>
 				</div>
 				<div class="w-100 mt-4"></div>
+				<div class="col-12 text-center">
+					<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+					<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdPic":"","bdStyle":"0","bdSize":"32"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+				</div>
+				<div class="w-100 mt-4"></div>
 				<div class="col-6">
 					{if condition="is_numeric($data.previd)"}
 						<a href="{:url('index/Bing/details',['id'=>authcode($data.previd)])}" title="上一个"><i class="fa fa-angle-left fa-fw"></i>上一个</a>
@@ -118,6 +123,7 @@
 	    	</div>
 		</div>
 	{/notempty}
+
 	<div class="container-full">
 		<footer class="mt-4 mb-2 pt-3 text-center">
 			QQ：525566309 邮箱：ceroot@163.com<br>
@@ -132,18 +138,15 @@
 <!-- bootstrap -->
 <script type="text/javascript" src="__LIBS__/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="__LIBS__/lazyload/2.x/lazyload.min.js"></script>
-<script type="text/javascript" src="https://hm.baidu.com/hm.js?9d431989a95c98f4e1d5353cadad4487"></script>
 <script type="text/javascript">
 	$(function(){
 		lazyload();
+
+
+
+
 	});
-	
-	// var _hmt = _hmt || [];
-	// (function() {
-	//   var hm = document.createElement("script");
-	//   hm.src = "https://hm.baidu.com/hm.js?9d431989a95c98f4e1d5353cadad4487";
-	//   var s = document.getElementsByTagName("script")[0]; 
-	//   s.parentNode.insertBefore(hm, s);
-	// })();
 </script>
+
+<script type="text/javascript" src="https://hm.baidu.com/hm.js?9d431989a95c98f4e1d5353cadad4487"></script>
 </html>
