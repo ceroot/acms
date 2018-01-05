@@ -32,12 +32,8 @@ class Cache extends Base
 
     public function ctest()
     {
-        $value  = 'value';
-        $action = $this->app->cache->remember('action', function () use ($value) {
-            return $value;
-        });
 
-        dump($action);
+        dump(session('action'));
     }
 
     /**
@@ -50,102 +46,93 @@ class Cache extends Base
     public function cache()
     {
         $runTimePath = Env::get('runtime_path'); // 运行目录
+        $msg         = '';
 
         if ($this->app->request->isAjax()) {
-
-            // $action = $this->app->cache->remember('action', function () use ($dataA) {
-            //     return $dataA;
-            // });
-            if (\Cache::get('stopTag') == 'other') {
-                $msg = '缓存更新成功...';
-                \Cache::rm('action'); // 删除 action 缓存
-                \Cache::rm('stopTag'); // 删除 stopTag 缓存
-                return $this->error($msg);
-            }
-
-            if (!$this->app->cache->has('action')) {
+            if (!\Session::has('action')) {
                 $action = $this->app->request->param('action/a');
-                $this->app->cache->set('action', $action);
+                \Session::set('action', $action);
             } else {
-                $action = $this->app->cache->get('action');
+                $action = \Session::get('action');
             }
+            // die;
 
             $current = array_shift($action);
-            $this->app->cache->set('action', $action);
+            \Session::set('action', $action);
+            switch (strtolower($current)) {
+                case 'config':
+                    $Config = new \app\common\model\Config;
+                    $config = $Config->cache_config();
+                    $msg    = '网站配置';
+                    break;
+                case 'category':
+                    $msg = '栏目缓存';
+                    //D('Category')->update_cache();
+                    break;
+                case 'table':
 
-            if (!empty($action)) {
-                switch ($current) {
-                    case 'Config':
-                        $Config = new \app\common\model\Config;
-                        $config = $Config->cache_config();
-                        $msg    = '网站配置更新成功...';
-                        break;
-                    case 'Category':
-                        $msg = '栏目缓存更新成功...';
-                        //D('Category')->update_cache();
-                        break;
-                    case 'Table':
+                    $msg = '数据表缓存';
+                    break;
+                case 'rule':
+                    $this->app->model('authRule')->updateCache();
+                    $msg = '规则表缓存';
+                    break;
+                case 'ueditor':
+                    $ueditorPath = './data/ueditor/';
 
-                        $msg = '数据表缓存更新成功...';
-                        break;
-                    case 'rule':
-                        $this->app->model('authRule')->updateCache();
-                        $msg = '规则表缓存更新成功...';
-                        break;
-                    case 'ueditor':
-                        $ueditorPath = './data/ueditor/';
+                    Dir::del($ueditorPath . 'file');
+                    Dir::del($ueditorPath . 'images');
+                    Dir::del($ueditorPath . 'video');
 
-                        Dir::del($ueditorPath . 'file');
-                        Dir::del($ueditorPath . 'images');
-                        Dir::del($ueditorPath . 'video');
+                    Dir::create($ueditorPath . 'file');
+                    Dir::create($ueditorPath . 'images');
+                    Dir::create($ueditorPath . 'video');
+                    $msg = 'ueditor 暂存目录';
+                    break;
+                case 'temp':
+                    $tempPath = '../data/temp';
+                    Dir::del($tempPath);
+                    Dir::create($tempPath);
+                    $msg = '临时目录';
+                    break;
+                case 'sdk_config':
+                    \Cache::rm('oauth_sdk_config');
+                    $msg = '第三方登录 SDK 缓存';
+                    break;
+                case 'runtime':
+                    // is_file(RUNTIME_PATH . 'common~runtime.php') &&
+                    // unlink(RUNTIME_PATH . 'common~runtime.php');
+                    //Dir::del(RUNTIME_PATH . 'temp');
+                    //Dir::del(RUNTIME_PATH . 'data');
+                    //Dir::del(RUNTIME_PATH . 'logs');
+                    Dir::del($runTimePath . 'temp');
+                    Dir::create($runTimePath . 'temp');
+                    Dir::del($runTimePath . 'cache');
+                    Dir::create($runTimePath . 'cache');
+                    $msg = '运行目录（runtime）...';
+                    break;
+                case 'other':
 
-                        Dir::create($ueditorPath . 'file');
-                        Dir::create($ueditorPath . 'images');
-                        Dir::create($ueditorPath . 'video');
-                        $msg = 'ueditor 暂存目录更新成功...';
-                        break;
-                    case 'temp':
-                        $tempPath = '../data/temp';
-                        Dir::del($tempPath);
-                        Dir::create($tempPath);
-                        $msg = '临时目录更新成功...';
-                        break;
-                    case 'sdk_config':
-                        $this->app->cache->rm('oauth_sdk_config');
-                        $msg = '第三方登录SDK缓存更新成功...';
-                        break;
-                    case 'other':
-                        // is_file(RUNTIME_PATH . 'common~runtime.php') &&
-                        // unlink(RUNTIME_PATH . 'common~runtime.php');
-                        // // 删除目录
-                        // Dir::del(RUNTIME_PATH . 'cache');
-                        //Dir::del(RUNTIME_PATH . 'temp');
-                        //Dir::del(RUNTIME_PATH . 'data');
-                        //Dir::del(RUNTIME_PATH . 'logs');
-                        Dir::del($runTimePath . 'cache');
-                        Dir::create($runTimePath . 'cache');
-                        Dir::del($runTimePath . 'temp');
-                        Dir::create($runTimePath . 'temp');
-                        // $this->app->cache->clear();
-                        $msg = '其它项更新成功';
-                        \Cache::set('stopTag', $current);
-                        break;
-                    default:
-
-                        # code...
-                        break;
-                }
-
-                $data['type'] = $current;
-                return $this->success($msg, '', $data);
-            } else {
-                //$msg = '缓存更新成功...';
-                //$this->app->cache->rm('action'); // 删除 action 缓存
-
-                // 日志记录
-                //action_log(1);
-                //return $this->error($msg);
+                    $msg = '其它缓存';
+                    break;
+                default:
+                    // $msg = '没有默认跳过';
+                    # code...
+                    break;
             }
+
+            $data['type'] = $current;
+            $data['end']  = 0;
+            \Session::set('logText', $msg);
+
+            if (count($action) == 0) {
+                $msg         = '全部缓存更新成功';
+                $data['end'] = 1;
+                \Session::delete('action'); // 删除 action
+            }
+
+            \Hook::listen('action_log', ['record_id' => 0]);
+            return $this->success($msg, '', $data);
 
         } else {
             return $this->menusView();
@@ -155,8 +142,7 @@ class Cache extends Base
 
     public function resetcache()
     {
-        $this->app->cache->rm('action');
-        $this->app->cache->rm('stopTag');
+        \Session::delete('action');
         return $this->success('重置成功');
     }
 }

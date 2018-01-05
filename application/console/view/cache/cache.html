@@ -26,16 +26,16 @@
 	{:widget('Widgets/form', ['type'=>'checkbox','name'=>'action','value'=>'Config','datalist'=>['ueditor'=>'ueditor 暂存目录']])}
 	{:widget('Widgets/form', ['type'=>'checkbox','name'=>'action','value'=>'Config','datalist'=>['temp'=>'临时目录']])}
 	{:widget('Widgets/form', ['type'=>'checkbox','name'=>'action','value'=>'Config','datalist'=>['sdk_config'=>'第三方登录缓存']])}
+	{:widget('Widgets/form', ['type'=>'checkbox','name'=>'action','value'=>'Config','datalist'=>['runtime'=>'运行目录（runtime）']])}
 	{:widget('Widgets/form', ['type'=>'checkbox','name'=>'action','value'=>'Config','datalist'=>['other'=>'其它项']])}
 	<div class="layui-form-item" pane="">
         <div class="layui-input-block">
-        	<div class="showstatus"></div>
+        	<div class="showstatus" style="color: #666;"></div>
         </div>
         <div class="layui-form-mid layui-word-aux"></div>
     </div>
     <div class="layui-form-item" pane="">
         <div class="layui-input-block">
-        	<input type="hidden" name="action[]" value="end" checked='checked'>
 			<button class="layui-btn layui-btn-sm" type="submit">更新缓存</button>
 			<a class="layui-btn layui-btn-sm reset" href="javascript:;">重置更新缓存</a>
         </div>
@@ -57,6 +57,7 @@ $(function(){
 
 	// storage.removeItem('input_index');
 	storage.setItem('input_index',0);
+	storage.setItem('reset',0);
 
 	$('form button[type="submit"]').on('click',function(e){
 		e.preventDefault();
@@ -65,14 +66,21 @@ $(function(){
 		var _url   = _form.prop('action');
 		var _data  = _form.serialize();
 		var showstatus  = $('.showstatus');
-		console.log($('body').find('.status-ok:hidden').length);
-		if($('body').find('.status-ok:hidden').length == 0){
-			$('body').find('div.status>i').hide();
+		var _html;
+
+		if(storage.getItem('reset')==1){
+			$('body').find('div.status>i.status-ok').hide();
+			storage.setItem('reset',0);
 		}
 		
 		input_index  = parseInt(storage.getItem('input_index'));
 		console.log(input_index);
-		$('body').find('input').eq(input_index).siblings('div.status').find('i.status-loading').show();
+		$('body').find('input[type="checkbox"]:checked').eq(input_index).siblings('div.status').find('i.status-loading').show();
+
+		_html = '<i class="layui-icon" style="color:#5FB878">&#xe63d;</i> 正在操作';
+		_html = _html + $('body').find('input[type="checkbox"]:checked').eq(input_index).siblings('div.layui-form-checkbox').find('span').text();
+		console.log(_html);
+		showstatus.html(_html);
 		$.ajax({
 			type:'post',
 			url:_url,
@@ -83,17 +91,21 @@ $(function(){
 			},
 			success:function(data){
 				console.log(data);
-				if(data.data.type != 'end'){
-					if(data.code){
-						var _html  = '<p>'+data.msg+'</p>';
-						$('body').find('input[value="' + data.data.type + '"]').siblings('div.status').find('i.status-loading').hide();
-						$('body').find('input[value="' + data.data.type + '"]').siblings('div.status').find('i.status-ok').fadeIn();
-						showstatus.html(_html);
-						storage.setItem('input_index',input_index + 1);
+				if(data.code){
+					_html  = '<p>'+data.msg+'</p>';
+					$('body').find('input[value="' + data.data.type + '"]').siblings('div.status').find('i.status-loading').hide();
+					$('body').find('input[value="' + data.data.type + '"]').siblings('div.status').find('i.status-ok').fadeIn();
+					// showstatus.html(_html);
+					storage.setItem('input_index',input_index + 1);
+					if(!data.data.end){
 						setTimeout(function () {
 							_self.click();
 						}, 200);
-						
+					}
+					if(data.data.end){
+						storage.setItem('input_index',0);
+						storage.setItem('reset',1);
+						showstatus.html(_html);
 					}
 				}else{
 					var _html  = '<p>'+data.msg+'</p>';
@@ -107,7 +119,8 @@ $(function(){
 	});
 
 	$('body').on('click','.reset',function(){
-
+		storage.setItem('input_index',0);
+		storage.setItem('reset',0);
 		$.ajax({
 			type:'post',
 			url:'{:url('resetcache')}',

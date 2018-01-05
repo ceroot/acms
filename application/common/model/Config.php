@@ -18,6 +18,7 @@
 namespace app\common\model;
 
 use app\common\model\Extend;
+use think\Db;
 use think\facade\Cache;
 use think\facade\Config as Cfg;
 
@@ -64,7 +65,7 @@ class Config extends Extend
             ['status', '=', 1],
         ];
         // $data = $this->where($map)->field('type,name,value')->select();
-        $data = db('config')->where($map)->field('type,name,value')->select();
+        $data = Db::name('config')->where($map)->field('type,name,value')->select();
 
         $config = array();
         if ($data && is_array($data)) {

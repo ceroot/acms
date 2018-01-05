@@ -49,11 +49,11 @@ class AuthRule extends Extend
     public function updateCacheAuthModel()
     {
 
-        if (!Cache::get('authrule')) {
-            return false;
-        }
+        // if (!Cache::has('authrule')) {
+        //     return false;
+        // }
 
-        $notAuth = []; // 不需要进行权限验证的方法
+        $notAuth                 = []; // 不需要进行权限验证的方法
         $instantiationController = []; // 需要实列化的控制器
 
         foreach (Cache::get('authrule') as $val) {
@@ -113,13 +113,13 @@ class AuthRule extends Extend
             if ($value['status']) {
                 // 激活当前处理
                 $value['active'] = 0;
-                $controller = toCamel(request()->controller());
-                $action = toCamel(request()->action());
+                $controller      = toCamel(request()->controller());
+                $action          = toCamel(request()->action());
 
                 // 取得当前控制器id与方法id
                 if (strtolower($value['name']) == strtolower($controller . '/' . $action)) {
                     $currentData = [
-                        'action_id' => $value['id'],
+                        'action_id'     => $value['id'],
                         'controller_id' => $value['pid'],
                     ];
                 }
@@ -127,7 +127,7 @@ class AuthRule extends Extend
                 switch ($value['name']) {
                     case 'index/index':
                         $time = date('YmdHis') . getrandom(128);
-                        $url = url('console/index/index?time=' . $time);
+                        $url  = url('console/index/index?time=' . $time);
                         # code...
                         break;
                     case 'manager/log': // 管理员管理
@@ -148,7 +148,7 @@ class AuthRule extends Extend
                         }
                 }
                 $value['url'] = $url;
-                $navdata[] = $value;
+                $navdata[]    = $value;
             }
         }
 
@@ -185,7 +185,7 @@ class AuthRule extends Extend
                 }
             }
             $second['title'] = $producttitle;
-            $second['data'] = get_cate_by_pid($activedata, $currentData['controller_id']);
+            $second['data']  = get_cate_by_pid($activedata, $currentData['controller_id']);
         } else {
             foreach ($activedata as $value) {
                 if ($currentData['action_id'] == $value['id']) {
@@ -194,10 +194,10 @@ class AuthRule extends Extend
                 }
             }
             $second['title'] = $producttitle;
-            $second['data'] = get_chi_ids($navdata, $currentData['action_id']);
+            $second['data']  = get_chi_ids($navdata, $currentData['action_id']);
         }
-        $treeArray['second'] = $second; // 二级菜单数据
-        $treeArray['bread'] = $bread; // 面包萱
+        $treeArray['second']    = $second; // 二级菜单数据
+        $treeArray['bread']     = $bread; // 面包萱
         $treeArray['showtitle'] = end($bread)['title']; // 当前标题
 
         // 去掉不需要显示的
