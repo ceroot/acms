@@ -83,7 +83,7 @@ $(function(){
 			},
 			success:function(data){
 				console.log(data);
-				if(data.data.type != 'other'){
+				if(data.data.type != 'end'){
 					if(data.code){
 						var _html  = '<p>'+data.msg+'</p>';
 						$('body').find('input[value="' + data.data.type + '"]').siblings('div.status').find('i.status-loading').hide();
