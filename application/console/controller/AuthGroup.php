@@ -71,14 +71,8 @@ class AuthGroup extends Base
                 $temp = '';
             }
 
-            // return $temp;
             $status = $this->model->where('id', $this->id)->setField('rules', $temp);
-
-            if ($status) {
-                return $this->success('修改成功');
-            } else {
-                return $this->error('修改成功');
-            }
+            return $status ? $this->success('修改成功') : $this->error('修改成功');
         } else {
             $rules = $this->app->model('authRule')->getAll(1);
             $this->assign('rules', $rules);

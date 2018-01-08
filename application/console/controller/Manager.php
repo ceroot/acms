@@ -69,7 +69,7 @@ class Manager extends Base
 
             // 数据验证
             $data['id'] = $uid;
-            $result = $this->validate($data, 'app\common\validate\UcenterMember.info'); // 数据验证
+            $result     = $this->validate($data, 'app\common\validate\UcenterMember.info'); // 数据验证
             if ($result !== true) {
                 return $this->error($result);
             }
@@ -125,7 +125,7 @@ class Manager extends Base
                 return $this->error('数据有误');
             }
 
-            $user = $this->model::get($uid, 'UcenterMember');
+            $user         = $this->model::get($uid, 'UcenterMember');
             $userPassword = $this->ucenterMember->getFieldById($uid, 'password');
 
             if (!password_verify($data['oldpassword'], $userPassword)) {
@@ -168,7 +168,7 @@ class Manager extends Base
                 }
 
                 $user = $this->model::get($this->id, 'UcenterMember'); // 从数据取得用户数据
-                $uid = $user['uid'];
+                $uid  = $user['uid'];
 
                 if (!$user) {
                     return $this->error('用户数据错误');
@@ -194,7 +194,7 @@ class Manager extends Base
                     if (!$salt) {
                         $salt = getrandom(10, 1);
                     }
-                    $data['salt'] = $salt;
+                    $data['salt']     = $salt;
                     $data['password'] = User::encryptPassword($data['password']); // 密码加密
                 } else {
                     unset($data['password']);
@@ -210,7 +210,7 @@ class Manager extends Base
                 // 数据保存
                 $status = $this->ucenterMember->save($data, ['id' => $uid]);
 
-                $mid = $this->id; // 取得管理用户 id
+                $mid   = $this->id; // 取得管理用户 id
                 $scene = 'edit'; // 编辑场景
 
             } else {
@@ -220,18 +220,18 @@ class Manager extends Base
                     return $this->error($result);
                 }
 
-                $salt = getrandom(10, 1);
+                $salt             = getrandom(10, 1);
                 $data['password'] = User::encryptPassword($data['password']); // 密码加密
-                $data['salt'] = $salt; // 增加 salt
+                $data['salt']     = $salt; // 增加 salt
 
                 $status = $this->ucenterMember->save($data); // 数据保存
 
                 // 在管理用户表里新增数据
                 if ($status) {
                     $mdata['uid'] = $this->ucenterMember->getLastInsID(); // 取得新增 id;
-                    $status = $this->model->save($mdata); // 保存管理用户数据
-                    $mid = $this->model->getLastInsID(); // 取得管理用户 id
-                    $scene = 'add'; // 编辑场景
+                    $status       = $this->model->save($mdata); // 保存管理用户数据
+                    $mid          = $this->model->getLastInsID(); // 取得管理用户 id
+                    $scene        = 'add'; // 编辑场景
                 }
             }
 

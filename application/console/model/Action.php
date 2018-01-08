@@ -18,9 +18,7 @@ class Action extends Extend
      */
     public function add_for_rule()
     {
-
         if (Request::isPost()) {
-
             $name = Request::param('name'); // 取得规则名称
             $arr  = explode('/', $name);
 
@@ -41,7 +39,6 @@ class Action extends Extend
             if ($validate->check($data)) {
                 return $this->save($data);
             }
-
         }
     }
 

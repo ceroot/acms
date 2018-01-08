@@ -48,19 +48,15 @@ class AuthRule extends Extend
      */
     public function updateCacheAuthModel()
     {
-
         // if (!Cache::has('authrule')) {
         //     return false;
         // }
-
         $notAuth                 = []; // 不需要进行权限验证的方法
         $instantiationController = []; // 需要实列化的控制器
 
         foreach (Cache::get('authrule') as $val) {
             // 取得不需要进行权限验证
-            if (!$val['auth'] && $val['status']) {
-                $notAuth[] = strtolower($val['name']);
-            }
+            (!$val['auth'] && $val['status']) && $notAuth[] = strtolower($val['name']);
             // 取得不需要实例化模型的控制器名称
             if ($val['controller'] && $val['instantiation']) {
 
@@ -70,12 +66,9 @@ class AuthRule extends Extend
                 } else {
                     $name = $val['name'];
                 }
-                // $data['not_d_controller'][]         = $name;
                 $instantiationController[] = toUnderline($name);
 
             }
-            // dump($instantiation_controller);
-            // $data['instantiation_controller'] = $instantiation_controller;
         }
         Cache::set('not_auth', $notAuth); // 缓存不需要进行权限验证
         Cache::set('instantiation_controller', $instantiationController); // 缓存需要实列化的控制器
@@ -88,7 +81,6 @@ class AuthRule extends Extend
     public function consoleMenu()
     {
         $cache = Cache::get('authrule');
-        // dump($cache);die;
         // 判断是不是超级管理员
         if (in_array(Session::get('manager_id'), Config::get('auth_superadmin'))) {
             $data = $cache;
@@ -99,7 +91,7 @@ class AuthRule extends Extend
             // 2 不需要进行权限验证的
             $notAuth = Cache::get('not_auth'); // 从缓存取得不需要进行权限验证的数据
             // dump($notAuth);die;
-            $data = array();
+            $data = [];
             foreach ($cache as $value) {
                 if (Auth::check($value['name'], Session::get('manager_id')) || in_array(strtolower($value['name']), $notAuth)) {
                     $data[] = $value;
@@ -124,6 +116,7 @@ class AuthRule extends Extend
                     ];
                 }
 
+                // 处理 url
                 switch ($value['name']) {
                     case 'index/index':
                         $time = date('YmdHis') . getrandom(128);
@@ -141,11 +134,7 @@ class AuthRule extends Extend
                         $url = '';
                         break;
                     default:
-                        $url = url($value['name']);
-                        if ($value['url'] != null) {
-                            // $url = url($value['url']);
-                            $url = $value['url'];
-                        }
+                        $url = $value['url'] ?: url($value['name']);
                 }
                 $value['url'] = $url;
                 $navdata[]    = $value;
@@ -163,12 +152,12 @@ class AuthRule extends Extend
         $bread = get_parents($navdata, $currentData['action_id']);
 
         // 只取id组成数组
-        $activeidarr = array();
+        $activeidarr = [];
         foreach ($bread as $value) {
             $activeidarr[] = $value['id'];
         }
         // 高亮标识
-        $activedata = array();
+        $activedata = [];
         foreach ($navdata as $value) {
             if (in_array($value['id'], $activeidarr)) {
                 $value['active'] = 1;
@@ -201,15 +190,13 @@ class AuthRule extends Extend
         $treeArray['showtitle'] = end($bread)['title']; // 当前标题
 
         // 去掉不需要显示的
-        $showData = array();
+        $showData = [];
         foreach ($activedata as $key => $value) {
             if ($value['isnavshow'] == 1) {
                 $showData[] = $value;
             }
         }
-        // dump($showData);
         $treeArray['menu'] = get_cate_tree_arr($showData, 0); // 生成树形结构$showData
-
         return $treeArray;
     }
 

@@ -19,9 +19,10 @@ Route::rule('bing/$', 'index/Bing/index');
 Route::rule('bing/details/:id', 'index/Bing/details');
 Route::rule('bing/download/:id', 'index/Bing/download');
 Route::rule('new/:id', 'index/News/read');
+// Route::domain('console', 'console');
 
 // Route::domain('bing', function () {
-//     // 动态注册域名的路由规则
+// 动态注册域名的路由规则
 //     Route::rule('details/:id', 'index/Bing/details');
 //     Route::rule('download/:id', 'index/Bing/download');
 //     Route::bind('index/Bing');

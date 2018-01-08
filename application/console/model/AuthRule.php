@@ -35,15 +35,9 @@ class AuthRule extends Extend
      */
     public function getAll($isArray = 0)
     {
-
-        $cache = Cache::get('authrule');
-
-        if ($isArray) {
-            return Data::channelLevel($cache, 0, '', 'id', 'pid');
-        } else {
-            return Data::tree($cache, 'title', 'id', 'pid');
-
-        }
+        $cache  = Cache::get('authrule');
+        $redata = $isArray ? Date::channelLevel($cache, 0, '', 'id', 'pid') : Data::tree($cache, 'title', 'id', 'pid');
+        return $redata;
     }
 
     public function updateCache()

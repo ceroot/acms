@@ -49,9 +49,7 @@ class Start extends Controller
             $password = Request::param('password'); // 密码
             $code     = Request::param('verify'); // 验证码
             // 设置错误 session
-            if (!Session::has('error_num')) {
-                Session::set('error_num', 0);
-            }
+            Session::has('error_num') || Session::set('error_num', 0);
 
             // 检测错误次数
             $error_num = Session::get('error_num');
