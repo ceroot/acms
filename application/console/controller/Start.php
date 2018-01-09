@@ -95,6 +95,12 @@ class Start extends Controller
     }
     public function test()
     {
+        $tag  = 0;
+        $sur  = 456;
+        $sur2 = 977;
+        $val  = $tag ? $sur : $sur2;
+        dump($val);
+        die;
         set_time_limit(0);
         // $url = 'http://ip.taobao.com/service/getIpInfo.php?ip=1.204.54.195';
         // $ch  = curl_init();

@@ -1138,7 +1138,7 @@ var tableOperation = {
 
 function ueditor(){
     var ue = UE.getEditor('content',{
-        zIndex:898,
+        zIndex:88,
         topOffset:48,
         // initialFrameHeight:'500',
         // toolbarTopOffset:50,

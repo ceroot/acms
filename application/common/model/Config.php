@@ -64,10 +64,9 @@ class Config extends Extend
         $map = [
             ['status', '=', 1],
         ];
-        // $data = $this->where($map)->field('type,name,value')->select();
         $data = Db::name('config')->where($map)->field('type,name,value')->select();
 
-        $config = array();
+        $config = [];
         if ($data && is_array($data)) {
             foreach ($data as $value) {
                 switch (strtolower($value['name'])) {

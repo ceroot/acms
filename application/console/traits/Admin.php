@@ -478,14 +478,11 @@ trait Admin
                 $filePathTemp = $allPathTemp . $filename; // 文件的位置
                 if (file_put_contents($filePathTemp, base64_decode(str_replace($result[1], '', $coverData)))) {
                     if (file_exists($filePathTemp)) {
-
                         $image = \think\Image::open($filePathTemp);
                         if ($image) {
                             $filePath = $allPathImages . $filename;
-                            // 按照原图的比例生成一个最大为150*150的缩略图并保存为封面图像
-                            if ($image->thumb(400, 400)->save($filePath)) {
-                                unlink($filePathTemp); // 删除临时文件
-                            };
+                            // 按照原图的比例生成一个最大为150*150的缩略图并保存为封面图像，最后删除临时文件
+                            $image->thumb(400, 400)->save($filePath) && unlink($filePathTemp);
                         }
 
                         $data['path']        = $dateFile . $filename;
@@ -494,7 +491,6 @@ trait Admin
                         $data['sha1']        = sha1($filePath);
 
                         return Db::name('picture')->insertGetId($data);
-
                     }
                 } else {
                     return 0;
@@ -515,11 +511,8 @@ trait Admin
                 $image = \think\Image::open($tempFilePath);
                 if ($image) {
                     $filePath = $allPath . $filename;
-                    // 按照原图的比例生成一个最大为150*150的缩略图并保存为封面图像
-                    if ($image->thumb(400, 400)->save($filePath)) {
-                        unlink($tempFilePath); // 删除临时文件
-                    };
-
+                    // 按照原图的比例生成一个最大为150*150的缩略图并保存为封面图像，最后删除临时文件
+                    $image->thumb(400, 400)->save($filePath) && unlink($tempFilePath);
                 }
             }
         } elseif ($type == 3) {
@@ -549,14 +542,6 @@ trait Admin
         // return 12;
         switch ($name) {
             case 'article':
-                // 对 ueditor 内容数据的处理
-                $data['content'] = ueditor_handle($data['content'], $data['title']);
-
-                $tempData['content'] = $data['content'];
-
-                if ($this->app->request->has($this->pk)) {
-                    $contentSqlTemp = $dbtemp->getFieldById($id, 'content');
-                }
 
                 break;
             default:

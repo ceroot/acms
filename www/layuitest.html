@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <title>开始编写一个自己的模块：notification</title>
+<link rel="stylesheet" type="text/css" href="/static/libs/layui/2.2.5/css/layui.css" media="all">
+</head>
+<body>
+
+<div style="padding: 50px;">
+  <button class="layui-btn layui-btn-primary demo" data-type="hello">Hello</button>
+</div>
+
+<div>
+<script id="content" class="ueditor" name="content" type="text/plain">
+
+</script>
+</div>
+
+<script type="text/javascript" src="/static/libs/layui/2.2.5/layui.js"></script>
+
+
+<script>
+layui.config({base: '../mods/'}).use('notification', function(){
+  var $ = layui.$
+  ,notification = layui.notification;
+  
+  //触发事件
+  var active = {
+    //测试接口是否能正常调用
+    hello: function(){
+      notification.open({
+        content: 'hello notification'
+      });
+    }
+  };
+  
+  $('.demo').on('click', function(){
+    var othis = $(this)
+    ,type = othis.data('type');
+    active[type] ? active[type].call(this, othis) : '';
+  });
+
+
+
+  notification.ueditor({
+    content: 'hello notification',
+
+  });
+
+
+});
+</script>
+</body>
+</html>

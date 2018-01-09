@@ -73,11 +73,7 @@ if (!function_exists('toUnderline')) {
         for ($i = 0; $i < strlen($str); $i++) {
             $ascii_code = ord($str[$i]);
             if ($ascii_code >= 65 && $ascii_code <= 90) {
-                if ($i == 0) {
-                    $temp_array[] = chr($ascii_code + 32);
-                } else {
-                    $temp_array[] = '_' . chr($ascii_code + 32);
-                }
+                $temp_array[] = ($i == 0) ? chr($ascii_code + 32) : '_' . chr($ascii_code + 32);
             } else {
                 $temp_array[] = $str[$i];
             }
@@ -130,7 +126,6 @@ if (!function_exists('authcode')) {
             if ($pos_b) {
                 $code = str_replace($restr_b, $tostr_b, $code);
             }
-
         } else {
             $pos_a = strpos($str, $tostr_a);
             $pos_b = strpos($str, $tostr_b);
@@ -184,11 +179,7 @@ if (!function_exists('logouturl')) {
 if (!function_exists('getbackurl')) {
     function getbackurl($suffix = true)
     {
-        if ($suffix) {
-            $backurl = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-        } else {
-            $backurl = request()->domain() . '/' . request()->path();
-        }
+        $backurl = $suffix ? 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] : request()->domain() . '/' . request()->path();
         $backurl = rawurlencode($backurl);
         return $backurl;
     }
@@ -661,9 +652,7 @@ if (!function_exists('ueditor_handle')) {
                                 // 实例化图片尺寸类
                                 $newimage = new \imageresize\ImageResize();
                                 $result   = $newimage->resize($imageSrc, $newPath, 800, 500);
-                                if ($result) {
-                                    unlink($imageSrc); // 删除临时文件
-                                }
+                                $result && unlink($imageSrc); // 删除临时文件
                             } else {
                                 rename($imageSrc, $newPath);
                             }
@@ -752,16 +741,12 @@ if (!function_exists('ueditor_handle')) {
                     $newPath  = $pathFiles . $datePath[0] . '/';
 
                     // 判断目录是否存在，如果不存在则创建
-                    if (!is_dir($newPath)) {
-                        make_dir($newPath);
-                    }
+                    is_dir($newPath) && make_dir($newPath);
 
                     // 移动文件
                     $newPath = $newPath . $fileName; // 新路径
                     $value   = '.' . $value; // 旧路径
-                    if (is_file($value)) {
-                        rename($value, $newPath);
-                    }
+                    is_file($value) && rename($value, $newPath);
 
                     // 替换成新的文件路径
                     $newvalue = str_replace('ueditor/', '', $oldValue);
