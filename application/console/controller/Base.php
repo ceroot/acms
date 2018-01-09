@@ -32,10 +32,28 @@ class Base extends Extend
                 $this->id = deauthcode($this->app->request->param($this->pk)); // id解密
             }
         }
+
+        $detect = new \Mobile_Detect;
+        if ($detect->isMobile()) {
+
+        }
+
     }
 
     public function test($type = 0)
     {
+        // require_once 'Mobile_Detect.php';
+        // $detect = new Mobile_Detect;
+        $detect = new \Mobile_Detect;
+        // $extendPath = Env::get('extend_path');
+        dump($detect->version('Edge'));
+        dump($detect->getPhoneDevices());
+        dump($detect->getTabletDevices());
+        dump($detect->getOperatingSystems());
+        dump($detect->getBrowsers());
+        dump($detect->getUtilities());
+        dump($detect->getProperties());
+        die;
         return $this->menusView();
         // $tableFields = $this->app->getTableFields('cy_' . $this->app->request->controller()); // 取得表字段
         $tableFields = \Db::getTableFields('cy_' . $this->model->getName());

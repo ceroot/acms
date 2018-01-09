@@ -1,8 +1,6 @@
 <?php
 namespace app\index\controller;
 
-use think\facade\Cache;
-
 class Index
 {
     public function index()
@@ -17,6 +15,8 @@ class Index
 
     public function test()
     {
-        Cache::clear();
+        $detect = new \Mobile_Detect;
+        // $extendPath = Env::get('extend_path');
+        dump($detect->version('Edge'));
     }
 }

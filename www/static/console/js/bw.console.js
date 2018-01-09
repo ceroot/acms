@@ -240,7 +240,7 @@ function _init(){
 
             // 屏幕大小判断
             if(getWindowSize().x<1366){
-                $.get('/console/index/getcollapsed',{},function(data){
+                $.post('/console/index/getcollapsed',{},function(data){
                     if(data==1){
                         
                     }else{
