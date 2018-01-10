@@ -38,4 +38,29 @@ class Document extends Extend
         dump($data);
     }
 
+    public function reader($id)
+    {
+        $id || $this->error('参数错误');
+        // $id                = deauthor($id);
+        $data = Db::name('Document')->where('status', 1)->find($id);
+
+        $modelId          = $data['model_id'];
+        $coverId          = $data['cover_id'];
+        $template         = $data['template'] ?: 'reader';
+        $data['template'] = $template;
+
+        $coverData     = Db::name('picture')->find($coverId);
+        $data['cover'] = $coverData['path'];
+
+        $documentModelData = Db::name('model')->find($modelId);
+        $extendId          = $documentModelData['extend'];
+        $extendName        = $documentModelData['name'];
+        $name              = Db::name('model')->getFieldById($extendId, 'name');
+        $extendData        = Db::name($name . '_' . $extendName)->find($data['id']);
+        $data['extend']    = $extendData;
+
+        dump($data);
+
+    }
+
 }
