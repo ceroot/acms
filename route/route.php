@@ -13,6 +13,10 @@ Route::get('think', function () {
     return 'hello,ThinkPHP5!';
 });
 
+Route::rule('document/$', 'index/Document/index');
+Route::rule('document/lists', 'index/Document/lists');
+Route::rule('document/reader/:id', 'index/Document/reader');
+
 Route::get('hello/:name', 'index/hello');
 // Route::rule('my', 'Member/myinfo'); // 静态地址路由
 Route::rule('bing/$', 'index/Bing/index');

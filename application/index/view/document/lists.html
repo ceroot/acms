@@ -1,0 +1,18 @@
+{extend name="mould:base" /}
+{block name="title"}{/block}
+{block name="author"}{/block}
+{block name="keywords"}{/block}
+{block name="description"}{/block}
+{block name="content"}
+	<div class="container">
+		<ul>
+		{volist name="list" id="vo"}
+			<li>
+				<a href="{:url('index/Document/reader',['id'=>$vo.id])}" target="_blank" title="{$vo.title}">{$vo.title}</a>
+			</li>
+		{/volist}
+		</ul>
+	</div>
+{/block}
+{block name="script"}
+{/block}

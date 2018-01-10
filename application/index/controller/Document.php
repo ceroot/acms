@@ -21,6 +21,7 @@ namespace app\index\controller;
 
 use app\common\controller\Extend;
 use think\Db;
+use think\facade\App;
 
 class Document extends Extend
 {
@@ -38,28 +39,25 @@ class Document extends Extend
         dump($data);
     }
 
+    public function lists()
+    {
+        $list = Db::name('Document')->select();
+        $this->assign('list', $list);
+
+        return $this->fetch();
+    }
+
     public function reader($id)
     {
         $id || $this->error('参数错误');
         // $id                = deauthor($id);
-        $data = Db::name('Document')->where('status', 1)->find($id);
+        $data = App::model('Document', 'logic')->getReader($id);
 
-        $modelId          = $data['model_id'];
-        $coverId          = $data['cover_id'];
-        $template         = $data['template'] ?: 'reader';
-        $data['template'] = $template;
+        // dump($data);
 
-        $coverData     = Db::name('picture')->find($coverId);
-        $data['cover'] = $coverData['path'];
+        $this->assign('data', $data);
 
-        $documentModelData = Db::name('model')->find($modelId);
-        $extendId          = $documentModelData['extend'];
-        $extendName        = $documentModelData['name'];
-        $name              = Db::name('model')->getFieldById($extendId, 'name');
-        $extendData        = Db::name($name . '_' . $extendName)->find($data['id']);
-        $data['extend']    = $extendData;
-
-        dump($data);
+        return $this->fetch();
 
     }
 
