@@ -251,6 +251,7 @@ class Bing extends Extend
         $file || $this->error('参数错误');
 
         is_file($file) || $this->error('文件不存在');
+
         $fileName = basename($file);
         $model    = model('BingWallpaper');
 
@@ -665,15 +666,11 @@ class Bing extends Extend
 
     public function nametocn($f)
     {
-        // dump(1);die;
         $f        = $f . '01';
         $date     = date($f);
         $firstday = date('Ym01', strtotime($date));
         $lastday  = date('Ymd', strtotime("$firstday +1 month -1 day"));
 
-        // dump($firstday);
-        // dump($lastday);
-        // die;
         $where = [
             ['datesign', '>=', $firstday],
             ['datesign', '<=', $lastday],
@@ -694,10 +691,7 @@ class Bing extends Extend
             } else {
                 dump($_basePath . $newname);
             }
-
         }
-        // dump($data);
-
     }
 
 }

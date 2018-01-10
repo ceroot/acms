@@ -96,15 +96,6 @@ trait Admin
 
             $intersect = array_intersect($mapFields, $tableFields); // 取得 post 字段与表字段差集，去掉多余的查询字段
 
-            // 重组 post 数据
-            // foreach ($intersect as $value) {
-            //     if ($value == $like) {
-            //         $map[$value] = [$value, 'like', '%' . $data[$value] . '%'];
-            //     } else {
-            //         $map[$value] = [$value, '=', $data[$value]];
-            //     }
-            // }
-
             // 相关条件处理
             foreach ($intersect as $value) {
                 $likTag = false; // 模糊标记

@@ -21,12 +21,12 @@ Route::rule('bing/download/:id', 'index/Bing/download');
 Route::rule('new/:id', 'index/News/read');
 // Route::domain('console', 'console');
 
-// Route::domain('bing', function () {
-// 动态注册域名的路由规则
-//     Route::rule('details/:id', 'index/Bing/details');
-//     Route::rule('download/:id', 'index/Bing/download');
-//     Route::bind('index/Bing');
-// });
+Route::domain('bing', function () {
+    // 动态注册域名的路由规则
+    Route::rule('details/:id', 'index/Bing/details');
+    Route::rule('download/:id', 'index/Bing/download');
+    Route::bind('index/Bing');
+});
 
 // Route::domain('bing', '\app\index\controller\Bing');
 
@@ -40,6 +40,10 @@ Route::rule('resize', function ($i, $w) {
 
     if ($w < 67) {
         return '参数错误w';
+    }
+
+    if (!file_exists($image)) {
+        return '文件错误';
     }
 
     $size   = getimagesize($image); // 得到图像的大小
@@ -72,6 +76,7 @@ Route::rule('resize', function ($i, $w) {
     imagejpeg($dst, null, 100);
     imagedestroy($src);
     imagedestroy($dst);
+
 });
 
 return [
