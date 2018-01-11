@@ -3,15 +3,74 @@
 {block name="author"}{/block}
 {block name="keywords"}{/block}
 {block name="description"}{/block}
+{block name="css"}
+<style type="text/css">
+.media{ border-bottom: 1px solid #ddd; }
+.media h5 a{color: #07913a;}
+.media h5 a:hover{color: #ea5413}
+.media img{ width: 180px; }
+.media p{ font-size: .875rem; color: #666 }
+.media .meta{ font-size: .75rem; padding-right: 20px; }
+.media .meta a{}
+
+@media screen and (max-width: 576px) {
+	.media h5 a{ font-size: .875rem; overflow: hidden; text-overflow: ellipsis; white-space:nowrap; }
+	.media img{ width: 100px; }
+}
+
+</style>
+{/block}
 {block name="content"}
-	<div class="container">
-		<ul>
-		{volist name="list" id="vo"}
-			<li>
-				<a href="{:url('index/Document/reader',['id'=>$vo.id])}" target="_blank" title="{$vo.title}">{$vo.title}</a>
-			</li>
-		{/volist}
-		</ul>
+	<div class="container main-area">
+		<div class="row">
+	        <div class="col-sm-9">
+				{volist name="list" id="vo"}
+					<div class="media mb-4 pb-3">
+						<a href="{:url('index/Document/reader',['id'=>$vo.id])}" target="_blank" title="{$vo.title}"><img class="mr-3" src="/data/images/{$vo.cover}" alt="{$vo.title}"></a>
+						<div class="media-body">
+							<h5 class="mt-0"><a href="{:url('index/Document/reader',['id'=>$vo.id])}" target="_blank" title="{$vo.title}">{$vo.title}</a></h5>
+							<p>{$vo.description}</p>
+							<div class="meta text-muted">
+								<span class="float-right">{$vo.create_time|date="Y年m月d日 H:i"}&nbsp;&nbsp;浏览：{$vo.view}&nbsp;&nbsp;<a href="{:url('index/Document/reader',['id'=>$vo.id])}" target="_blank">详情内容</a></span>
+							</div>
+						</div>
+					</div>
+				{/volist}
+	        </div>
+	        <aside class="col-sm-3 ml-sm-auto main-sidebar">
+	            <div class="sidebar-module sidebar-module-inset">
+	                <h4>关于</h4>
+	                <p>Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
+	            </div>
+	            <div class="sidebar-module">
+	                <h4>文档归类</h4>
+	                <ol class="list-unstyled">
+	                    <li><a href="#">March 2014</a></li>
+	                    <li><a href="#">February 2014</a></li>
+	                    <li><a href="#">January 2014</a></li>
+	                    <li><a href="#">December 2013</a></li>
+	                    <li><a href="#">November 2013</a></li>
+	                    <li><a href="#">October 2013</a></li>
+	                    <li><a href="#">September 2013</a></li>
+	                    <li><a href="#">August 2013</a></li>
+	                    <li><a href="#">July 2013</a></li>
+	                    <li><a href="#">June 2013</a></li>
+	                    <li><a href="#">May 2013</a></li>
+	                    <li><a href="#">April 2013</a></li>
+	                </ol>
+	            </div>
+	            <div class="sidebar-module">
+	                <h4>Elsewhere</h4>
+	                <ol class="list-unstyled">
+	                    <li><a href="#">GitHub</a></li>
+	                    <li><a href="#">Twitter</a></li>
+	                    <li><a href="#">Facebook</a></li>
+	                </ol>
+	            </div>
+	        </aside><!-- /.blog-sidebar -->
+	    </div>
+
+
 	</div>
 {/block}
 {block name="script"}

@@ -41,7 +41,15 @@ class Document extends Extend
 
     public function lists()
     {
-        $list = Db::name('Document')->select();
+        $data = Db::name('Document')->where('status', 1)->order('id', 'desc')->select();
+        $list = [];
+        foreach ($data as $value) {
+            $coverId        = $value['cover_id'];
+            $coverData      = Db::name('picture')->find($coverId);
+            $value['cover'] = $coverData['path'];
+            $list[]         = $value;
+            # code...
+        }
         $this->assign('list', $list);
 
         return $this->fetch();
@@ -51,9 +59,8 @@ class Document extends Extend
     {
         $id || $this->error('参数错误');
         // $id                = deauthor($id);
+        Db::name('Document')->where('id', $id)->setInc('view'); // 记录访问次数
         $data = App::model('Document', 'logic')->getReader($id);
-
-        // dump($data);
 
         $this->assign('data', $data);
 

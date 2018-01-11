@@ -778,7 +778,7 @@ function _init(){
                             //layer.msg(result.msg, {time: 5000, icon:6});
                             layer.msg(result.msg,{time:500,shift:0, icon:6},function(){
                                if(result.url){
-                                    window.location.href = result.url;
+                                    // window.location.href = result.url;
                                 } 
                             });
                         }else{

@@ -412,11 +412,14 @@ trait Admin
                         if ($this->app->request->has('content')) {
                             $data['documentExtend'] = $this->documentExtend($data);
                         }
+
                         break;
                     default:
                         # code...
                         break;
                 }
+
+                // return $data;
 
                 $this->app->hook->listen('action_log', ['action' => $scene, 'record_id' => $record_id]); // 行为日志记录
 
@@ -533,7 +536,10 @@ trait Admin
         // return 12;
         switch ($name) {
             case 'article':
-
+                // $tempData['content'] = $data['content'];
+                // 对 ueditor 内容数据的处理
+                $tempData['content'] = ueditor_handle($data['content'], $data['title']);
+                // return $tempData;
                 break;
             default:
                 # code...
@@ -541,10 +547,13 @@ trait Admin
         }
 
         if ($this->app->request->has($this->pk)) {
+
             // 执行更新
             if ($db->find($id)) {
-                $status = $db->update($tempData);
+                $contentSqlTemp = $dbtemp->getFieldById($id, 'content');
 
+                $status = $db->update($tempData);
+                // return $tempData;
                 if ($status) {
                     switch ($name) {
                         case 'article':

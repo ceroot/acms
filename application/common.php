@@ -651,7 +651,7 @@ if (!function_exists('ueditor_handle')) {
                             if ($imageInfo[0] > 800) {
                                 // 实例化图片尺寸类
                                 $newimage = new \imageresize\ImageResize();
-                                $result   = $newimage->resize($imageSrc, $newPath, 800, 500);
+                                $result   = $newimage->resize($imageSrc, $newPath, 1000, 700);
                                 $result && unlink($imageSrc); // 删除临时文件
                             } else {
                                 rename($imageSrc, $newPath);
@@ -709,30 +709,66 @@ if (!function_exists('ueditor_handle')) {
 
         // 文件替换处理
         if (preg_match_all("'<\s*a\s.*?href\s*=\s*([\"\'])?(?(1)(.*?)\\1|([^\s\>]+))[^>]*>?(.*?)</a>'isx", $content, $links)) {
-            while (list($key, $val) = each($links[2])) {
-                if (!empty($val)) {
-                    $match['link'][] = $val;
-                }
-            }
-            while (list($key, $val) = each($links[3])) {
-                if (!empty($val)) {
-                    $match['link'][] = $val;
-                }
-            }
-            while (list($key, $val) = each($links[4])) {
-                if (!empty($val)) {
-                    $match['content'][] = $val;
-                }
-            }
-            while (list($key, $val) = each($links[0])) {
-                if (!empty($val)) {
-                    $match['all'][] = $val;
-                }
 
+            // while (list($key, $val) = each($links[2])) {
+            //     if (!empty($val)) {
+            //         $match['link'][] = $val;
+            //     }
+            // }
+
+            // while (list($key, $val) = each($links[3])) {
+            //     if (!empty($val)) {
+            //         $match['link'][] = $val;
+            //     }
+            // }
+            // while (list($key, $val) = each($links[4])) {
+            //     if (!empty($val)) {
+            //         $match['content'][] = $val;
+            //     }
+            // }
+            // while (list($key, $val) = each($links[0])) {
+            //     if (!empty($val)) {
+            //         $match['all'][] = $val;
+            //     }
+            // }
+            //
+
+            $match = [];
+            foreach ($links[3] as $val) {
+                empty($val) || $match['link'][] = $val;
             }
+
+            foreach ($links[2] as $val) {
+                empty($val) || $match['link'][] = $val;
+            }
+
+            foreach ($links[4] as $val) {
+                empty($val) || $match['content'][] = $val;
+            }
+
+            foreach ($links[0] as $val) {
+                empty($val) || $match['all'][] = $val;
+            }
+
+            // // 处理图片样式
+            // $contentTemp = [];
+            // foreach ($match['content'] as $value) {
+            //     $value         = preg_replace('/(<img).+(src=\"?.+)\/(.+\.(jpg|gif|bmp|bnp|png)\"?).+>/i', "\${1} \${2}/\${3}>", $value);
+            //     $contentTemp[] = $value;
+            // }
+
+            // $match['content'] = $contentTemp;
+
+            // $str = preg_replace('/(<img).+(src=\"?.+)\/(.+\.(jpg|gif|bmp|bnp|png)\"?).+>/i', "\${1} \${2}/\${3}>", $str);
 
             // 文件地址处理
-            foreach ($match['link'] as $value) {
+            foreach ($match['link'] as $key => $value) {
+
+                // 图片链接地址处理
+                if (is_images_url($value) != false) {
+                    $content = str_replace($match['all'][$key], $match['content'][$key], $content);
+                }
+
                 if (stripos($value, 'data/ueditor') !== false) {
                     $oldValue = $value;
                     $linkArr  = explode('/', $value);
@@ -757,11 +793,68 @@ if (!function_exists('ueditor_handle')) {
             }
         }
 
+        // 处理图片样式
+        $search  = '/(<img.*?)style=(["\'])?.*?(?(2)\2|\s)([^>]+>)/is';
+        $content = preg_replace($search, '$1$3', $content);
         // 附件小图标处理
         if (stripos($content, 'ueditor/1.4.3.2/dialogs/attachment') !== false) {
             $content = str_replace('ueditor/1.4.3.2/dialogs/attachment', 'images', $content);
         }
         return $content;
+    }
+}
+
+/**
+ * [ is_images_url 判断 url 地址是否是图片地址 ]
+ * @author SpringYang
+ * @email    ceroot@163.com
+ * @dateTime 2018-01-11T18:34:19+0800
+ * @param    [type]                   $url [description]
+ * @return   boolean && string             [false：不是；string：图片格式]
+ */
+function is_images_url($url)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); //是否跟着爬取重定向的页面
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //将curl_exec()获取的值以文本流的形式返回，而不是直接输出。
+    curl_setopt($ch, CURLOPT_HEADER, 1); // 启用时会将头文件的信息作为数据流输出
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5); //设置超时时间
+    curl_setopt($ch, CURLOPT_URL, $url); //设置URL
+    $content    = curl_exec($ch);
+    $httpcode   = curl_getinfo($ch, CURLINFO_HTTP_CODE); //curl的httpcode
+    $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE); //获取头大小
+    curl_close($ch);
+    $headers = substr($content, 0, $headerSize);
+
+    // 判断返回 headers
+    if ($headers) {
+        $head_data = preg_split('/\n/', $headers); //逐行放入数组中
+        $head_data = array_filter($head_data); //过滤空数组
+
+        // 取得 Content-Type
+        $contentType = '';
+        foreach ($head_data as $val) {
+            //按:分割开
+            if (stripos($val, ':')) {
+                list($k, $v) = explode(":", $val); //:前面的作为key，后面的作为value，放入数组中
+                if ('Content-Type' == $k) {
+                    $contentType = trim($v);
+                    break;
+                }
+            }
+        }
+
+        if ($contentType) {
+            $img_type = explode("/", $contentType); //然后将获取到的 Content-Type 值用/分隔开
+            if ($httpcode == 200 && strcasecmp($img_type[0], 'image') == 0) {
+                //如果httpcode为200，并且Content-type前面的部分为image，则说明该链接可以访问成功，并且是一个图片类型的
+                $type = $img_type[1];
+                return $type;
+            } else {
+                //否则........
+                return false;
+            }
+        }
     }
 }
 
