@@ -636,11 +636,7 @@ if (!function_exists('ueditor_handle')) {
                     $datePath   = array_slice($imagesArr, -2, 1); // 取得数组里的倒数第二个值，也就是以日期命名的目录
                     $newPath    = $pathImages . $datePath[0] . '/'; // 新的文件目录
 
-                    // 判断目录是否存在，如果不存在则创建
-                    if (!is_dir($newPath)) {
-                        make_dir($newPath);
-                    }
-
+                    is_dir($newPath) || make_dir($newPath); // 判断目录是否存在，如果不存在则创建
                     // 文件移动
                     $newPath  = $newPath . $imagesName; // 新路径
                     $imageSrc = '.' . $imageSrc; // 旧路径
@@ -693,9 +689,7 @@ if (!function_exists('ueditor_handle')) {
                     $stylePattern = '<img.*?style="(.*?)">'; // style 规则
                     $stylePreg    = preg_match($stylePattern, $oldValue, $styleMatch);
                     if ($stylePreg) {
-                        if (empty($styleMatch[1])) {
-                            $newValue = preg_replace('/style=.+?[*|\"]/i', '', $newValue);
-                        }
+                        empty($styleMatch[1]) && $newValue = preg_replace('/style=.+?[*|\"]/i', '', $newValue);
                     }
 
                     // 替换成新的图片路径
@@ -709,91 +703,47 @@ if (!function_exists('ueditor_handle')) {
 
         // 文件替换处理
         if (preg_match_all("'<\s*a\s.*?href\s*=\s*([\"\'])?(?(1)(.*?)\\1|([^\s\>]+))[^>]*>?(.*?)</a>'isx", $content, $links)) {
-
-            // while (list($key, $val) = each($links[2])) {
-            //     if (!empty($val)) {
-            //         $match['link'][] = $val;
-            //     }
-            // }
-
-            // while (list($key, $val) = each($links[3])) {
-            //     if (!empty($val)) {
-            //         $match['link'][] = $val;
-            //     }
-            // }
-            // while (list($key, $val) = each($links[4])) {
-            //     if (!empty($val)) {
-            //         $match['content'][] = $val;
-            //     }
-            // }
-            // while (list($key, $val) = each($links[0])) {
-            //     if (!empty($val)) {
-            //         $match['all'][] = $val;
-            //     }
-            // }
-            //
-
             $match = [];
             foreach ($links[3] as $val) {
                 empty($val) || $match['link'][] = $val;
             }
-
             foreach ($links[2] as $val) {
                 empty($val) || $match['link'][] = $val;
             }
-
             foreach ($links[4] as $val) {
                 empty($val) || $match['content'][] = $val;
             }
-
             foreach ($links[0] as $val) {
                 empty($val) || $match['all'][] = $val;
             }
 
-            // // 处理图片样式
-            // $contentTemp = [];
-            // foreach ($match['content'] as $value) {
-            //     $value         = preg_replace('/(<img).+(src=\"?.+)\/(.+\.(jpg|gif|bmp|bnp|png)\"?).+>/i', "\${1} \${2}/\${3}>", $value);
-            //     $contentTemp[] = $value;
-            // }
-
-            // $match['content'] = $contentTemp;
-
-            // $str = preg_replace('/(<img).+(src=\"?.+)\/(.+\.(jpg|gif|bmp|bnp|png)\"?).+>/i', "\${1} \${2}/\${3}>", $str);
-
             // 文件地址处理
             foreach ($match['link'] as $key => $value) {
-
-                // 图片链接地址处理
+                // 图片链接地址处理，因为本地化图片在之前已经处理过了，这里只处理文件
                 if (is_images_url($value) != false) {
                     $content = str_replace($match['all'][$key], $match['content'][$key], $content);
-                }
+                } else {
+                    if (stripos($value, 'data/ueditor') !== false) {
+                        $oldValue = $value;
+                        $linkArr  = explode('/', $value);
+                        $datePath = array_slice($linkArr, -2, 1);
+                        $fileName = end($linkArr);
+                        $newPath  = $pathFiles . $datePath[0] . '/';
 
-                if (stripos($value, 'data/ueditor') !== false) {
-                    $oldValue = $value;
-                    $linkArr  = explode('/', $value);
-                    $datePath = array_slice($linkArr, -2, 1);
-                    $fileName = end($linkArr);
-                    $newPath  = $pathFiles . $datePath[0] . '/';
+                        is_dir($newPath) && make_dir($newPath); // 判断目录是否存在，如果不存在则创建
+                        // 移动文件
+                        $newPath = $newPath . $fileName; // 新路径
+                        $value   = '.' . $value; // 旧路径
+                        is_file($value) || rename($value, $newPath);
 
-                    // 判断目录是否存在，如果不存在则创建
-                    is_dir($newPath) && make_dir($newPath);
-
-                    // 移动文件
-                    $newPath = $newPath . $fileName; // 新路径
-                    $value   = '.' . $value; // 旧路径
-                    is_file($value) && rename($value, $newPath);
-
-                    // 替换成新的文件路径
-                    $newvalue = str_replace('ueditor/', '', $oldValue);
-
-                    // 内容替换成新的值
-                    $content = str_replace($oldValue, $newvalue, $content);
+                        $newvalue = str_replace('ueditor/', '', $oldValue); // 替换成新的文件路径
+                        $content  = str_replace($oldValue, $newvalue, $content); // 内容替换成新的值
+                    }
                 }
             }
         }
 
-        // 处理图片样式
+        // 正则处理图片样式
         $search  = '/(<img.*?)style=(["\'])?.*?(?(2)\2|\s)([^>]+>)/is';
         $content = preg_replace($search, '$1$3', $content);
         // 附件小图标处理
@@ -949,7 +899,6 @@ if (!function_exists('del_file')) {
 if (!function_exists('get_keywords')) {
     function get_keywords($str, $lenght = 10, $separator = ',')
     {
-
         $str = strip_tags($str); // 去掉 html 代码
         $str = preg_replace('/[ ]/', '', $str);
         $str = str_replace('&nbsp;', '', $str); // 去掉 &nbsp;
