@@ -48,7 +48,7 @@ a:hover{ text-decoration: none; color: #07913a; transition: all .3s; }
 .hr-0, .hr-1, .hr-2, .hr-3, .hr-4, .hr-5, .hr-6, .hr-7, .hr-8, .hr-10, .hr-12, .hr-15, .hr-20, .hr-25, .hr-30, .hr-40, .hr-50 { font-size:1px; line-height:1px; clear:both; }
 
 body > .main {
-  padding: 66px 15px 0;
+  padding-top: 66px;
 }
 
 .footer {
@@ -73,8 +73,8 @@ body > .main {
 .main-area{
     background: #fff;
     box-shadow: 0 1px 2px 0 rgba(0,0,0,.05);
-    padding-top: 15px;
-    padding-bottom: 15px;
+    padding: 15px;
+    /*padding-bottom: 15px;*/
     border-radius: 4px;
 
     /*border:1px solid #e6e6e6;*/
@@ -86,11 +86,12 @@ body > .main {
 .document-content{ font-size: .875rem;}
 .document-content img{ max-width: 100%; }
 
-.main-sidebar{border-left: 1px solid #dedede;}
+.main-sidebar{box-shadow: 0 1px 2px 0 rgba(0,0,0,.05); background: #fff;}
 
 
 @media screen and (max-width: 576px) {
     .main-content h2{ font-size: 1.25rem; }
-    .main-sidebar{border-left:0;}
+    .main-sidebar{ margin-top: 15px; }
+
 }
 

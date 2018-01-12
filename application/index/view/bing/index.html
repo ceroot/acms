@@ -48,19 +48,11 @@
 {block name="script"}
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <script type="text/javascript" src="__LIBS__/lazyload/2.x/lazyload.min.js"></script>
-<script type="text/javascript" src="https://hm.baidu.com/hm.js?9d431989a95c98f4e1d5353cadad4487"></script>
 <script type="text/javascript">
 	$(function(){
 		//https://appelsiini.net/projects/lazyload/
 		lazyload();
 	});
-
-	// var _hmt = _hmt || [];
-	// (function() {
-	//   var hm = document.createElement("script");
-	//   hm.src = "https://hm.baidu.com/hm.js?9d431989a95c98f4e1d5353cadad4487";
-	//   var s = document.getElementsByTagName("script")[0]; 
-	//   s.parentNode.insertBefore(hm, s);
-	// })();
 </script>
+{$Think.config.statistics_code|raw}
 {/block}

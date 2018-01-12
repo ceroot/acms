@@ -14,39 +14,45 @@
 .media .meta a{}
 
 @media screen and (max-width: 576px) {
-	.media h5 a{ font-size: .875rem; overflow: hidden; text-overflow: ellipsis; white-space:nowrap; }
-	.media img{ width: 100px; }
+	.media h5{ font-size: 1rem; margin-bottom: .2rem; }
+	.media h5 a{ font-size: 1rem; overflow: hidden; text-overflow: ellipsis; white-space:nowrap; }
+	.media img{ width: 90px; height: 60px; }
+	.media .media-body > p{ height: 1rem; overflow: hidden; text-overflow:ellipsis;  margin-bottom: .4rem }
+
+	.media .media-body .meta span.date{ float: left; }
+	.media .media-body .meta span.detail{ display: none; }
+
 }
 
 </style>
 {/block}
 {block name="content"}
-	<div class="container main-area">
+	<div class="container">
 		<div class="row">
-	        <div class="col-sm-9">
+	        <div class="col-sm-9 main-area">
 				{volist name="list" id="vo"}
-					<div class="media mb-4 pb-3">
+					<div class="media mb-3 pb-3">
 						<a href="{:url('index/Document/reader',['id'=>$vo.id])}" target="_blank" title="{$vo.title}"><img class="mr-3" src="/data/images/{$vo.cover}" alt="{$vo.title}"></a>
 						<div class="media-body">
 							<h5 class="mt-0"><a href="{:url('index/Document/reader',['id'=>$vo.id])}" target="_blank" title="{$vo.title}">{$vo.title}</a></h5>
 							<p>{$vo.description}</p>
-							<div class="meta text-muted">
-								<span class="float-right">{$vo.create_time|date="Y年m月d日 H:i"}&nbsp;&nbsp;浏览：{$vo.view}&nbsp;&nbsp;<a href="{:url('index/Document/reader',['id'=>$vo.id])}" target="_blank">详情内容</a></span>
+							<div class="meta text-muted text-right">
+								<span class="date">{$vo.create_time|date="m月d日 H:i"}</span><span class="view">&nbsp;&nbsp;浏览：{$vo.view}</span><span class="detail">&nbsp;&nbsp;<a href="{:url('index/Document/reader',['id'=>$vo.id])}" target="_blank">详情内容</a></span>
 							</div>
 						</div>
 					</div>
 				{/volist}
 	        </div>
 	        <aside class="col-sm-3 ml-sm-auto main-sidebar">
-	            <div class="sidebar-module sidebar-module-inset">
+	            <div class="sidebar-module sidebar-module-inset pt-3">
 	                <h4>关于</h4>
-	                <p>本系统是一款基于ThinkPHP5.1.* + bootstrap 4.0 beta + layui2.2.5 + Mysql开发的后台管理框架，PHP版本要求提升到5.6，系统集成了一般应用所必须的功能模块，为开发者减少重复性的工作，提升开发速度，规范团队开发模式。</p>
+	                <p>本系统是一款基于ThinkPHP5.1.* + layui2.2.5 + Mysql开发的后台管理框架，PHP版本要求提升到5.6，系统集成了一般应用所必须的功能模块，为开发者减少重复性的工作，提升开发速度，规范团队开发模式。</p>
 	            </div>
 	            <div class="sidebar-module">
 	                <h4>文档归类</h4>
 	                <ol class="list-unstyled">
 	                	{volist name="gl" id="gvo"}
-	                		<li><a href="{:url('index/Document/lists', ['month' => $gvo['month']])}">{$gvo.title} [{$gvo.count}]</a></li>
+	                		<li><a href="{:url('index/Document/lists', ['month' => $gvo['month']])}">{$gvo.month|strtotime|date="Y年m月"} [{$gvo.count}]</a></li>
 	                	{/volist}
 	                </ol>
 	            </div>

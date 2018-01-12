@@ -19,6 +19,7 @@
 namespace app\common\structure;
 
 use app\common\traits\Models;
+use think\Db;
 use think\facade\Request;
 
 class Tools
@@ -560,6 +561,43 @@ class Tools
             // 因为加密后的密文可能是一些特殊字符，复制过程可能会丢失，所以用base64编码
             return $keyc . str_replace('=', '', base64_encode($result));
         }
+    }
+
+    /**
+     * [ getPrevNextId 根据 id 取得上一项下一项的 id ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-12-29T17:56:04+0800
+     * @param    string                   $table  [表名]
+     * @param    integer                  $id     [当前 id]
+     * @param    integer                  $type   [类型，0 为上一条，1 为下一条]
+     * @return   [type]                           [description]
+     */
+    public static function getPrevNextId($table, $id, $type = 0)
+    {
+        $tempId = $id;
+        if ($type) {
+            $id     = $id + 1;
+            $tipsId = Db::name($table)->max('id');
+            $tips   = '未来在路上，请稍等……';
+        } else {
+            $id     = $id - 1;
+            $tipsId = Db::name($table)->min('id');
+            $tips   = '已经是第一个了';
+        }
+
+        if ($tempId == $tipsId) {
+            return $tips;
+        }
+
+        $data = Db::name($table)->where('status', 1)->find($id);
+
+        if (!$data) {
+            self::getPrevNextId($table, $id, $type);
+        } else {
+            return $id;
+        }
+
     }
 
 }

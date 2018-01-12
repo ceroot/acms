@@ -15,7 +15,10 @@ class Document extends Extend
     public function getReader($id)
     {
         $data = Db::name('Document')->where('status', 1)->find($id);
-
+        if (!$data) {
+            return false;
+        }
+        // dump($data);
         $modelId           = $data['model_id'];
         $coverId           = $data['cover_id'];
         $cid               = $data['cid'];
