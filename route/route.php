@@ -14,23 +14,25 @@ Route::get('think', function () {
 });
 
 Route::rule('document/$', 'index/Document/index');
-Route::rule('document/lists', 'index/Document/lists');
-Route::rule('document/reader/:id', 'index/Document/reader');
+// Route::rule('document/lists', 'index/Document/lists');
+// Route::rule('document/lists/:id', 'index/Document/lists');
+// Route::rule('document/reader/:id', 'index/Document/reader');
+// Route::rule('document/category/:time', 'index/Document/lists');
 
 Route::get('hello/:name', 'index/hello');
 // Route::rule('my', 'Member/myinfo'); // 静态地址路由
-Route::rule('bing/$', 'index/Bing/index');
+Route::rule('bing', 'index/Bing/index');
 Route::rule('bing/details/:id', 'index/Bing/details');
 Route::rule('bing/download/:id', 'index/Bing/download');
 Route::rule('new/:id', 'index/News/read');
 // Route::domain('console', 'console');
 
-Route::domain('bing', function () {
-    // 动态注册域名的路由规则
-    Route::rule('details/:id', 'index/Bing/details');
-    Route::rule('download/:id', 'index/Bing/download');
-    Route::bind('index/Bing');
-});
+// Route::domain('bing', function () {
+//     // 动态注册域名的路由规则
+//     Route::rule('details/:id', 'index/Bing/details');
+//     Route::rule('download/:id', 'index/Bing/download');
+//     Route::bind('index/Bing');
+// });
 
 // Route::domain('bing', '\app\index\controller\Bing');
 

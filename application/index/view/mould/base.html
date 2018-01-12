@@ -45,15 +45,14 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <ul class="navbar-nav mr-auto">
-                        <li class="nav-item active">
+                        <li class="nav-item">
                             <a class="nav-link" href="/">首页 <span class="sr-only">(current)</span></a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/document/lists">文档</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/bing">Bing 每日图片</a>
-                        </li>
+                        {volist name="menuData" id="mvo"}
+                            <li class="nav-item {eq name="$mvo.active" value="1"}active{/eq}">
+                                <a class="nav-link" href="{$mvo.url}" title="{$mvo.title}">{$mvo.title}</a>
+                            </li>
+                        {/volist}
                     </ul>
                 </div>
             </div>

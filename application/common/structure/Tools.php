@@ -8,11 +8,11 @@
 // +----------------------------------------------------------------------+
 /**
  *
- * @filename  UserInfo.php
+ * @filename  Tools.php
  * @authors   SpringYang
  * @email     ceroot@163.com
  * @QQ        525566309
- * @date      2017-10-25 14:00:19
+ * @date      2017-10-25 11:06:39
  * @site      http://www.benweng.com
  * @version   $Id$
  */
@@ -51,21 +51,29 @@ class Tools
      */
     public static function checkRemoteFileExists($url)
     {
-        $curl = curl_init($url);
-        curl_setopt($curl, CURLOPT_NOBODY, true); // 不取回数据
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'GET'); // 不加这个会返回403，加了才返回正确的200，原因不明
+        $found = false;
 
-        $result = curl_exec($curl); // 发送请求
-        $found  = false;
-        // 如果请求没有发送失败
-        if ($result !== false) {
-            // 再检查http响应码是否为 200
-            $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            if ($statusCode == 200) {
+        if (function_exists('curl_init')) {
+            $curl = curl_init($url);
+            curl_setopt($curl, CURLOPT_NOBODY, true); // 不取回数据
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'GET'); // 不加这个会返回403，加了才返回正确的200，原因不明
+
+            $result = curl_exec($curl); // 发送请求
+            // 如果请求没有发送失败
+            if ($result !== false) {
+                // 再检查http响应码是否为 200
+                $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+                if ($statusCode == 200) {
+                    $found = true;
+                }
+            }
+            curl_close($curl);
+        } else {
+            $headers = get_headers($url, 1);
+            if (preg_grep('/200/', $headers)) {
                 $found = true;
             }
         }
-        curl_close($curl);
         return $found;
     }
 
@@ -96,6 +104,87 @@ class Tools
     }
 
     /**
+     * [ isImagesUrl 判断 url 地址是否是图片地址，如果是就返回图片格式 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-12T10:36:36+0800
+     * @param    string                   $url [url 地址]
+     * @return   boolean                       [description]
+     */
+    public static function isImagesUrl($url)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); //是否跟着爬取重定向的页面
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //将curl_exec()获取的值以文本流的形式返回，而不是直接输出。
+        curl_setopt($ch, CURLOPT_HEADER, 1); // 启用时会将头文件的信息作为数据流输出
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5); //设置超时时间
+        curl_setopt($ch, CURLOPT_URL, $url); //设置URL
+        $content    = curl_exec($ch);
+        $httpcode   = curl_getinfo($ch, CURLINFO_HTTP_CODE); //curl的httpcode
+        $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE); //获取头大小
+        curl_close($ch);
+
+        $headers = substr($content, 0, $headerSize);
+        // 判断返回 headers
+        if ($headers) {
+            $head_data = preg_split('/\n/', $headers); //逐行放入数组中
+            $head_data = array_filter($head_data); //过滤空数组
+
+            // 取得 Content-Type
+            $contentType = '';
+            foreach ($head_data as $val) {
+                //按:分割开
+                if (stripos($val, ':')) {
+                    list($k, $v) = explode(":", $val); //:前面的作为key，后面的作为value，放入数组中
+                    if ('content-type' == strtolower($k)) {
+                        $contentType = trim($v);
+                        break;
+                    }
+                }
+            }
+
+            if ($contentType) {
+                $img_type = explode("/", $contentType); //然后将获取到的 Content-Type 值用/分隔开
+                if ($httpcode == 200 && strcasecmp($img_type[0], 'image') == 0) {
+                    //如果httpcode为200，并且Content-type前面的部分为image，则说明该链接可以访问成功，并且是一个图片类型的
+                    $type = $img_type[1];
+                    return $type;
+                } else {
+                    //否则........
+                    return false;
+                }
+            }
+        }
+    }
+
+    /**
+     * [ urlGetContents 取得 url 内容 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-12T10:39:25+0800
+     * @param    string                   $url [url 地址]
+     * @return   [type]                        [description]
+     */
+    public static function urlGetContents($url)
+    {
+        if (function_exists("curl_init")) {
+            $ch      = curl_init();
+            $timeout = 30;
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+            $file_contents = curl_exec($ch);
+            curl_close($ch);
+        } else {
+            $is_auf = ini_get('allow_url_fopen') ? true : false;
+            if ($is_auf) {
+                $file_contents = file_get_contents($url);
+            }
+        }
+        return $file_contents;
+    }
+
+    /**
      * [ isLocal 判断 ip 是内网还是外网 ]
      * @author SpringYang
      * @email    ceroot@163.com
@@ -108,6 +197,87 @@ class Tools
         $ip = $ip ?: Request::ip();
         return preg_match('%^127\.|10\.|192\.168|172\.(1[6-9]|2|3[01])%', $ip); // 正则方式
         //return !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE); // PHP 自带判断私有ip 方法
+    }
+
+    /**
+     * [ getRandom 取得随机数 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-12T10:43:55+0800
+     * @param    integer                  $length  [随机数长度]
+     * @param    integer                  $numeric [类型 0为数字，1为全部，2为大小写，3为数字加大写，4为数字加小写，5为大写，6为小写，7为uniqid()]
+     * @return   string                   $hash    [返回字符串]
+     */
+    public static function getRandom($length = 6, $numeric = 0)
+    {
+        PHP_VERSION < '4.2.0' && mt_srand((double) microtime() * 1000000);
+        if ($length > 10 && $numeric == 0) {
+            $numeric = 1;
+        }
+
+        $hash = '';
+        switch ($numeric) {
+            case 0:
+                $hash = sprintf('%0' . $length . 'd', mt_rand(0, pow(10, $length) - 1));
+                break;
+            case 1:
+                $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789abcdefghjkmnpqrstuvwxyz';
+                $max   = strlen($chars) - 1;
+                for ($i = 0; $i < $length; $i++) {
+                    $hash .= $chars[mt_rand(0, $max)];
+                }
+                break;
+            case 2:
+                $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz';
+                $max   = strlen($chars) - 1;
+                for ($i = 0; $i < $length; $i++) {
+                    $hash .= $chars[mt_rand(0, $max)];
+                }
+                break;
+            case 3:
+                $chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+                $max   = strlen($chars) - 1;
+                for ($i = 0; $i < $length; $i++) {
+                    $hash .= $chars[mt_rand(0, $max)];
+                }
+                break;
+            case 4:
+                $chars = '23456789abcdefghjkmnpqrstuvwxyz';
+                $max   = strlen($chars) - 1;
+                for ($i = 0; $i < $length; $i++) {
+                    $hash .= $chars[mt_rand(0, $max)];
+                }
+            case 5:
+                $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+                $max   = strlen($chars) - 1;
+                for ($i = 0; $i < $length; $i++) {
+                    $hash .= $chars[mt_rand(0, $max)];
+                }
+                break;
+            case 6:
+                $chars = 'abcdefghjkmnpqrstuvwxyz';
+                $max   = strlen($chars) - 1;
+                for ($i = 0; $i < $length; $i++) {
+                    $hash .= $chars[mt_rand(0, $max)];
+                }
+                break;
+            case 7:
+                $uniqid = implode(null, array_map('ord', str_split(md5(uniqid()), 1)));
+                $max    = strlen($uniqid) - 1;
+                for ($i = 0; $i < $length; $i++) {
+                    $temp = $uniqid[mt_rand(0, $max)];
+                    // 去掉第一个为 0 的情况
+                    if ($i == 0 && $temp == 0) {
+                        $temp = sprintf('%0' . 1 . 'd', mt_rand(0, pow(10, 1) - 1));
+                    }
+                    $hash .= $temp;
+                }
+                break;
+            default:
+                $hash = sprintf('%0' . $length . 'd', mt_rand(0, pow(10, $length) - 1));
+                // 代码
+        }
+        return $hash;
     }
 
     /**

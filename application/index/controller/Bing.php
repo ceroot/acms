@@ -19,14 +19,14 @@
 
 namespace app\index\controller;
 
-use app\common\controller\Extend;
 use app\facade\Tools;
+use app\index\controller\Base;
 use Qcloud_cos\Auth;
 use Qcloud_cos\Cosapi;
 use QL\QueryList;
 use traits\controller\Jump;
 
-class Bing extends Extend
+class Bing extends Base
 {
     use Jump;
 
@@ -50,6 +50,8 @@ class Bing extends Extend
      */
     public function initialize()
     {
+        parent::initialize();
+
         $this->year     = date('Y');
         $this->month    = date('m');
         $this->day      = date('d');

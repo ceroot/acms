@@ -42,21 +42,7 @@ if (!function_exists('ip2int')) {
 if (!function_exists('url_get_contents')) {
     function url_get_contents($url)
     {
-        if (function_exists("curl_init")) {
-            $ch      = curl_init();
-            $timeout = 30;
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-            $file_contents = curl_exec($ch);
-            curl_close($ch);
-        } else {
-            $is_auf = ini_get('allow_url_fopen') ? true : false;
-            if ($is_auf) {
-                $file_contents = file_get_contents($url);
-            }
-        }
-        return $file_contents;
+        return Tools::urlGetContents($url);
     }
 }
 
@@ -302,74 +288,7 @@ if (!function_exists('status_text')) {
 if (!function_exists('getrandom')) {
     function getrandom($length = 6, $numeric = 0)
     {
-        PHP_VERSION < '4.2.0' && mt_srand((double) microtime() * 1000000);
-        if ($length > 10 && $numeric == 0) {
-            $numeric = 1;
-        }
-
-        $hash = '';
-        switch ($numeric) {
-            case 0:
-                $hash = sprintf('%0' . $length . 'd', mt_rand(0, pow(10, $length) - 1));
-                break;
-            case 1:
-                $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789abcdefghjkmnpqrstuvwxyz';
-                $max   = strlen($chars) - 1;
-                for ($i = 0; $i < $length; $i++) {
-                    $hash .= $chars[mt_rand(0, $max)];
-                }
-                break;
-            case 2:
-                $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz';
-                $max   = strlen($chars) - 1;
-                for ($i = 0; $i < $length; $i++) {
-                    $hash .= $chars[mt_rand(0, $max)];
-                }
-                break;
-            case 3:
-                $chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-                $max   = strlen($chars) - 1;
-                for ($i = 0; $i < $length; $i++) {
-                    $hash .= $chars[mt_rand(0, $max)];
-                }
-                break;
-            case 4:
-                $chars = '23456789abcdefghjkmnpqrstuvwxyz';
-                $max   = strlen($chars) - 1;
-                for ($i = 0; $i < $length; $i++) {
-                    $hash .= $chars[mt_rand(0, $max)];
-                }
-            case 5:
-                $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-                $max   = strlen($chars) - 1;
-                for ($i = 0; $i < $length; $i++) {
-                    $hash .= $chars[mt_rand(0, $max)];
-                }
-                break;
-            case 6:
-                $chars = 'abcdefghjkmnpqrstuvwxyz';
-                $max   = strlen($chars) - 1;
-                for ($i = 0; $i < $length; $i++) {
-                    $hash .= $chars[mt_rand(0, $max)];
-                }
-                break;
-            case 7:
-                $uniqid = implode(null, array_map('ord', str_split(md5(uniqid()), 1)));
-                $max    = strlen($uniqid) - 1;
-                for ($i = 0; $i < $length; $i++) {
-                    $temp = $uniqid[mt_rand(0, $max)];
-                    // 去掉第一个为 0 的情况
-                    if ($i == 0 && $temp == 0) {
-                        $temp = sprintf('%0' . 1 . 'd', mt_rand(0, pow(10, 1) - 1));
-                    }
-                    $hash .= $temp;
-                }
-                break;
-            default:
-                $hash = sprintf('%0' . $length . 'd', mt_rand(0, pow(10, $length) - 1));
-                // 代码
-        }
-        return $hash;
+        return Tools::getRandom($length, $numeric);
     }
 }
 
@@ -762,49 +681,10 @@ if (!function_exists('ueditor_handle')) {
  * @param    [type]                   $url [description]
  * @return   boolean && string             [false：不是；string：图片格式]
  */
-function is_images_url($url)
-{
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); //是否跟着爬取重定向的页面
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //将curl_exec()获取的值以文本流的形式返回，而不是直接输出。
-    curl_setopt($ch, CURLOPT_HEADER, 1); // 启用时会将头文件的信息作为数据流输出
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5); //设置超时时间
-    curl_setopt($ch, CURLOPT_URL, $url); //设置URL
-    $content    = curl_exec($ch);
-    $httpcode   = curl_getinfo($ch, CURLINFO_HTTP_CODE); //curl的httpcode
-    $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE); //获取头大小
-    curl_close($ch);
-    $headers = substr($content, 0, $headerSize);
-
-    // 判断返回 headers
-    if ($headers) {
-        $head_data = preg_split('/\n/', $headers); //逐行放入数组中
-        $head_data = array_filter($head_data); //过滤空数组
-
-        // 取得 Content-Type
-        $contentType = '';
-        foreach ($head_data as $val) {
-            //按:分割开
-            if (stripos($val, ':')) {
-                list($k, $v) = explode(":", $val); //:前面的作为key，后面的作为value，放入数组中
-                if ('Content-Type' == $k) {
-                    $contentType = trim($v);
-                    break;
-                }
-            }
-        }
-
-        if ($contentType) {
-            $img_type = explode("/", $contentType); //然后将获取到的 Content-Type 值用/分隔开
-            if ($httpcode == 200 && strcasecmp($img_type[0], 'image') == 0) {
-                //如果httpcode为200，并且Content-type前面的部分为image，则说明该链接可以访问成功，并且是一个图片类型的
-                $type = $img_type[1];
-                return $type;
-            } else {
-                //否则........
-                return false;
-            }
-        }
+if (!function_exists('is_images_url')) {
+    function is_images_url($url)
+    {
+        return Tools::isImagesUrl($url);
     }
 }
 

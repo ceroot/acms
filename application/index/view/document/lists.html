@@ -1,5 +1,5 @@
 {extend name="mould:base" /}
-{block name="title"}文档{/block}
+{block name="title"}{$title}{/block}
 {block name="author"}{/block}
 {block name="keywords"}{/block}
 {block name="description"}{/block}
@@ -40,23 +40,14 @@
 	        <aside class="col-sm-3 ml-sm-auto main-sidebar">
 	            <div class="sidebar-module sidebar-module-inset">
 	                <h4>关于</h4>
-	                <p>Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
+	                <p>本系统是一款基于ThinkPHP5.1.* + bootstrap 4.0 beta + layui2.2.5 + Mysql开发的后台管理框架，PHP版本要求提升到5.6，系统集成了一般应用所必须的功能模块，为开发者减少重复性的工作，提升开发速度，规范团队开发模式。</p>
 	            </div>
 	            <div class="sidebar-module">
 	                <h4>文档归类</h4>
 	                <ol class="list-unstyled">
-	                    <li><a href="#">March 2014</a></li>
-	                    <li><a href="#">February 2014</a></li>
-	                    <li><a href="#">January 2014</a></li>
-	                    <li><a href="#">December 2013</a></li>
-	                    <li><a href="#">November 2013</a></li>
-	                    <li><a href="#">October 2013</a></li>
-	                    <li><a href="#">September 2013</a></li>
-	                    <li><a href="#">August 2013</a></li>
-	                    <li><a href="#">July 2013</a></li>
-	                    <li><a href="#">June 2013</a></li>
-	                    <li><a href="#">May 2013</a></li>
-	                    <li><a href="#">April 2013</a></li>
+	                	{volist name="gl" id="gvo"}
+	                		<li><a href="{:url('index/Document/lists', ['month' => $gvo['month']])}">{$gvo.title} [{$gvo.count}]</a></li>
+	                	{/volist}
 	                </ol>
 	            </div>
 	            <div class="sidebar-module">
