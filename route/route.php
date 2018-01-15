@@ -25,6 +25,7 @@ Route::rule('bing$', 'index/Bing/index');
 Route::rule('bing/details/:id', 'index/Bing/details');
 Route::rule('bing/download/:id', 'index/Bing/download');
 Route::rule('new/:id', 'index/News/read');
+Route::rule('about', 'index/About/index');
 // Route::domain('console', 'console');
 
 // Route::domain('bing', function () {
