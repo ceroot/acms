@@ -572,7 +572,7 @@ class Tools
      * @param    array                    $where  [条件]
      * @param    integer                  $id     [当前 id]
      * @param    integer                  $type   [类型，0 为上一条，1 为下一条]
-     * @return   [type]                           [description]
+     * @return   array                            [返回本条信息]
      */
     public static function getPrevNextId($table, $id, $type = 0, $where = null)
     {
@@ -589,11 +589,13 @@ class Tools
         }
 
         if ($tempId == $tipsId) {
-            return $tips;
+            $data['id']    = 0;
+            $data['title'] = $tips;
+            return $data;
         }
 
         $data = Db::name($table)->where($where)->where('status', 1)->find($id);
-        return $data ? $id : self::getPrevNextId($table, $id, $type);
+        return $data ?: self::getPrevNextId($table, $id, $type);
     }
 
     /**

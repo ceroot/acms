@@ -94,10 +94,10 @@ class Document extends Base
         // dump($data);
         $data || $this->error('没有数据');
 
-        $prevId         = Tools::getPrevNextId('Document', $id);
-        $nextId         = Tools::getPrevNextId('Document', $id, 1);
-        $data['previd'] = $prevId;
-        $data['nextid'] = $nextId;
+        $prevData         = Tools::getPrevNextId('Document', $id);
+        $nextData         = Tools::getPrevNextId('Document', $id, 1);
+        $data['prevData'] = $prevData;
+        $data['nextData'] = $nextData;
 
         $this->assign('data', $data);
         // dump($data);die;

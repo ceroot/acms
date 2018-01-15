@@ -24,8 +24,8 @@
                   	</div>
                 </div>
                 <nav class="blog-pagination">
-                    <a class="btn btn-outline-primary {if condition="is_numeric($data.previd)"}{else /} btn-outline-secondary disabled{/if}" href="{:url('index/Document/reader',['id'=>$data.previd])}">上一篇</a>
-                    <a class="btn btn-outline-primary {if condition="is_numeric($data.nextid)"}{else /} btn-outline-secondary disabled{/if}" href="{:url('index/Document/reader',['id'=>$data.nextid])}">下一篇</a>
+                    <a class="btn btn-outline-primary {eq name="$data.prevData.id" value="0"} btn-outline-secondary disabled{/eq}" href="{:url('index/Document/reader',['id'=>$data.prevData.id])}">上一篇</a> {$data.prevData.title}<br><br>
+                    <a class="btn btn-outline-primary {eq name="$data.nextData.id" value="0"} btn-outline-secondary disabled{/eq}" href="{:url('index/Document/reader',['id'=>$data.nextData.id])}">下一篇</a> {$data.nextData.title}
                 </nav>
         </div>
         </div>
