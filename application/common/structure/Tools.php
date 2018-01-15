@@ -569,20 +569,22 @@ class Tools
      * @email    ceroot@163.com
      * @dateTime 2017-12-29T17:56:04+0800
      * @param    string                   $table  [表名]
+     * @param    array                    $where  [条件]
      * @param    integer                  $id     [当前 id]
      * @param    integer                  $type   [类型，0 为上一条，1 为下一条]
      * @return   [type]                           [description]
      */
-    public static function getPrevNextId($table, $id, $type = 0)
+    public static function getPrevNextId($table, $id, $type = 0, $where = null)
     {
+        $db     = Db::name($table);
         $tempId = $id;
         if ($type) {
             $id     = $id + 1;
-            $tipsId = Db::name($table)->max('id');
+            $tipsId = $db->where($where)->max('id');
             $tips   = '未来在路上，请稍等……';
         } else {
             $id     = $id - 1;
-            $tipsId = Db::name($table)->min('id');
+            $tipsId = $db->where($where)->min('id');
             $tips   = '已经是第一个了';
         }
 
@@ -590,14 +592,23 @@ class Tools
             return $tips;
         }
 
-        $data = Db::name($table)->where('status', 1)->find($id);
+        $data = Db::name($table)->where($where)->where('status', 1)->find($id);
+        return $data ? $id : self::getPrevNextId($table, $id, $type);
+    }
 
-        if (!$data) {
-            self::getPrevNextId($table, $id, $type);
-        } else {
-            return $id;
-        }
-
+    /**
+     * [ getFirstLastDayMonth function_description ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-15T15:37:16+0800
+     * @param    [type]                   $date [description]
+     * @return   [type]                         [description]
+     */
+    public static function getFirstLastDayMonth($date)
+    {
+        $firstday = date('Y-m-01', strtotime($date));
+        $lastday  = date('Y-m-d', strtotime("$firstday +1 month -1 day"));
+        return [$firstday, $lastday];
     }
 
 }

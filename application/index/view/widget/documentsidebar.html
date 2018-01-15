@@ -1,0 +1,20 @@
+	            <div class="sidebar-module sidebar-module-inset pt-3">
+	                <h4>关于</h4>
+	                <p style="font-size: .875rem">本系统是一款基于ThinkPHP5.1.* + layui2.2.5 + Mysql开发的后台管理框架，PHP版本要求提升到5.6，系统集成了一般应用所必须的功能模块，为开发者减少重复性的工作，提升开发速度，规范团队开发模式。</p>
+	            </div>
+	            <div class="sidebar-module">
+	                <h4>文档归类</h4>
+	                <ol class="list-unstyled">
+	                	{volist name="gl" id="gvo"}
+	                		<li><a href="{:url('index/Document/lists', ['month' => date('Ym',$gvo.month)])}">{$gvo.month|date="Y年m月"} [{$gvo.count}]</a></li>
+	                	{/volist}
+	                </ol>
+	            </div>
+	            <div class="sidebar-module">
+	                <h4>Elsewhere</h4>
+	                <ol class="list-unstyled">
+	                    <li><a href="#">GitHub</a></li>
+	                    <li><a href="#">Twitter</a></li>
+	                    <li><a href="#">Facebook</a></li>
+	                </ol>
+	            </div>

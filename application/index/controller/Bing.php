@@ -239,9 +239,11 @@ class Bing extends Base
         }
 
         $data = $model->get($id);
-        $data || $this->getPrevNextId($id, $type);
-
-        return $id;
+        if (!$data) {
+            return $this->getPrevNextId($id, $type);
+        } else {
+            return $id;
+        }
     }
 
     public function download($id, $i, $w)

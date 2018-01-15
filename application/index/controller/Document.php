@@ -30,30 +30,7 @@ class Document extends Base
     public function initialize()
     {
         parent::initialize();
-        $startDate = Db::name('Document')->find();
-        $startDate = date('Ymd', $startDate['create_time']);
 
-        $getthemonth = $this->getthemonth($startDate);
-        // dump($getthemonth);
-        $where = [
-            ['create_time', 'between time', [$getthemonth[0], $getthemonth[1]]],
-        ];
-        $data = Db::name('Document')->where($where)->select();
-        // dump($data);die;
-        $count = Db::name('Document')->where('status', 1)->whereBetweenTime('create_time', $getthemonth[0], $getthemonth[1])->count();
-
-        $gl = [
-            ['month' => date('Ym', strtotime($startDate)), 'count' => $count],
-        ];
-        $this->assign('gl', $gl);
-
-    }
-
-    public function getthemonth($date)
-    {
-        $firstday = date('Y-m-01', strtotime($date));
-        $lastday  = date('Y-m-d', strtotime("$firstday +1 month -1 day"));
-        return array($firstday, $lastday);
     }
 
     public function index()
@@ -64,13 +41,14 @@ class Document extends Base
 
     public function lists()
     {
-        $cid   = Request::param('id');
+        $title = '文档列表';
+
         $where = [
             ['status', '=', 1],
         ];
 
-        $title = '文档列表';
-        if ($cid) {
+        if (Request::has('id')) {
+            $cid       = Request::param('id');
             $whereTemp = [
                 ['cid', '=', $cid],
             ];
@@ -80,19 +58,18 @@ class Document extends Base
             $title = Db::name('Category')->getFieldById($cid, 'title');
         }
 
-        $month     = Request::param('month');
-        $whereTime = null;
-        if ($month) {
-            $monthArr = $this->getthemonth($month);
-            // $whereBetweenTime = ['create_time', [$monthArr[0], $monthArr[1]]];
-            $title = date('Y年m月', strtotime($month));
+        if (Request::has('month')) {
+            $month    = Request::param('month');
+            $month    = $month . '01';
+            $monthArr = Tools::getFirstLastDayMonth($month);
+            $title    = date('Y年m月', strtotime($month));
 
             $whereTemp = [
                 ['create_time', 'between time', [$monthArr[0], $monthArr[1]]],
             ];
             array_push($where, $whereTemp);
         }
-        // dump($whereBetweenTime);die;
+
         $data = Db::name('Document')->where($where)->order('id', 'desc')->select();
 
         $list = [];
@@ -101,7 +78,6 @@ class Document extends Base
             $coverData      = Db::name('picture')->find($coverId);
             $value['cover'] = $coverData['path'];
             $list[]         = $value;
-            # code...
         }
         $this->assign('list', $list);
         $this->assign('title', $title);
@@ -127,46 +103,6 @@ class Document extends Base
         // dump($data);die;
 
         return $this->fetch();
-
-    }
-
-    public function te($id)
-    {
-        $prevId = $this->getPrevNextId('Document', $id);
-        // $nextId         = $this->getPrevNextId('Document', $id, 1);
-        // $data['previd'] = $prevId;
-        // $data['nextid'] = $nextId;
-
-        dump($prevId);
-    }
-
-    public function getPrevNextId($table, $id, $type = 0)
-    {
-        $tempId = $id;
-        if ($type) {
-            $id     = $id + 1;
-            $tipsId = Db::name($table)->max('id');
-            $tips   = '未来在路上，请稍等……';
-        } else {
-            $id     = $id - 1;
-            $tipsId = Db::name($table)->min('id');
-            $tips   = '已经是第一个了';
-        }
-
-        if ($tempId == $tipsId) {
-            return $tips;
-        }
-
-        $data = Db::name($table)->where('status', 1)->find($id);
-        // dump($data);
-
-        if (!$data) {
-            $this->getPrevNextId($table, $id, $type);
-            // return false;
-        } else {
-            $dataq = Db::name($table)->where('status', 1)->find($id);
-            return $dataq['id'];
-        }
 
     }
 
