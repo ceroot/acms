@@ -216,14 +216,13 @@ trait Admin
                         $one = $this->model->find($this->id); // 取得数据
                     }
 
-                    $model_id       = $this->model->getFieldById($this->id, 'model_id');
-                    $modelName      = Db::name('Model')->getFieldById($model_id, 'name');
-                    $tempData       = Db::name('document_' . $modelName)->find($this->id);
-                    $one['content'] = $tempData ? $tempData['content'] : '';
-                    // dump($one['cover_id']);
-                    // $one['cover_id'] = Db::name('picture')->getFieldById($one['cover_id'], 'path');
+                    $model_id        = $this->model->getFieldById($this->id, 'model_id');
+                    $model_id        = $model_id ? $model_id : 2;
+                    $modelName       = Db::name('Model')->getFieldById($model_id, 'name');
+                    $tempData        = Db::name('document_' . $modelName)->find($this->id);
+                    $one['content']  = $tempData ? $tempData['content'] : '';
                     $coverData       = Db::name('picture')->find($one['cover_id']);
-                    $one['cover_id'] = $coverData ? $coverData['path'] : ''; //Db::name('picture')->getFieldById($one['cover_id'], 'path');
+                    $one['cover_id'] = $coverData ? $coverData['path'] : '';
                     break;
                 default:
                     if ($this->isWithTrashed()) {
