@@ -17,7 +17,7 @@ a:hover{ text-decoration: none; color: #07913a; transition: all .3s; }
 .box-area .box-content{ border:1px solid #ddd; border-radius: .25rem; padding: .25rem; padding-bottom: 1.25rem; height: 100%; position: relative; }
 .box-area .box-content:hover{ border:1px solid #23527c;}
 .box-area .box-content .box-body{}
-.box-area .box-content .box-body .img-box{ max-height: 199.35px; overflow: hidden; text-align: center; }
+.box-area .box-content .box-body .img-box{ max-height: 199.35px; overflow: hidden; text-align: center; background: #fff; }
 .box-area .box-content .box-body .img-box img{max-width: 100%; }
 .box-area .box-content .box-body{}
 .box-area .box-content .box-footer{ color: #666; position: absolute; bottom: 3px; left: 0; width: 100%; padding-left: 5px; padding-right: 5px; font-size: .875rem}
