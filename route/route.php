@@ -14,9 +14,9 @@ Route::get('think', function () {
 });
 
 Route::rule('document$', 'index/Document/index');
-// Route::rule('document/lists', 'index/Document/lists');
-// Route::rule('document/lists/:id', 'index/Document/lists');
-// Route::rule('document/reader/:id', 'index/Document/reader');
+Route::rule('document/lists', 'index/Document/lists');
+Route::rule('document/lists/:id', 'index/Document/lists');
+Route::rule('document/reader/:id', 'index/Document/reader');
 // Route::rule('document/category/:time', 'index/Document/lists');
 
 Route::get('hello/:name', 'index/hello');
