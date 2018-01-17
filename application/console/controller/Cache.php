@@ -21,9 +21,8 @@ namespace app\console\controller;
 use app\console\controller\Base;
 use Dir;
 use think\facade\Env;
+use think\facade\Hook;
 use think\facade\Session;
-use think\facade\Cache;
-use think\facade\Hook
 
 class Cache extends Base
 {
@@ -91,7 +90,7 @@ class Cache extends Base
                     $msg = '临时目录';
                     break;
                 case 'sdk_config':
-                    Cache::rm('oauth_sdk_config');
+                    \Cache::rm('oauth_sdk_config');
                     $msg = '第三方登录 SDK 缓存';
                     break;
                 case 'runtime':
