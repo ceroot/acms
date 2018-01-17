@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
@@ -38,23 +38,22 @@ class AuthRule extends Base
             } else {
                 $this->assign('_pid', null);
             }
-
         } else {
             $this->assign('_pid', null);
         }
 
     }
 
-    function list() {
-        cookie('__forward__', $_SERVER['REQUEST_URI']); // 记录当前列表页的cookie
-        return $this->fetch();
-    }
-
+    /**
+     * [ del 删除 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T12:06:14+0800
+     * @return   [type]                   [description]
+     */
     public function del()
     {
-        if (!$this->id) {
-            return $this->error('参数错误');
-        }
+        $this->id || $this->error('参数错误');
 
         $status = $this->model->del($this->id);
 
@@ -68,8 +67,11 @@ class AuthRule extends Base
     }
 
     /**
-     * @name   更新菜单显示
-     * @author SpringYang <ceroot@163.com>
+     * [ updateshow 更新菜单显示 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T12:07:04+0800
+     * @return   [type]                   [description]
      */
     public function updateshow()
     {
@@ -77,8 +79,11 @@ class AuthRule extends Base
     }
 
     /**
-     * @name   更新权限验证
-     * @author SpringYang <ceroot@163.com>
+     * [ updateauth 更新权限验证 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T12:07:17+0800
+     * @return   [type]                   [description]
      */
     public function updateauth()
     {
@@ -86,11 +91,13 @@ class AuthRule extends Base
     }
 
     /**
-     * @name   更新字段
-     * @param  string   $field      [字段名称]
-     * @param  string   $value      [字段值]
-     * @return boolean              [返回布尔值]
-     * @author SpringYang <ceroot@163.com>
+     * [ updatefield 更新字段 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T12:07:35+0800
+     * @param    string                   $field [字段名称]
+     * @param    string                   $value [字段值]
+     * @return   boolean                         [返回布尔值]
      */
     protected function updatefield($field, $value = null)
     {
@@ -111,8 +118,11 @@ class AuthRule extends Base
     }
 
     /**
-     * @name   规则排序
-     * @author SpringYang <ceroot@163.com>
+     * [ sort 规则排序 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T12:08:32+0800
+     * @return   [type]                   [description]
      */
     public function sort()
     {

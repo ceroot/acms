@@ -13,9 +13,11 @@ class Base extends Extend
     protected $id; // 主键
 
     /**
-     * @name   initialize          [初始化]
-     * @author SpringYang <ceroot@163.com>
-     * @dateTime
+     * [ initialize 初始化 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T12:23:40+0800
+     * @return   [type]                   [description]
      */
     public function initialize()
     {
@@ -33,6 +35,7 @@ class Base extends Extend
             }
         }
 
+        // 等完善
         $detect = new \Mobile_Detect;
         if ($detect->isMobile()) {
 
@@ -42,27 +45,13 @@ class Base extends Extend
 
     public function test($type = 0)
     {
-        // require_once 'Mobile_Detect.php';
-        // $detect = new Mobile_Detect;
-        $detect = new \Mobile_Detect;
-        // $extendPath = Env::get('extend_path');
-        dump($detect->version('Edge'));
-        dump($detect->getPhoneDevices());
-        dump($detect->getTabletDevices());
-        dump($detect->getOperatingSystems());
-        dump($detect->getBrowsers());
-        dump($detect->getUtilities());
-        dump($detect->getProperties());
-        die;
-        return $this->menusView();
-        // $tableFields = $this->app->getTableFields('cy_' . $this->app->request->controller()); // 取得表字段
-        $tableFields = \Db::getTableFields('cy_' . $this->model->getName());
-        dump($tableFields);
+
     }
 
     /**
      * [ index 通用首页 ]
-     * @author   SpringYang <ceroot@163.com>
+     * @author   SpringYang
+     * @email    <ceroot@163.com>
      * @dateTime 2017-10-27T15:37:47+0800
      * @return   [type]                   [description]
      */
@@ -109,15 +98,14 @@ class Base extends Extend
      */
     public function lists()
     {
+        $this->app->cookie->set('__forward__', $_SERVER['REQUEST_URI']);
         if ($this->app->request->isAjax()) {
             $redata = $this->_lists(); // 返回的数据
             $count  = $redata['count']; // 总条数
             $data   = $redata['data']; // 当年
-            // return $data;
-            $this->app->cookie->set('__forward__', $_SERVER['REQUEST_URI']);
+
             return $this->success('成功', '', $data, $count);
         } else {
-            $this->app->cookie->set('__forward__', $_SERVER['REQUEST_URI']);
             return $this->menusView();
         }
     }
@@ -157,7 +145,8 @@ class Base extends Extend
 
     /**
      * [ add 通用添加 ]
-     * @author   SpringYang <ceroot@163.com>
+     * @author   SpringYang
+     * @email    ceroot@163.com
      * @dateTime 2017-10-27T15:38:46+0800
      */
     public function add()
@@ -168,7 +157,8 @@ class Base extends Extend
 
     /**
      * [ edit 通用编辑 ]
-     * @author   SpringYang <ceroot@163.com>
+     * @author   SpringYang
+     * @email    ceroot@163.com
      * @dateTime 2017-10-27T15:38:13+0800
      * @return   [type]                       [description]
      */
@@ -176,7 +166,6 @@ class Base extends Extend
     {
         $one = $this->_edit();
         $this->assign('one', $one);
-        // dump($one);die;
 
         return $this->menusView('add');
     }
@@ -189,7 +178,8 @@ class Base extends Extend
 
     /**
      * [ renew 通用更新数据操作方法 ]
-     * @author   SpringYang <ceroot@163.com>
+     * @author   SpringYang
+     * @email    ceroot@163.com
      * @dateTime 2017-10-27T15:43:40+0800
      * @return   [type]                   [description]
      */
@@ -200,7 +190,8 @@ class Base extends Extend
 
     /**
      * [ updatestatus 通用更新 status 字段状态 ]
-     * @author SpringYang <ceroot@163.com>
+     * @author   SpringYang
+     * @email    ceroot@163.com
      * @dateTime 2017-10-30T16:45:39+0800
      * @return   [type]                   [description]
      */
@@ -211,18 +202,13 @@ class Base extends Extend
 
     public function updatestatustest()
     {
-        $data = $this->model::get(31);
-        dump($data);die;
-        $value        = $data->getData('status'); // 取得 status 原始数据
-        $data->status = $value ? 0 : 1; // status 数据
 
-        $status = $data->save();
-        dump($status);
     }
 
     /**
      * [ del 通用删除 ]
-     * @author SpringYang <ceroot@163.com>
+     * @author   SpringYang
+     * @email    ceroot@163.com
      * @dateTime 2017-10-31T09:52:43+0800
      * @return   [type]                   [description]
      */
@@ -233,7 +219,7 @@ class Base extends Extend
 
     /**
      * [ seting 通用设置 ]
-     * @author SpringYang
+     * @author   SpringYang
      * @email    ceroot@163.com
      * @dateTime 2017-11-03T10:18:50+0800
      * @return   [type]                   [description]

@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2017 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
@@ -46,9 +46,10 @@ class WebLog
     }
 
     /**
-     * { function_name function_description}
-     * @Author   SpringYang
-     * @DateTime 2017-10-23T10:48:12+0800
+     * [ webLog 网站日志记录 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-10-23T10:48:12+0800
      * @return   [type]                   [description]
      */
     private function webLog()
@@ -63,7 +64,8 @@ class WebLog
         if ($this->checkrobot()) {
             return true;
         }
-        // dump(Request::controller());die;
+
+        // 不记录 WebLog
         if (Request::controller() == 'WebLog') {
             return true;
         }
@@ -152,6 +154,14 @@ class WebLog
 
     }
 
+    /**
+     * [ checkrobot 搜索引擎蜘蛛判断 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T11:39:43+0800
+     * @param    string                   $useragent [description]
+     * @return   [type]                              [description]
+     */
     private function checkrobot($useragent = '')
     {
         static $kw_spiders  = array('bot', 'crawl', 'spider', 'slurp', 'sohu-search', 'lycos', 'robozilla');
@@ -168,6 +178,7 @@ class WebLog
 
         return false;
     }
+
     private function dstrpos($string, $arr, $returnvalue = false)
     {
         if (empty($string)) {

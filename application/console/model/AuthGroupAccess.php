@@ -6,8 +6,13 @@ use app\common\model\Extend;
 class AuthGroupAccess extends Extend
 {
     /**
-     * @name   saveData             [保存数据]
-     * @author SpringYang <ceroot@163.com>
+     * [ saveData 保存数据 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T13:02:47+0800
+     * @param    integer                  $uid     [用户 id]
+     * @param    integer                  $groupid [组 id]
+     * @return   [type]                            [description]
      */
     public function saveData($uid, $groupid)
     {
@@ -19,10 +24,12 @@ class AuthGroupAccess extends Extend
     }
 
     /**
-     * @name   delDataByUid         [根据用户id删除数据]
-     * @param  string   $uid        [用户id]
-     * @return boolean              [返回布尔值]
-     * @author SpringYang <ceroot@163.com>
+     * [ delDataByUid 根据用户id删除数据 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T13:04:09+0800
+     * @param    integer                   $uid [用户id]
+     * @return   [type]                        [description]
      */
     public function delDataByUid($uid)
     {
@@ -30,10 +37,12 @@ class AuthGroupAccess extends Extend
     }
 
     /**
-     * @name   delDataByUid         [根据角色id删除数据]
-     * @param  string   $gid        [角色id]
-     * @return boolean              [返回布尔值]
-     * @author SpringYang <ceroot@163.com>
+     * [ delDataByUid 根据角色id删除数据 ]
+     * @author   SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T13:04:39+0800
+     * @param    integer                  $gid [角色 id]
+     * @return   [type]                        [description]
      */
     public function delDataByGid($gid)
     {

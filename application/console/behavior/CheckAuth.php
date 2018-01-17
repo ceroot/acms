@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
@@ -33,10 +33,16 @@ class CheckAuth
 
     public function run($params)
     {
-        // dump(DIRECTORY_SEPARATOR);die;
         $this->check();
     }
 
+    /**
+     * [ check 权限检查 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T11:59:11+0800
+     * @return   [type]                   [description]
+     */
     private function check()
     {
         if (strtolower(Request::controller()) == 'start') {
@@ -57,23 +63,10 @@ class CheckAuth
         // 1 不是超级管理员
         // 2 是必须验证的
         if (!in_array(Session::get('manager_id'), Config::get('auth_superadmin')) && !in_array($action, $not_auth)) {
-            // 处理会员和管理员规则
-            if ($controller == 'user' && input('role') == 1) {
-                $controller = 'manager';
-            }
-
-            // 权限验证
-            // 执行验证
-            // if (!$this->authCheck($action, Session::get('manager_id'))) {
-            //     $url = url('index/index?time=' . time()) . '?backurl=' . getbackurl();
-            //     return $this->error('您没有相关权限，请联系管理员', $url);
-            // }
-
             if (!Auth::check($action, Session::get('manager_id'))) {
                 $url = url('index/index?time=' . time()) . '?backurl=' . getbackurl();
                 return $this->error('您没有相关权限，请联系管理员', $url);
             }
-
         }
 
     }

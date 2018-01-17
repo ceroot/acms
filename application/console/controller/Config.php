@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
@@ -30,7 +30,7 @@ class Config extends Base
 
     /**
      * [ index 配置首页 ]
-     * @author SpringYang
+     * @author   SpringYang
      * @email    ceroot@163.com
      * @dateTime 2018-01-09T10:24:08+0800
      * @return   [type]                   [description]
@@ -92,7 +92,7 @@ class Config extends Base
 
     /**
      * [ groupupdate 修改操作 ]
-     * @author SpringYang
+     * @author   SpringYang
      * @email    ceroot@163.com
      * @dateTime 2018-01-09T10:25:38+0800
      * @return   [type]                   [description]
@@ -122,7 +122,7 @@ class Config extends Base
 
     /**
      * [ lists 列表页 ]
-     * @author SpringYang
+     * @author   SpringYang
      * @email    ceroot@163.com
      * @dateTime 2018-01-09T10:25:55+0800
      * @return   [type]                   [description]

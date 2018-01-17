@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
@@ -29,7 +29,7 @@ class Category extends Extend
      * @author SpringYang
      * @email    ceroot@163.com
      * @dateTime 2018-01-12T14:48:04+0800
-     * @return   array                   [description]
+     * @return   [type]                   [description]
      */
     public function getMenu()
     {

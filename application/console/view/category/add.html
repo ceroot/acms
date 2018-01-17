@@ -1,7 +1,7 @@
 {extend name="mould:base" /}
 {block name="title"}{/block}
 {block name="content"}
-<form action="{:url('renew')}" method="post" class="layui-form">
+<form action="{:url('renew')}" method="post" class="layui-form pb">
     {:widget('Widgets/form', ['type'=>'select','title'=>'顶级','name'=>'pid','value'=>$one.pid|$_pid,'elementid'=>'pid','datalist'=>$category])}
     {:widget('Widgets/form', ['type'=>'text','title'=>'类别标识','name'=>'name','value'=>$one.name,'elementid'=>'name','layverify'=>'required','placeholder'=>'规则名称'])}
     {:widget('Widgets/form', ['type'=>'text','title'=>'类别名称','name'=>'title','value'=>$one.title,'elementid'=>'title','layverify'=>'required','placeholder'=>'规则名称'])}

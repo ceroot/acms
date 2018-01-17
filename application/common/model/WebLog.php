@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
@@ -27,7 +27,15 @@ class WebLog extends Extend
     use SoftDelete;
     protected $deleteTime = 'delete_time';
 
-    // 取得来自地区，待完善
+    /**
+     * [ getFromAttr 取得来自地区，待完善 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T11:51:00+0800
+     * @param    [type]                   $value [description]
+     * @param    [type]                   $data  [description]
+     * @return   [type]                          [description]
+     */
     public function getFromAttr($value, $data)
     {
         $ip     = long2ip($data['create_ip']);

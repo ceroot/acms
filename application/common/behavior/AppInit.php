@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
@@ -27,10 +27,16 @@ class AppInit
 
     public function run($param)
     {
-        $this->config(); // 配置信息
+        $this->config(); // 配置信息处理
     }
 
-    // 配置信息处理
+    /**
+     * [ config 配置信息处理 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-10-23T11:34:38+0800
+     * @return   [type]                   [description]
+     */
     private function config()
     {
         // 判断数据库中的配置是否存在，不存在设置并返回
@@ -52,9 +58,6 @@ class AppInit
             }
             Config::set($key, $value);
         }
-
-        // dump(Config::get('app_debug'));
-        // dump($config);
 
         // Config::set($config); // 添加配置，5.0之前可以这样
 

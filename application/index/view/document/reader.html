@@ -10,7 +10,7 @@
 {/block}
 {block name="content"}
 <div class="container">
-	<div class="row">
+    <div class="row">
         <div class="col-sm-9 main-area">
             <div class="main-content">
               	<h2>{$data.title}</h2>	
@@ -23,11 +23,18 @@
                   		  {/notempty}
                   	</div>
                 </div>
-                <nav class="blog-pagination">
-                    <a class="btn btn-outline-primary {eq name="$data.prevData.id" value="0"} btn-outline-secondary disabled{/eq}" href="{:url('index/Document/reader',['id'=>$data.prevData.id])}">上一篇</a> {$data.prevData.title}<br><br>
-                    <a class="btn btn-outline-primary {eq name="$data.nextData.id" value="0"} btn-outline-secondary disabled{/eq}" href="{:url('index/Document/reader',['id'=>$data.nextData.id])}">下一篇</a> {$data.nextData.title}
-                </nav>
-        </div>
+            </div>
+            <div class="bw-pagination">
+                <div class="row ">
+                    <div class="col-6 col-sm-6 col-lg-12 prev">
+                        <a class=" {eq name="$data.prevData.id" value="0"} disabled{/eq}" href="{:url('index/Document/reader',['id'=>$data.prevData.id])}"><span>上一篇</span><i>：{$data.prevData.title}</i></a>
+                    </div>
+                    <div class="col-6 col-sm-6 col-lg-12">
+                        <a class=" {eq name="$data.nextData.id" value="0"} disabled{/eq}" href="{:url('index/Document/reader',['id'=>$data.nextData.id])}"><span>下一篇</span><i>：{$data.nextData.title}</i></a>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <aside class="col-sm-3 ml-sm-auto main-sidebar">
             {:widget('Widgets/documentsidebar')}

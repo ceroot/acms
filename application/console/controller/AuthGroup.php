@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
@@ -26,9 +26,15 @@ class AuthGroup extends Base
     public function initialize()
     {
         parent::initialize();
-
     }
 
+    /**
+     * [ lists 列表 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T12:04:29+0800
+     * @return   [type]                   [description]
+     */
     public function lists()
     {
         $pageLimit = $this->app->request->param('limit');
@@ -44,7 +50,6 @@ class AuthGroup extends Base
         foreach ($list as $value) {
             $value['editid'] = authcode($value['id']);
             $newlist[]       = $value;
-            # code...
         }
 
         $rulesTree = $this->model->getRules($newlist);
@@ -57,6 +62,13 @@ class AuthGroup extends Base
         return $this->menusView();
     }
 
+    /**
+     * [ rule 角色管理页面 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T12:05:08+0800
+     * @return   [type]                   [description]
+     */
     public function rule()
     {
         if ($this->app->request->isPost()) {

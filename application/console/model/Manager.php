@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
@@ -27,9 +27,9 @@ class Manager extends Extend
 
     /**
      * [ setLoginTimeAttr 登录时间自动化 ]
-     * @Author   SpringYang
-     * @Email    ceroot@163.com
-     * @DateTime 2017-10-25T11:26:10+0800
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-10-25T11:26:10+0800
      */
     public function setLoginTimeAttr()
     {

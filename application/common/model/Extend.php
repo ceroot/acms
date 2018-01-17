@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
@@ -98,6 +98,14 @@ class Extend extends Model
         return long2ip($value);
     }
 
+    /**
+     * [ getStatusAttr 设置状态为中文 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T11:50:00+0800
+     * @param    [type]                   $value [description]
+     * @return   [type]                          [description]
+     */
     public function getStatusAttr($value)
     {
         $data = ['0' => '禁用', '1' => '正常'];

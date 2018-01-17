@@ -2,6 +2,7 @@
 namespace app\console\controller;
 
 use app\console\controller\Base;
+use app\facade\Tools;
 use think\Db;
 use think\facade\App;
 
@@ -13,12 +14,11 @@ class Index extends Base
     }
 
     /**
-     * @Author    Hybrid
-     * @DateTime  2017-10-20
-     * @copyright [copyright]
-     * @license   [license]
-     * @version   [version]
-     * @return    [type]      [description]
+     * [ index 首页 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T12:54:53+0800
+     * @return   [type]                   [description]
      */
     public function index()
     {
@@ -29,13 +29,25 @@ class Index extends Base
         $this->assign('userCount', App::model('UcenterMember')->count());
         $this->assign('actionCount', App::model('ActionLog')->count());
 
+        // 网站日志统计;
+        $weblogEcharts = Tools::echarts([]);
+        $this->assign('weblogEcharts', $weblogEcharts);
+
+        // 文档统计
+        $documentEcharts = Tools::echarts(['table' => 'document']);
+        $this->assign('documentEcharts', $documentEcharts);
+
+        // 行为统计
+        $actionEcharts = Tools::echarts(['table' => 'actionLog']);
+        $this->assign('actionEcharts', $actionEcharts);
+
         return $this->menusView();
 
     }
 
     /**
      * [ copyright 版权 ]
-     * @author SpringYang
+     * @author   SpringYang
      * @email    ceroot@163.com
      * @dateTime 2018-01-09T14:26:33+0800
      * @return   [type]                   [description]
@@ -49,7 +61,7 @@ class Index extends Base
 
     /**
      * [ serverInfo 服务器休息 ]
-     * @author SpringYang
+     * @author   SpringYang
      * @email    ceroot@163.com
      * @dateTime 2018-01-09T14:26:52+0800
      * @return   [type]                   [description]
@@ -86,7 +98,7 @@ class Index extends Base
 
     /**
      * [ extensionsList PHP 扩展信息 ]
-     * @author SpringYang
+     * @author   SpringYang
      * @email    ceroot@163.com
      * @dateTime 2018-01-09T14:27:48+0800
      * @return   [type]                   [description]
@@ -99,7 +111,7 @@ class Index extends Base
 
     /**
      * [ get_mysql_version 数据库版本 ]
-     * @author SpringYang
+     * @author   SpringYang
      * @email    ceroot@163.com
      * @dateTime 2018-01-09T14:28:17+0800
      * @return   [type]                   [description]
@@ -140,7 +152,7 @@ class Index extends Base
 
     /**
      * [ setcollapsed 侧边栏动作设置 ]
-     * @author SpringYang
+     * @author   SpringYang
      * @email    ceroot@163.com
      * @dateTime 2018-01-09T14:28:48+0800
      * @return   [type]                   [description]

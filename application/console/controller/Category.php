@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
@@ -26,7 +26,6 @@ class Category extends Base
     public function initialize()
     {
         parent::initialize();
-        //$field    = 'id,pid,name,title';
         $category = $this->model->select();
         $category = $category->toArray();
 

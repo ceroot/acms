@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
@@ -49,14 +49,19 @@ class Extend extends Controller
 
     }
 
+    /**
+     * [ imgResize 输出图片大小 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T11:43:40+0800
+     * @param    string                   $img     [图片路径]
+     * @param    integer                  $w       [图片宽度]
+     * @param    integer                  $quality [图片清晰度，默认 80]
+     * @return   [type]                            [description]
+     */
     public function imgResize($img, $w = 500, $quality = 80)
     {
-
-        // $image = './data/bingwallpaper/2017/12/19/ReindeerLichen_ZH-CN9944307835.jpg';
-
-        // $image = './data/bingwallpaper/2017/12/19/' . $i;
         $image = $img;
-        // $image = 'https://www.benweng.com/data/bingwallpaper/2017/12/20/PowysCounty_ZH-CN11115693548.jpg';
 
         $size   = getimagesize($image); // 得到图像的大小
         $width  = $size[0];
@@ -90,42 +95,4 @@ class Extend extends Controller
         imagedestroy($dst);
     }
 
-    public function imgResizeBack($img, $w)
-    {
-
-        // $image = './data/bingwallpaper/2017/12/19/ReindeerLichen_ZH-CN9944307835.jpg';
-
-        // $image = './data/bingwallpaper/2017/12/19/' . $i;
-        $image = $img;
-        // $image = 'https://www.benweng.com/data/bingwallpaper/2017/12/20/PowysCounty_ZH-CN11115693548.jpg';
-
-        $max_width  = $w; //200;
-        $max_height = 200;
-
-        $size   = getimagesize($image); //得到图像的大小
-        $width  = $size[0];
-        $height = $size[1];
-
-        $x_ratio = $max_width / $width;
-        $y_ratio = $max_height / $height;
-
-        if (($width <= $max_width) && ($height <= $max_height)) {
-            $tn_width  = $width;
-            $tn_height = $height;
-        } elseif (($x_ratio * $height) < $max_height) {
-            $tn_height = ceil($x_ratio * $height);
-            $tn_width  = $max_width;
-        } else {
-            $tn_width  = ceil($y_ratio * $width);
-            $tn_height = $max_height;
-        }
-
-        $src = imagecreatefromjpeg($image);
-        $dst = imagecreatetruecolor($tn_width, $tn_height); //新建一个真彩色图像
-        imagecopyresampled($dst, $src, 0, 0, 0, 0, $tn_width, $tn_height, $width, $height); //重采样拷贝部分图像并调整大小
-        header('Content-Type: image/jpeg');
-        imagejpeg($dst, null, 100);
-        imagedestroy($src);
-        imagedestroy($dst);
-    }
 }
