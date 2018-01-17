@@ -11,6 +11,12 @@
 	.tj .tj-box .tj-content{}
 	.tj .tj-box .tj-content h4{ padding: 10px 20px 10px 5px; padding-bottom: 5px; border-bottom: 1px solid #fff; font-size: 30px; text-shadow: 3px 3px 3px rgba(0,0,0,0.3); }
 	.tj .tj-box .tj-content .box-body{ padding: 5px 20px 10px 5px }
+
+	.echarts-box{ width: 100%; height: 400px; }
+
+	@media screen and (max-width: 575.99px) {
+		.echarts-box{ height: 300px; }
+	}
 </style>
 {/block}
 {block name="content"}
@@ -55,15 +61,15 @@
 	</fieldset>
 	<fieldset class="layui-elem-field">
 		<legend>访问统计</legend>
-		<div id="weblogEcharts" style="width:100%; height:400px;"></div>
+		<div class="echarts-box" id="weblogEcharts"></div>
 	</fieldset>
 	<fieldset class="layui-elem-field">
 		<legend>文档统计</legend>
-		<div id="documentEcharts" style="width:100%; height:400px;"></div>
+		<div class="echarts-box" id="documentEcharts"></div>
 	</fieldset>
 	<fieldset class="layui-elem-field">
 		<legend>行为统计</legend>
-		<div id="actionEcharts" style="width:100%; height:400px;"></div>
+		<div class="echarts-box" id="actionEcharts"></div>
 	</fieldset>
 	<fieldset class="layui-elem-field">
 		<legend>开发团队</legend>

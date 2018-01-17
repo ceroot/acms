@@ -36,4 +36,20 @@ class Document extends Base
         $this->assign('model_list', $model_list);
     }
 
+    public function dtest()
+    {
+        $data['cid']         = 1;
+        $data['model_id']    = 2;
+        $data['cover_id']    = 30;
+        $data['description'] = 'description';
+        $data['keywords']    = 'keywords';
+        $data['template']    = 'template';
+        $data['title']       = 'fdsfsfa';
+
+        $status = $this->model->save($data);
+
+        dump($status);
+
+    }
+
 }

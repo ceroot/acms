@@ -356,10 +356,11 @@ trait Admin
                 // 数据验证
                 // return $data;
                 $validate = $this->app->validate($this->app->request->controller());
+
                 if (!$validate->check($data)) {
                     switch (strtolower($this->app->request->controller())) {
                         case 'document':
-                            $this->documentCover($data['cover_id'], 3);
+                            return $this->documentCover($data['cover_id'], 3);
                             break;
 
                         default:
@@ -369,6 +370,8 @@ trait Admin
 
                     return $this->error($validate->getError());
                 }
+
+                // return $data;
 
                 // 数据保存
                 $status = $this->model->save($data);
