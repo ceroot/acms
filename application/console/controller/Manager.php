@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
@@ -40,7 +40,7 @@ class Manager extends Base
 
     /**
      * [ info 个人信息 ]
-     * @author SpringYang <ceroot@163.com>
+     * @author   SpringYang <ceroot@163.com>
      * @dateTime 2017-11-02T15:03:49+0800
      * @return   [type]                   [description]
      */
@@ -100,7 +100,7 @@ class Manager extends Base
 
     /**
      * [ password 修改密码 ]
-     * @author SpringYang <ceroot@163.com>
+     * @author   SpringYang <ceroot@163.com>
      * @dateTime 2017-11-02T15:03:28+0800
      * @return   [type]                   [description]
      */
@@ -155,6 +155,13 @@ class Manager extends Base
         }
     }
 
+    /**
+     * [ renew 更新 ]
+     * @author   SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T12:56:13+0800
+     * @return   [type]                   [description]
+     */
     public function renew()
     {
         if (request()->isPost()) {

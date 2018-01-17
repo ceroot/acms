@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
@@ -39,8 +39,9 @@ class CheckLogin
 
     /**
      * [ initialization 初始化 ]
-     * @Author   SpringYang <ceroot@163.com>
-     * @DateTime 2017-10-26T11:03:54+0800
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-10-26T11:03:54+0800
      * @return   [type]                   [description]
      */
     private function initialization()
@@ -49,9 +50,10 @@ class CheckLogin
     }
 
     /**
-     * [ check 运行检查 ]
-     * @Author   SpringYang <ceroot@163.com>
-     * @DateTime 2017-10-26T11:04:10+0800
+     * [ check 运行登录状态检查 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-10-26T11:04:10+0800
      * @return   [type]                   [description]
      */
     private function check()
@@ -99,7 +101,8 @@ class CheckLogin
 
     /**
      * [ managerLogin 管理用户登录判断 ]
-     * @author SpringYang <ceroot@163.com>
+     * @author SpringYang
+     * @email    ceroot@163.com
      * @dateTime 2017-11-06T13:33:38+0800
      * @return   [type]                   [0-没有登录，1-登录]
      */

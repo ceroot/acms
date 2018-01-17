@@ -13,7 +13,8 @@ class Action extends Extend
 
     /**
      * [ add_for_rule 这里是给添加规则时是否添加操作记录调用的 ]
-     * @author SpringYang <ceroot@163.com>
+     * @author   SpringYang
+     * @email    ceroot@163.com
      * @dateTime 2017-11-01T17:47:06+0800
      */
     public function add_for_rule()

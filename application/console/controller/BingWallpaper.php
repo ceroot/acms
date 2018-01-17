@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
@@ -21,15 +21,13 @@ namespace app\console\controller;
 
 use app\console\controller\Base;
 
-class BingWallpaper extends Base {
+class BingWallpaper extends Base
+{
 
-	public function initialize() {
-		parent::initialize();
+    public function initialize()
+    {
+        parent::initialize();
 
-	}
-
-	public function index1() {
-		dump(1);
-	}
+    }
 
 }

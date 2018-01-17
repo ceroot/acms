@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
@@ -46,8 +46,9 @@ class ActionLog
 
     /**
      * [ initialization 初始化 ]
-     * @Author   SpringYang <ceroot@163.com>
-     * @DateTime 2017-10-26T11:00:31+0800
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-10-26T11:00:31+0800
      * @return   [type]                   [description]
      */
     private function initialization()
@@ -56,12 +57,18 @@ class ActionLog
     }
 
     /**
-     * { actionLog 行为记录方法}
-     * @Author   SpringYang <ceroot@163.com>
-     * @DateTime 2017-10-24T11:47:42+0800
-     * @param    integer                   $id [description]
-     * @return   [type]                        [description]
+     * [ actionLog 行为记录方法 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-10-24T11:47:42+0800
+     * @param  string   $action     [行为标识]
+     * @param  string   $model      [触发行为的模型名]
+     * @param  int      $record_id  [触发行为的记录id]
+     * @param  int      $user_id    [执行行为的用户id]
+     * @param  string   $actioninfo [记录信息]
+     * @return   [type]                               [description]
      */
+
     private function actionLog($record_id = null, $action = null, $model = null, $user_id = null, $actioninfo = null)
     {
         $result = App::model('ActionLog')->actionLogRun($record_id, $action, $model, $user_id, $actioninfo);

@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
@@ -21,24 +21,20 @@ namespace app\console\controller;
 use app\console\controller\Base;
 use Dir;
 use think\facade\Env;
+use think\facade\Session;
+use think\facade\Cache;
+use think\facade\Hook
 
 class Cache extends Base
 {
     public function initialize()
     {
         parent::initialize();
-
-    }
-
-    public function ctest()
-    {
-
-        dump(session('action'));
     }
 
     /**
      * [ cache 更新缓存 ]
-     * @author SpringYang
+     * @author   SpringYang
      * @email    ceroot@163.com
      * @dateTime 2017-11-30T15:27:14+0800
      * @return   [type]                   [description]
@@ -49,16 +45,15 @@ class Cache extends Base
         $msg         = '';
 
         if ($this->app->request->isAjax()) {
-            if (!\Session::has('action')) {
-                $action = $this->app->request->param('action/a');
-                \Session::set('action', $action);
+            if (Session::has('action')) {
+                $action = Session::get('action');
             } else {
-                $action = \Session::get('action');
+                $action = $this->app->request->param('action/a');
+                Session::set('action', $action);
             }
-            // die;
 
             $current = array_shift($action);
-            \Session::set('action', $action);
+            Session::set('action', $action);
             switch (strtolower($current)) {
                 case 'config':
                     $Config = new \app\common\model\Config;
@@ -96,7 +91,7 @@ class Cache extends Base
                     $msg = '临时目录';
                     break;
                 case 'sdk_config':
-                    \Cache::rm('oauth_sdk_config');
+                    Cache::rm('oauth_sdk_config');
                     $msg = '第三方登录 SDK 缓存';
                     break;
                 case 'runtime':
@@ -123,15 +118,15 @@ class Cache extends Base
 
             $data['type'] = $current;
             $data['end']  = 0;
-            \Session::set('logText', $msg);
+            Session::set('logText', $msg);
 
             if (count($action) == 0) {
                 $msg         = '全部缓存更新成功';
                 $data['end'] = 1;
-                \Session::delete('action'); // 删除 action
+                Session::delete('action'); // 删除 action
             }
 
-            \Hook::listen('action_log', ['record_id' => 0]);
+            Hook::listen('action_log', ['record_id' => 0]);
             return $this->success($msg, '', $data);
 
         } else {
@@ -140,9 +135,16 @@ class Cache extends Base
 
     }
 
+    /**
+     * [ resetcache 重置更新缓存 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T12:51:30+0800
+     * @return   [type]                   [description]
+     */
     public function resetcache()
     {
-        \Session::delete('action');
+        Session::delete('action');
         return $this->success('重置成功');
     }
 }

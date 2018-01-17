@@ -1,10 +1,22 @@
 <?php
+// +----------------------------------------------------------------------+
+// | BWCMS                                                                |
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
+// +----------------------------------------------------------------------+
+// | Authors: SpringYang [ceroot@163.com]                                 |
+// +----------------------------------------------------------------------+
 /**
  *
- * @authors SpringYang (ceroo@163.com)
- * @date    2018-01-10 23:09:46
- * @version $Id$
+ * @filename  Document.php 文档逻辑
+ * @authors   SpringYang
+ * @email     ceroot@163.com
+ * @QQ        525566309
+ * @date      2018-01-10 23:09:46
+ * @site      http://www.benweng.com
+ * @version   $Id$
  */
+
 namespace app\common\logic;
 
 use app\common\model\Extend;
@@ -12,6 +24,14 @@ use think\Db;
 
 class Document extends Extend
 {
+    /**
+     * [ getReader function_description ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T11:45:59+0800
+     * @param    integer                  $id [文档 id]
+     * @return   array                        [返回文档数据]
+     */
     public function getReader($id)
     {
         $data = Db::name('Document')->where('status', 1)->find($id);

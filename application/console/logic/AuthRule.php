@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
@@ -29,8 +29,9 @@ class AuthRule extends Extend
 
     /**
      * { updateCache 更新缓存数据}
-     * @Author   SpringYang
-     * @DateTime 2017-10-24T14:14:25+0800
+     * @author   SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-10-24T14:14:25+0800
      * @return   [type]                   [description]
      */
     public function updateCache()
@@ -42,7 +43,8 @@ class AuthRule extends Extend
 
     /**
      * { updateCacheAuthModel 更新不需要权限验证的控制器、方法和不需要实例化模型缓存}
-     * @Author   SpringYang
+     * @author   SpringYang
+     * @email    ceroot@163.com
      * @DateTime 2017-10-24T13:15:05+0800
      * @return   [type]                   [description]
      */
@@ -59,7 +61,6 @@ class AuthRule extends Extend
             (!$val['auth'] && $val['status']) && $notAuth[] = strtolower($val['name']);
             // 取得不需要实例化模型的控制器名称
             if ($val['controller'] && $val['instantiation']) {
-
                 if (stripos($val['name'], '/')) {
                     $name = explode('/', $val['name']);
                     $name = $name[0];
@@ -75,8 +76,11 @@ class AuthRule extends Extend
     }
 
     /**
-     * [admin_menu 生成后台菜单并缓存]
-     * @return [type] [description]
+     * [ consoleMenu 生成后台菜单并缓存 ]
+     * @author   SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T13:01:27+0800
+     * @return   [type]                   [description]
      */
     public function consoleMenu()
     {

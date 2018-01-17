@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2016 http://beneng.com All rights reserved.            |
 // +----------------------------------------------------------------------+
@@ -59,6 +59,13 @@ class Config extends Extend
         return $type[$data['type']];
     }
 
+    /**
+     * [ cache_config 设置配置缓存 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T11:49:03+0800
+     * @return   [type]                   [description]
+     */
     public function cache_config()
     {
         $map = [

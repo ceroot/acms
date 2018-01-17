@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | CYCMS                                                                |
+// | BWCMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2018 http://www.benweng.com All rights reserved.       |
 // +----------------------------------------------------------------------+
@@ -28,7 +28,8 @@ class AuthRule extends Extend
 {
     /**
      * { getAll 取得处理后的全部数据}
-     * @Author   SpringYang
+     * @author   SpringYang
+     * @email    ceroot@163.com
      * @DateTime 2017-10-24T12:00:16+0800
      * @param    integer                  $isArray [description]
      * @return   [type]                            [description]
@@ -40,14 +41,25 @@ class AuthRule extends Extend
         return $redata;
     }
 
+    /**
+     * [ updateCache 更新缓存 ]
+     * @author   SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T13:05:28+0800
+     * @return   [type]                   [description]
+     */
     public function updateCache()
     {
         App::model('AuthRule', 'logic')->updateCache();
     }
 
     /**
-     * [del 删除规则]
-     * @return [type] [description]
+     * [ del 删除规则 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T13:05:52+0800
+     * @param    integer                  $id [规则 id]
+     * @return   [type]                       [description]
      */
     public function del($id)
     {
