@@ -11,8 +11,6 @@
 	.tj .tj-box .tj-content{}
 	.tj .tj-box .tj-content h4{ padding: 10px 20px 10px 5px; padding-bottom: 5px; border-bottom: 1px solid #fff; font-size: 30px; text-shadow: 3px 3px 3px rgba(0,0,0,0.3); }
 	.tj .tj-box .tj-content .box-body{ padding: 5px 20px 10px 5px }
-
-	
 </style>
 {/block}
 {block name="content"}
@@ -56,6 +54,18 @@
 		<div class="layui-field-box">这是什么</div>
 	</fieldset>
 	<fieldset class="layui-elem-field">
+		<legend>访问统计</legend>
+		<div id="weblogEcharts" style="width:100%; height:400px;"></div>
+	</fieldset>
+	<fieldset class="layui-elem-field">
+		<legend>文档统计</legend>
+		<div id="documentEcharts" style="width:100%; height:400px;"></div>
+	</fieldset>
+	<fieldset class="layui-elem-field">
+		<legend>行为统计</legend>
+		<div id="actionEcharts" style="width:100%; height:400px;"></div>
+	</fieldset>
+	<fieldset class="layui-elem-field">
 		<legend>开发团队</legend>
 		<div class="layui-field-box">
 			<table class="layui-table" lay-size="sm">
@@ -96,5 +106,158 @@
 		    </table>
 		</div>
 	</fieldset>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="__LIBS__/echarts/4.0/echarts.min.js"></script>
+<script type="text/javascript">
+	$(function(){
+		// var myChart = echarts.init(document.getElementById('main'));
+		var weblogChart = echarts.init(document.getElementById('weblogEcharts'));
+		var	weblogOption = {
+				title:{
+					// text:'访问统计'
+				},
+				tooltip : {
+			        trigger: 'axis',
+			        axisPointer: {
+			            type: 'cross',
+			            label: {
+			                backgroundColor: '#6a7985'
+			            }
+			        }
+			    },
+			    xAxis: {
+			        type: 'category',
+			        // data: ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']
+			        data:{$weblogEcharts.day|raw}
+			    },
+			    yAxis: {
+			        type: 'value'
+			    },
+			    series: [{
+			        // data: [820, 932, 901, 934, 1290, 900, 500],
+			        name:'访问量',
+			        data: {$weblogEcharts.count},
+			        type: 'line',
+			        smooth: true,
+			        itemStyle:{
+			        	normal:{
+			        		color:'#37A2DA'
+			        	}
+			        },
+			        lineStyle:{
+			            normal:{
+			                // width:10,  //连线粗细
+			                color: '#37A2DA'  //连线颜色
+			            }
+			        },
+			        label:{
+			        	normal:{
+			        		show:true,
+			        		position:'top'
+			        	}
+			        }
+			    }]
+			};
+		weblogChart.setOption(weblogOption);
+		window.onresize = weblogChart.resize;
 
+		var documentChart = echarts.init(document.getElementById('documentEcharts'));
+		var	documentOption = {
+				title:{
+					// text:'访问统计'
+				},
+				tooltip : {
+			        trigger: 'axis',
+			        axisPointer: {
+			            type: 'cross',
+			            label: {
+			                backgroundColor: '#6a7985'
+			            }
+			        }
+			    },
+			    xAxis: {
+			        type: 'category',
+			        data:{$documentEcharts.day|raw}
+			    },
+			    yAxis: {
+			        type: 'value'
+			    },
+			    series: [{
+			        name:'文档数量',
+			        data: {$documentEcharts.count},
+			        type: 'line',
+			        smooth: true,
+			        itemStyle:{
+			        	normal:{
+			        		color:'#37A2DA'
+			        	}
+			        },
+			        lineStyle:{
+			            normal:{
+			                // width:10,  //连线粗细
+			                color: '#37A2DA'  //连线颜色
+			            }
+			        },
+			        label:{
+			        	normal:{
+			        		show:true,
+			        		position:'top'
+			        	}
+			        }
+			    }]
+			};
+		documentChart.setOption(documentOption);
+		window.onresize = documentChart.resize;
+
+		var actionChart = echarts.init(document.getElementById('actionEcharts'));
+		var	actionOption = {
+				title:{
+					// text:'访问统计'
+				},
+				tooltip : {
+			        trigger: 'axis',
+			        axisPointer: {
+			            type: 'cross',
+			            label: {
+			                backgroundColor: '#6a7985'
+			            }
+			        }
+			    },
+			    xAxis: {
+			        type: 'category',
+			        data:{$actionEcharts.day|raw}
+			    },
+			    yAxis: {
+			        type: 'value'
+			    },
+			    series: [{
+			        name:'行为数量',
+			        data: {$actionEcharts.count},
+			        type: 'line',
+			        smooth: true,
+			        itemStyle:{
+			        	normal:{
+			        		color:'#37A2DA'
+			        	}
+			        },
+			        lineStyle:{
+			            normal:{
+			                // width:10,  //连线粗细
+			                color: '#37A2DA'  //连线颜色
+			            }
+			        },
+			        label:{
+			        	normal:{
+			        		show:true,
+			        		position:'top'
+			        	}
+			        }
+			    }]
+			};
+		actionChart.setOption(actionOption);
+
+		window.onresize = actionChart.resize;
+	});
+</script>
 {/block}

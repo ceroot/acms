@@ -2,7 +2,7 @@
 {block name="title"}{/block}
 {block name="content"}
 <div class="details-content">
-    <form action="{:url('renew')}" method="post" class="form-horizontal cy-ajaxForm cy-form layui-form" role="form">
+    <form action="{:url('renew')}" method="post" class="layui-form pb" role="form">
         {:widget('Widgets/form', ['type'=>'text','title'=>'行为标识','name'=>'name','value'=>$one.name,'elementid'=>'name','placeholder'=>'行为标识'])}
         {:widget('Widgets/form', ['type'=>'text','title'=>'行为名称','name'=>'title','value'=>$one.title,'elementid'=>'title','placeholder'=>'行为名称'])}
         {:widget('Widgets/form', ['type'=>'radio','title'=>'行为类型','name'=>'type','value'=>$one.type,'elementid'=>'type','datalist'=>[1 => '系统', 2 => '用户'],'aux'=>'行为类型'])}

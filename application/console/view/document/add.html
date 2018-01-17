@@ -12,7 +12,7 @@
 {/block}
 {block name="content"}
 
-<form action="{:url('renew')}" method="post" class="layui-form">
+<form action="{:url('renew')}" method="post" class="layui-form pb">
     {:widget('Widgets/form', ['type'=>'select','title'=>'内容类型','name'=>'model_id','value'=>$one.model_id,'datalist'=>$model_list])}
     {:widget('Widgets/form', ['type'=>'select','title'=>'内容分类','name'=>'cid','value'=>$one.cid,'datalist'=>$category])}
     {:widget('Widgets/form', ['type'=>'text','title'=>'内容标题','name'=>'title','value'=>$one.title,'elementid'=>'title','placeholder'=>'内容标题','layverify'=>'required','inline'=>0])}
