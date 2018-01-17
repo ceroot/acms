@@ -613,4 +613,40 @@ class Tools
         return [$firstday, $lastday];
     }
 
+    /**
+     * [ echarts 统计数据 ]
+     * @author SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2018-01-17T17:12:52+0800
+     * @param    array                    $option [参数：table(表名)|field(字段)|endDate(结束时间)|beginDate(开始时间)，注：开始时间和结束时间是时间戳]
+     * @return   array                            [description]
+     */
+    public static function echarts($option = [])
+    {
+        array_key_exists('table', $option) || $option['table']         = 'WebLog';
+        array_key_exists('field', $option) || $option['field']         = 'create_time';
+        array_key_exists('endDate', $option) || $option['endDate']     = time();
+        array_key_exists('beginDate', $option) || $option['beginDate'] = strtotime(date("Ymd", strtotime('-1 months', $option['endDate'])));
+
+        $table       = $option['table']; // 表名
+        $endDate     = $option['endDate']; // 结束时间
+        $beginDate   = $option['beginDate']; // 开始时间
+        $create_time = $option['field']; // 统计字段
+
+        $_day       = date('Y-m-d', $beginDate);
+        $dayArr[]   = date('m-d', $beginDate);
+        $countArr[] = Db::name($table)->whereBetweenTime($create_time, $_day)->count();
+
+        while (($beginDate = strtotime('+1 day', $beginDate)) <= $endDate) {
+            $_day       = date('Y-m-d', $beginDate); // 取得递增天;
+            $dayArr[]   = date('m-d', $beginDate);
+            $countArr[] = Db::name($table)->whereBetweenTime($create_time, $_day)->count();
+
+        }
+        $data['day']   = json_encode($dayArr);
+        $data['count'] = json_encode($countArr);
+
+        return $data;
+    }
+
 }

@@ -2,6 +2,7 @@
 namespace app\console\controller;
 
 use app\console\controller\Base;
+use app\facade\Tools;
 use think\Db;
 use think\facade\App;
 
@@ -27,6 +28,18 @@ class Index extends Base
         $this->assign('articleCount', App::model('Document')->count());
         $this->assign('userCount', App::model('UcenterMember')->count());
         $this->assign('actionCount', App::model('ActionLog')->count());
+
+        // 网站日志统计;
+        $weblogEcharts = Tools::echarts([]);
+        $this->assign('weblogEcharts', $weblogEcharts);
+
+        // 文档统计
+        $documentEcharts = Tools::echarts(['table' => 'document']);
+        $this->assign('documentEcharts', $documentEcharts);
+
+        // 行为统计
+        $actionEcharts = Tools::echarts(['table' => 'actionLog']);
+        $this->assign('actionEcharts', $actionEcharts);
 
         return $this->menusView();
 
