@@ -77,18 +77,28 @@
     		<a href="http://www.twitter.com/ceroot" target="_blank" title="twitter"><i class="fa fa-twitter"></i></a>
     		<a class="weixin" href="javascript:;" title="微信"><i class="fa fa-weixin"></i></a>
     		<a class="weibo" href="http://www.weibo.com/ceroot" target="_blank" title="微博"><i class="fa fa-weibo"></i></a>
-            <a class="qq" href="http://wpa.qq.com/msgrd?v=3&uin=525566309&site=qq&menu=yes" target="_blank" title="qq"><i class="fa fa-qq"></i></a>
+            {notempty name="$Think.config.qq"}
+                <a class="qq" href="http://wpa.qq.com/msgrd?v=3&uin={$Think.config.qq}&site=qq&menu=yes" target="_blank" title="qq"><i class="fa fa-qq"></i></a>
+            {/notempty}
     	</div>
         <div class="more">
             <div class="box">
                 <div class="header">联系方式</div>
                 <div class="body">
-                    <p><b>QQ：</b><span><a href="http://wpa.qq.com/msgrd?v=3&uin=525566309&site=qq&menu=yes" target="_blank">525566309</a></span></p>
-                    <p><b>Email：</b><span>ceroot@163.com</span></p>
-                    <p><b>电话：</b><span>13985558113</span></p>
+                    {notempty name="$Think.config.qq"}
+                        <p><b>QQ：</b><span><a href="http://wpa.qq.com/msgrd?v=3&uin={$Think.config.qq}&site=qq&menu=yes" target="_blank">{$Think.config.qq}</a></span></p>
+                    {/notempty}
+                    {notempty name="$Think.config.email"}
+                        <p><b>Email：</b><span>{$Think.config.email}</span></p>
+                    {/notempty}
+                    {notempty name="$Think.config.mobile"}
+                        <p><b>电话：</b><span>{$Think.config.mobile}</span></p>
+                    {/notempty}
                     <p><b>微信：</b><span>ceroot</span></p>
                     <p><b>支付宝：</b><span>ceroot@163.com</span></p>
-                    <p><b>地址：</b><span>贵州省贵阳市南明区青山路99号</span></p>
+                    {notempty name="$Think.config.address"}
+                        <p><b>地址：</b><span>{$Think.config.address}</span></p>
+                    {/notempty}
                 </div>
             </div>
             <div class="box">
