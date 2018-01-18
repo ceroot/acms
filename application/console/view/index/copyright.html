@@ -9,18 +9,38 @@
 </style>
 {/block}
 {block name="content"}
-    <h5><b>系统信息</b></h5>
-    <table class="layui-table bw-table-hover">
+    
+    <h5><b>开发团队</b></h5>
+    <table class="layui-table" lay-size="sm">
         <tr>
-            {volist name="info" id="value" mod="2"}
-            <td width="20%" align="right">{$key}</td>
-            <td width="30%" class="text-success">{$value|raw}</td>
-            {eq name="mod" value="1"}
+            <td width="20%" align="right">负责人</td>
+            <td>SpringYang</td>
         </tr>
         <tr>
-            {/eq} {/volist}
+            <td width="20%" align="right">Email</td>
+            <td>ceroot@163.com</td>
+        </tr>
+        <tr>
+            <td width="20%" align="right">QQ</td>
+            <td>525566309 <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=525566309&site=qq&menu=yes"><img border="0" src="http://pub.idqqimg.com/wpa/images/counseling_style_51.png" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>
+            </td>
+        </tr>
+        <tr>
+            <td width="20%" align="right">版权所有</td>
+            <td><a href="http://www.benweng.com" target="_blank" title="笨翁">http://www.benweng.com</a></td>
+        </tr>
+    </table>
+    <h5><b>系统信息</b></h5>
+    <table class="layui-table" lay-size="sm">
+        {volist name="info" id="value"}
+            <tr>
+                <td width="20%" align="right">{$key}</td>
+                <td>{$value|raw}</td>
+            </tr>
+        {/volist}
+        <tr>
             <td align="right">扩展列表</td>
-            <td colspan="3" class="text-success">{$extensionsList}</td>
+            <td >{$extensionsList}</td>
         </tr>
     </table>
 {/block}

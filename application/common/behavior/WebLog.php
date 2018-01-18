@@ -20,6 +20,7 @@
 namespace app\common\behavior;
 
 use app\common\model\WebLog as WebLogModel;
+use Jenssegers\Agent\Agent;
 use think\facade\App;
 use think\facade\Config;
 use think\facade\Log;
@@ -54,6 +55,7 @@ class WebLog
      */
     private function webLog()
     {
+        $agent = new Agent(); // 实例化 agent
 
         // 网站日志记录开关判断
         if (!Config::get('weblog.status')) {
@@ -61,7 +63,12 @@ class WebLog
         }
 
         // 搜索引擎蜘蛛判断
-        if ($this->checkrobot()) {
+        // if ($this->checkrobot()) {
+        //     return true;
+        // }
+
+        // 搜索引擎蜘蛛判断
+        if ($agent->isRobot()) {
             return true;
         }
 
@@ -130,28 +137,40 @@ class WebLog
             $paramData = $tempData;
         }
 
+        $device = $agent->device(); // 获取设备信息 (iPhone, Nexus, AsusTablet, ...)
+
+        // 微信判断
+        if (stripos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) {
+            $device = 'weixin';
+        }
+
+        $device || $device = 'pc';
+
+        $platform  = $agent->platform(); // 系统信息  (Ubuntu, Windows, OS X, ...)
+        $browser   = $agent->browser(); // 浏览器信息  (Chrome, IE, Safari, Firefox, ...)
+        $languages = $agent->languages(); // 语言
+        $languages = count($languages) > 0 ? $languages[0] : '未知语言';
+
         // 写入数据组合
         $data = [
-            'uid'        => Session::get('user_auth.id') ?: 0,
-            'os'         => get_os(),
-            'browser'    => get_broswer(),
-            'url'        => Request::url(),
-            'module'     => Request::module(),
-            'controller' => Request::controller(),
-            'action'     => Request::action(),
-            'method'     => Request::method(),
-            'data'       => serialize($paramData),
-            'device'     => get_visit_source(),
+            'uid'             => Session::get('user_auth.id') ?: 0,
+            'os'              => $platform,
+            'os_version'      => $agent->version($platform),
+            'browser'         => $browser,
+            'browser_version' => $agent->version($browser),
+            'url'             => Request::url(),
+            'module'          => Request::module(),
+            'controller'      => Request::controller(),
+            'action'          => Request::action(),
+            'method'          => Request::method(),
+            'data'            => serialize($paramData),
+            'device'          => $device,
+            'languages'       => $languages,
         ];
 
         // App::model('WebLog')->create($data);
         $model = new WebLogModel;
-        if ($model->create($data)) {
-            Log::record("[ 网站日志记录 ]：网站日志数据记录成功");
-        } else {
-            Log::record("[ 网站日志记录 ]：网站日志数据记录失败");
-        };
-
+        $model->create($data) ? Log::record("[ 网站日志记录 ]：网站日志数据记录成功") : Log::record("[ 网站日志记录 ]：网站日志数据记录失败");
     }
 
     /**

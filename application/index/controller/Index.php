@@ -1,6 +1,8 @@
 <?php
 namespace app\index\controller;
 
+use Jenssegers\Agent\Agent;
+
 class Index
 {
     public function index()
@@ -12,27 +14,50 @@ class Index
     {
         return 'hello,' . $name;
     }
-
-    public function test()
+    public function test1()
     {
-        $dd = is_images_url('http://img1.mydrivers.com/img/20180111/s_fca9e42f7bfd465294c34b1db020a6ba.jpg');
-        dump($dd);
-        // die;
+        return view();
+    }
 
-        $strr = '<p style="text-align: center;"><img class="dd" alt="苹果突然关闭老款iPhone系统降级通道" src="/data/images/20180111/90b590af692a68777cec5791b09832fc446953.jpg" style="border-color: black; border-style: solid; border-width: 1px;" title="苹果突然关闭老款iPhone系统降级通道"></p><p style="text-align: center;"><img alt="苹果突然关闭老款iPhone系统降级通道" src="/data/images/20180111/90b590af692a68777cec5791b09832fc446953.jpg" style="border-color: black; border-style: solid; border-width: 1px;" title="苹果突然关闭老款iPhone系统降级通道"></p>';
-        // $str = preg_replace("/<img\s*src=(\"|\')(.*?)\\1[^>]*/is", '<img src="$2" />', $str);
-        dump($strr);
-        // $str = preg_replace('/(<img).+(src=\"?.+)images\/(.+\.(jpg|gif|bmp|bnp|png)\"?).+>/i', "\${1} \${2}uc/images/\${3}>", $str);
-        $str = preg_replace('/(<img).+(src=\"?.+)\/(.+\.(jpg|gif|bmp|bnp|png)\"?).+>/i', "\${1} \${2}/\${3}>", $strr);
-        dump($str);
+    public function itest()
+    {
+        // dump(Agent::is('Windows'));
 
-        $search = '/(<img.*?)style=(["\'])?.*?(?(2)\2|\s)([^>]+>)/is';
-        $str    = preg_replace($search, '$1$3', $strr);
-        dump($str);
-
-        die;
-        $detect = new \Mobile_Detect;
-        // $extendPath = Env::get('extend_path');
-        dump($detect->version('Edge'));
+        $agent = new Agent();
+        //设置User Agent，比如在cli模式下用到
+        //$agent->setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/537.13+ (KHTML, like Gecko) Version/5.1.7 Safari/534.57.2');
+        //$agent->setHttpHeaders($headers);
+        //Is方法检测（如：操作系统）
+        dump($agent->is('Windows'));
+        dump($agent->is('Firefox'));
+        dump($agent->is('iPhone'));
+        dump($agent->is('OS X'));
+        //魔法方法（如： 厂商产品定位）
+        dump($agent->isAndroidOS());
+        dump($agent->isNexus());
+        dump($agent->isSafari());
+        //识别移动设备
+        dump($agent->isMobile()); //手机
+        dump($agent->isTablet()); //平板
+        dump($agent->isDesktop()); //桌面端
+        // 语言
+        dump($languages = $agent->languages());
+        // ['nl-nl', 'nl', 'en-us', 'en']
+        // 是否是机器人
+        dump('是否是机器人：');
+        dump($agent->isRobot());
+        // 获取设备信息 (iPhone, Nexus, AsusTablet, ...)
+        dump('device：');
+        dump($agent->device());
+        // 系统信息  (Ubuntu, Windows, OS X, ...)
+        dump($agent->platform());
+        // 浏览器信息  (Chrome, IE, Safari, Firefox, ...)
+        dump($agent->browser());
+        // 获取浏览器版本
+        dump($browser = $agent->browser());
+        dump($version = $agent->version($browser));
+        // 获取系统版本
+        dump($platform = $agent->platform());
+        dump($version = $agent->version($platform));
     }
 }

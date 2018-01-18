@@ -66,9 +66,10 @@
         <hr>
         <div class="container">
             <div class="text-center">
-                QQ：525566309 邮箱：ceroot@163.com<br>
-                地址：贵州省贵阳市南明区青山路<br>
-                Copyright © 2016-{:date('Y')} benweng.com. All Rights Reserved<br><a href="http://www.benweng.com" title="笨翁网">笨翁网</a>版权所有   备案号：<a href="http://www.miitbeian.gov.cn" target="_blank" title="" >{$Think.config.web_site_icp}</a>
+                {notempty name="$Think.config.qq"}QQ：<a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin={$Think.config.qq}&site=qq&menu=yes" target="_blank" title="点击这里给我发消息">{$Think.config.qq} </a>{/notempty}
+                {notempty name="$Think.config.email"} &nbsp;&nbsp;&nbsp;&nbsp;邮箱：{$Think.config.email}<br>{/notempty}
+                {notempty name="$Think.config.address"}地址：{$Think.config.address}<br>{/notempty}
+                Copyright © 2016-{:date('Y')} <a href="http://www.benweng.com" title="笨翁网">benweng.com</a>. All Rights Reserved<br><a href="http://www.benweng.com" title="笨翁网">笨翁网</a>版权所有   备案号：<a href="http://www.miitbeian.gov.cn" target="_blank" title="" >{$Think.config.web_site_icp}</a>
             </div>
         </div>
     </footer>
