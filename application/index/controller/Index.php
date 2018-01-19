@@ -19,6 +19,11 @@ class Index
         return view();
     }
 
+    public function fullpage()
+    {
+        return view();
+    }
+
     public function itest()
     {
         // dump(Agent::is('Windows'));
