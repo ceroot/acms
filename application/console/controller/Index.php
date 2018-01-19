@@ -31,7 +31,10 @@ class Index extends Base
         $this->assign('actionCount', App::model('ActionLog')->count());
 
         // 网站日志统计;
-        $weblogEcharts = Tools::echarts([]);
+        $where = [
+            //['method', '=', 'post'],
+        ];
+        $weblogEcharts = Tools::echarts([], $where);
         $this->assign('weblogEcharts', $weblogEcharts);
 
         // 文档统计

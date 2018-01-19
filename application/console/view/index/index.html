@@ -117,9 +117,29 @@
 <script type="text/javascript" src="__LIBS__/echarts/4.0/echarts.min.js"></script>
 <script type="text/javascript">
 	$(function(){
-		// var myChart = echarts.init(document.getElementById('main'));
 		var weblogChart = echarts.init(document.getElementById('weblogEcharts'));
-		var	weblogOption = {
+		var elementChart = echarts.init(document.getElementById('documentEcharts'));
+		var actionChart = echarts.init(document.getElementById('actionEcharts'));
+
+		weblogChart.setOption(echartsFun({$weblogEcharts|raw},'访问量'));
+		elementChart.setOption(echartsFun({$weblogEcharts|raw},'文档数量'));
+		actionChart.setOption(echartsFun({$actionEcharts|raw},'行为数量'));
+
+		setTimeout(function (){
+		    window.onresize = function () {
+				weblogChart.resize();
+				elementChart.resize();
+				actionChart.resize();
+		    }
+		},200)
+
+	});
+
+	function echartsFun(echartsData,textTitle){
+		var xData = echartsData.xData;
+		var yData = echartsData.yData;
+
+		var	echartsOption = {
 				title:{
 					// text:'访问统计'
 				},
@@ -135,15 +155,15 @@
 			    xAxis: {
 			        type: 'category',
 			        // data: ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']
-			        data:{$weblogEcharts.day|raw}
+			        data:xData
 			    },
 			    yAxis: {
 			        type: 'value'
 			    },
 			    series: [{
 			        // data: [820, 932, 901, 934, 1290, 900, 500],
-			        name:'访问量',
-			        data: {$weblogEcharts.count},
+			        name:textTitle,
+			        data: yData,
 			        type: 'line',
 			        smooth: true,
 			        itemStyle:{
@@ -153,7 +173,7 @@
 			        },
 			        lineStyle:{
 			            normal:{
-			                // width:10,  //连线粗细
+			                width:1,  //连线粗细
 			                color: '#37A2DA'  //连线颜色
 			            }
 			        },
@@ -165,105 +185,7 @@
 			        }
 			    }]
 			};
-		weblogChart.setOption(weblogOption);
-		window.onresize = weblogChart.resize;
-
-		var documentChart = echarts.init(document.getElementById('documentEcharts'));
-		var	documentOption = {
-				title:{
-					// text:'访问统计'
-				},
-				tooltip : {
-			        trigger: 'axis',
-			        axisPointer: {
-			            type: 'cross',
-			            label: {
-			                backgroundColor: '#6a7985'
-			            }
-			        }
-			    },
-			    xAxis: {
-			        type: 'category',
-			        data:{$documentEcharts.day|raw}
-			    },
-			    yAxis: {
-			        type: 'value'
-			    },
-			    series: [{
-			        name:'文档数量',
-			        data: {$documentEcharts.count},
-			        type: 'line',
-			        smooth: true,
-			        itemStyle:{
-			        	normal:{
-			        		color:'#37A2DA'
-			        	}
-			        },
-			        lineStyle:{
-			            normal:{
-			                // width:10,  //连线粗细
-			                color: '#37A2DA'  //连线颜色
-			            }
-			        },
-			        label:{
-			        	normal:{
-			        		show:true,
-			        		position:'top'
-			        	}
-			        }
-			    }]
-			};
-		documentChart.setOption(documentOption);
-		window.onresize = documentChart.resize;
-
-		var actionChart = echarts.init(document.getElementById('actionEcharts'));
-		var	actionOption = {
-				title:{
-					// text:'访问统计'
-				},
-				tooltip : {
-			        trigger: 'axis',
-			        axisPointer: {
-			            type: 'cross',
-			            label: {
-			                backgroundColor: '#6a7985'
-			            }
-			        }
-			    },
-			    xAxis: {
-			        type: 'category',
-			        data:{$actionEcharts.day|raw}
-			    },
-			    yAxis: {
-			        type: 'value'
-			    },
-			    series: [{
-			        name:'行为数量',
-			        data: {$actionEcharts.count},
-			        type: 'line',
-			        smooth: true,
-			        itemStyle:{
-			        	normal:{
-			        		color:'#37A2DA'
-			        	}
-			        },
-			        lineStyle:{
-			            normal:{
-			                // width:10,  //连线粗细
-			                color: '#37A2DA'  //连线颜色
-			            }
-			        },
-			        label:{
-			        	normal:{
-			        		show:true,
-			        		position:'top'
-			        	}
-			        }
-			    }]
-			};
-		actionChart.setOption(actionOption);
-
-		window.onresize = actionChart.resize;
-	});
+		return echartsOption;
+	}
 </script>
 {/block}

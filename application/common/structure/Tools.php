@@ -619,32 +619,36 @@ class Tools
      * @email    ceroot@163.com
      * @dateTime 2018-01-17T17:12:52+0800
      * @param    array                    $option [参数：table(表名)|field(字段)|endDate(结束时间)|beginDate(开始时间)，注：开始时间和结束时间是时间戳]
+     * @param    array                    $where  [查询条件，ThinkPHP 里的数组形式] [['os', '=', 'Windows'],]
      * @return   array                            [description]
      */
-    public static function echarts($option = [])
+    public static function echarts(array $option = [], array $where = [])
     {
-        array_key_exists('table', $option) || $option['table']         = 'WebLog';
-        array_key_exists('field', $option) || $option['field']         = 'create_time';
-        array_key_exists('endDate', $option) || $option['endDate']     = time();
-        array_key_exists('beginDate', $option) || $option['beginDate'] = strtotime(date("Ymd", strtotime('-1 months', $option['endDate'])));
+        array_key_exists('table', $option) || $option['table']         = 'WebLog'; // 表名称（不加前缀），默认为网站日志表
+        array_key_exists('field', $option) || $option['field']         = 'create_time'; // 统计字段，默认为创建时间字段
+        array_key_exists('endDate', $option) || $option['endDate']     = time(); // 结束时间，默认为当前时间
+        array_key_exists('beginDate', $option) || $option['beginDate'] = strtotime(date("Ymd", strtotime('-1 months', $option['endDate']))); // 结束时间，默认为当前时间之前的一个月
 
         $table       = $option['table']; // 表名
         $endDate     = $option['endDate']; // 结束时间
         $beginDate   = $option['beginDate']; // 开始时间
         $create_time = $option['field']; // 统计字段
 
-        $_day       = date('Y-m-d', $beginDate);
-        $dayArr[]   = date('m-d', $beginDate);
-        $countArr[] = Db::name($table)->whereBetweenTime($create_time, $_day)->count();
+        // 条件
+        $where = $where ?: [];
 
-        while (($beginDate = strtotime('+1 day', $beginDate)) <= $endDate) {
-            $_day       = date('Y-m-d', $beginDate); // 取得递增天;
-            $dayArr[]   = date('m-d', $beginDate);
-            $countArr[] = Db::name($table)->whereBetweenTime($create_time, $_day)->count();
+        $xDataArr = []; // X 轴数据
+        $yDataArr = []; // Y 轴数据
 
-        }
-        $data['day']   = json_encode($dayArr);
-        $data['count'] = json_encode($countArr);
+        do {
+            $currentDay = date('Y-m-d', $beginDate); // 取得当前天;
+            $xData[]    = date('m-d', $beginDate);
+            $yData[]    = Db::name($table)->where($where)->whereBetweenTime($create_time, $currentDay)->count();
+        } while (($beginDate = strtotime('+1 day', $beginDate)) <= $endDate);
+
+        $data['xData'] = $xData;
+        $data['yData'] = $yData;
+        $data          = json_encode($data);
 
         return $data;
     }
