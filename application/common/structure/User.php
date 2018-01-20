@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------+
 /**
  *
- * @filename  UserInfo.php
+ * @filename  User.php
  * @authors   SpringYang
  * @email     ceroot@163.com
  * @QQ        525566309
