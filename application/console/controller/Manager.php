@@ -221,24 +221,16 @@ class Manager extends Base
                 $scene = 'edit'; // 编辑场景
 
             } else {
-                $result = $this->validate($data, 'app\common\validate\UcenterMember');
+                // return $data;
+                $status = User::register($data);
 
-                if ($result !== true) {
-                    return $this->error($result);
-                }
-
-                $salt             = getrandom(10, 1);
-                $data['password'] = User::encryptPassword($data['password']); // 密码加密
-                $data['salt']     = $salt; // 增加 salt
-
-                $status = $this->ucenterMember->save($data); // 数据保存
-
-                // 在管理用户表里新增数据
                 if ($status) {
-                    $mdata['uid'] = $this->ucenterMember->getLastInsID(); // 取得新增 id;
+                    $mdata['uid'] = $status;
                     $status       = $this->model->save($mdata); // 保存管理用户数据
                     $mid          = $this->model->getLastInsID(); // 取得管理用户 id
-                    $scene        = 'add'; // 编辑场景
+                } else {
+                    $scene = 'add'; // 编辑场景
+                    return $this->error(User::getError());
                 }
             }
 
@@ -253,9 +245,6 @@ class Manager extends Base
                     return $this->error('操作失败');
                 }
             }
-
         }
-
     }
-
 }

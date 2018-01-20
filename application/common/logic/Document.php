@@ -19,10 +19,10 @@
 
 namespace app\common\logic;
 
-use app\common\model\Extend;
 use think\Db;
+use think\Model;
 
-class Document extends Extend
+class Document extends Model
 {
     /**
      * [ getReader function_description ]

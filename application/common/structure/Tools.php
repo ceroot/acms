@@ -18,13 +18,14 @@
  */
 namespace app\common\structure;
 
-use app\common\traits\Models;
+// use app\common\traits\Models;
+use app\common\structure\Base;
 use think\Db;
 use think\facade\Request;
 
-class Tools
+class Tools extends Base
 {
-    use Models;
+    // use Models;
 
     /**
      * [ __construct 初始化 ]

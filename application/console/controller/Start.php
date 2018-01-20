@@ -69,6 +69,7 @@ class Start extends Controller
                     $this->error($error, '', array('error_num' => $error_num, 'verifyhtml' => $this->verifyhtml()));
                 }
             }
+
             $user = User::login($username, $password); // 用户登录验证
 
             // 验证不成功时

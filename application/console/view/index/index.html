@@ -122,7 +122,7 @@
 		var actionChart = echarts.init(document.getElementById('actionEcharts'));
 
 		weblogChart.setOption(echartsFun({$weblogEcharts|raw},'访问量'));
-		elementChart.setOption(echartsFun({$weblogEcharts|raw},'文档数量'));
+		elementChart.setOption(echartsFun({$documentEcharts|raw},'文档数量'));
 		actionChart.setOption(echartsFun({$actionEcharts|raw},'行为数量'));
 
 		setTimeout(function (){

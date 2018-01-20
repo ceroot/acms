@@ -18,34 +18,57 @@
  */
 namespace app\common\structure;
 
-use app\common\traits\Models;
+// use app\common\traits\Models;
+use app\common\structure\Base;
 use think\facade\App;
 use think\facade\Config;
 use think\facade\Log;
 use think\facade\Session;
 
-class User
+class User extends Base
 {
-    use Models;
-
+    // use Models;
     private $UcenterMember;
 
     /**
      * [ __construct 初始化 ]
-     * @Author   SpringYang
-     * @Email    ceroot@163.com
-     * @DateTime 2017-10-25T14:13:18+0800
+     * @author   SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-10-25T14:13:18+0800
      */
     public function __construct()
     {
         $this->UcenterMember = App::model('UcenterMember'); // 实例化用户模型
     }
 
+    public function register($data)
+    {
+        $validate = new \app\common\validate\UcenterMember;
+        if (!$validate->check($data)) {
+            $this->error = $validate->getError();
+            return false;
+        }
+
+        $salt             = getrandom(10, 1);
+        $data['password'] = self::encryptPassword($password); // 密码加密
+        $data['salt']     = $salt; // 增加 salt
+
+        $status = $this->UcenterMember->save($data);
+
+        if ($status) {
+            $uid = $this->UcenterMember->getLastInsID(); // 取得新增 id;
+            return $uid;
+        } else {
+            $this->error = $this->UcenterMember->getError();
+            return false;
+        }
+    }
+
     /**
      * [ login 用户登录认证 ]
-     * @Author   SpringYang
-     * @Email    ceroot@163.com
-     * @DateTime 2017-10-24T17:22:29+0800
+     * @author   SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-10-24T17:22:29+0800
      * @param    string                   $username [用户名]
      * @param    string                   $password [用户密码]
      * @param    integer                  $type     [用户名类型 （1-用户名，2-邮箱，3-手机，4-UID）]
@@ -84,9 +107,9 @@ class User
 
     /**
      * [ autoLogin 用户自动登录处理 ]
-     * @Author   SpringYang
-     * @Email    ceroot@163.com
-     * @DateTime 2017-10-25T11:56:15+0800
+     * @author   SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-10-25T11:56:15+0800
      * @param    array                    $user [用户信息]
      * @return   [type]                         [description]
      */
@@ -131,9 +154,9 @@ class User
 
     /**
      * [ updateLogin 更新用户登录信息 ]
-     * @Author   SpringYang
-     * @Email    ceroot@163.com
-     * @DateTime 2017-10-25T15:21:02+0800
+     * @author   SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-10-25T15:21:02+0800
      * @param    [type]                   $id [description]
      * @return   [type]                       [description]
      */
@@ -240,9 +263,9 @@ class User
 
     /**
      * [ encryptPassword 密码加密 ] 弃用
-     * @Author   SpringYang
-     * @Email    ceroot@163.com
-     * @DateTime 2017-10-24T17:35:25+0800
+     * @author   SpringYang
+     * @email    ceroot@163.com
+     * @dateTime 2017-10-24T17:35:25+0800
      * @param    string                   $password [description]
      * @return   string                             [description]
      */

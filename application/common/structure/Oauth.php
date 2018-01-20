@@ -19,10 +19,11 @@
 
 namespace app\common\structure;
 
-use app\common\traits\Models;
+// use app\common\traits\Models;
+use app\common\structure\Base;
 use think\facade\App;
 
-class Oauth
+class Oauth extends Base
 {
 
     use Models;

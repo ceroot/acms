@@ -18,13 +18,13 @@
  */
 namespace app\common\model;
 
-use app\common\traits\Models;
+// use app\common\traits\Models;
 use think\Model;
 
 class Extend extends Model
 {
 
-    use Models; // 模型扩展
+    // use Models; // 模型扩展
 
     // 自动完成
     protected $auto   = [];

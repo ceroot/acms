@@ -12,7 +12,7 @@ use think\facade\App;
 trait Models
 {
     //定义错误信息
-    protected $error;
+    protected $error_back;
 
     /**
      * [ getError 返回模型的错误信息 ]
@@ -21,7 +21,7 @@ trait Models
      * @dateTime 2018-01-17T11:53:55+0800
      * @return   string|array                   [description]
      */
-    public function getError()
+    public function getError_back()
     {
         return $this->error;
     }
