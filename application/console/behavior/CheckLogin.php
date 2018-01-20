@@ -96,7 +96,7 @@ class CheckLogin
             return $this->success('管理用户已经退出，请重新登录', $loginurl);
         }
 
-        Log::record('[ 检查登录日志 ]：管理用户 id 为' . Session::get('manager_id') . '登录成功');
+        //Log::record('[ 检查登录日志 ]：管理用户 id 为' . Session::get('manager_id') . '登录成功');
     }
 
     /**

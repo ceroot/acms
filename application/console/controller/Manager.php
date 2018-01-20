@@ -228,8 +228,8 @@ class Manager extends Base
                     $mdata['uid'] = $status;
                     $status       = $this->model->save($mdata); // 保存管理用户数据
                     $mid          = $this->model->getLastInsID(); // 取得管理用户 id
+                    $scene        = 'add'; // 编辑场景
                 } else {
-                    $scene = 'add'; // 编辑场景
                     return $this->error(User::getError());
                 }
             }

@@ -53,8 +53,9 @@ class ModuleInit
      */
     private function cacheAuthRule()
     {
+        // dump(Config::get('app_debug'));die;
         // 判断是否进行缓存
-        if (!Cache::has('authrule') || Config::get('app_debug')) {
+        if (!Cache::has('authrule') || Config::get('app_debug') || Config::get('develop_mode')) {
             App::model('AuthRule', 'logic')->updateCache();
             Log::record('[ 规则缓存日志 ]：执行规则缓存成功（模块初始化）');
         }

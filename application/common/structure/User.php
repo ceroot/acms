@@ -50,7 +50,7 @@ class User extends Base
         }
 
         $salt             = getrandom(10, 1);
-        $data['password'] = self::encryptPassword($password); // 密码加密
+        $data['password'] = self::encryptPassword($data['password']); // 密码加密
         $data['salt']     = $salt; // 增加 salt
 
         $status = $this->UcenterMember->save($data);
