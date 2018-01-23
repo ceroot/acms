@@ -1,88 +1,115 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<title>Examples</title>
-<meta name="description" content="">
-<meta name="keywords" content="">
-<link rel="stylesheet" type="text/css" href="__LIBS__/fullPage.js/2.9.5/jquery.fullPage.css">
-<style type="text/css">
-	.section { text-align: center; font: 50px "Microsoft Yahei"; color: #fff;}
-	#menu {
-		margin: 0;
-		padding: 0;
-		position: fixed;
-		left: 10px;
-		top: 10px;
-		list-style-type: none;
-		z-index: 70;
-	}
-</style>
-<script type="text/javascript" src="__LIBS__/jquery/jquery-{$Think.config.static.jquery_version}.min.js"></script>
-<script type="text/javascript" src="__LIBS__/jquery.easings/jquery.easings.min.js"></script>
-<script type="text/javascript" src="__LIBS__/fullPage.js/2.9.5/jquery.fullpage.min.js"></script>
-<script type="text/javascript">
-$(document).ready(function() {
-	$(document).ready(function() {
-		$('#fullpage').fullpage({
-			sectionsColor: ['#1bbc9b', '#4BBFC3', '#7BAABE', '#f90', '#ccddff'],
-			anchors: ['firstPage', 'secondPage', 'thirdPage', 'fourthPage', 'lastPage'],
-			menu: '#menu',
-			scrollingSpeed: 1000,
-			navigation: true,
-			navigationTooltips: ['First page', 'Second page', 'Third and last page','fourthPage','lastPage'],
-			continuousVertical: true
-		});
-	});
-});
-</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title>Examples</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link rel="stylesheet" type="text/css" href="__LIBS__/fullPage.js/2.9.5/jquery.fullPage.css">
+    <style type="text/css">
+    #menu {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        z-index: 70;
+    }
+
+    #menu ul {
+        list-style-type: none;
+        width: 1200px;
+        margin: 0 auto;
+        padding: 0;
+    }
+
+    #menu li {
+        display: inline-block;
+    }
+
+    #menu li a {
+        text-decoration: none;
+        color: #fff
+    }
+
+    #menu li a:hover {
+        color: #f90
+    }
+
+    .section {
+        text-align: center;
+        color: #fff;
+    }
+    </style>
+    <script type="text/javascript" src="__LIBS__/jquery/jquery-{$Think.config.static.jquery_version}.min.js"></script>
+    <script type="text/javascript" src="__LIBS__/jquery.easings/jquery.easings.min.js"></script>
+    <script type="text/javascript" src="__LIBS__/fullPage.js/2.9.5/jquery.fullpage.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $(document).ready(function() {
+            $('#fullpage').fullpage({
+                sectionsColor: ['#1bbc9b', '#4BBFC3', '#7BAABE', '#f90', '#ccddff'],
+                anchors: ['firstPage', 'secondPage', 'thirdPage', 'fourthPage', 'lastPage'],
+                menu: '#menu',
+                scrollingSpeed: 1000,
+                navigation: true,
+                navigationTooltips: ['First page', 'Second page', 'Third and last page', 'fourthPage', 'lastPage'],
+                // continuousVertical: true,
+                css3: true,
+            });
+        });
+    });
+    </script>
 </head>
+
 <body>
-<div id="fullpage">
-	<ul id="menu">
-		<li data-menuanchor="firstPage" class="active"><a href="#firstPage">First section</a></li>
-		<li data-menuanchor="secondPage"><a href="#secondPage">Second section</a></li>
-		<li data-menuanchor="thirdPage"><a href="#thirdPage">Third section</a></li>
-		<li data-menuanchor="fourthPage"><a href="#fourthPage">Fourth section</a></li>
-		<li data-menuanchor="lastPage"><a href="#lastPage">five section</a></li>
-	</ul>
-	<div class="section">Some section1</div>
-	<div class="section">
-		<div class="slide">
-			<div class="intro">
-				<h1>Create Sliders</h1>
-				<p>Not only vertical scrolling but also horizontal scrolling. With fullPage.js you will be able to add horizontal sliders in the most simple way ever.</p>
-				<img src="imgs/slider.png" alt="slider" />
-			</div>
-
-		</div>
-		<div class="slide">
-			<div class="intro">
-				<img src="imgs/1.png" alt="simple" />
-				<h1>Simple</h1>
-				<p>Easy to use. Configurable and customizable.</p>
-			</div>
-		</div>
-		<div class="slide">
-			<div class="intro">
-				<img src="imgs/2.png" alt="Cool" />
-				<h1>Cool</h1>
-				<p>It just looks cool. Impress everybody with a simple and modern web design!</p>
-			</div>
-		</div>
-		<div class="slide">
-			<div class="intro">
-				<img src="imgs/3.png" alt="Compatible" />
-				<h1>Compatible</h1>
-				<p>Working in modern and old browsers too! IE 8 users don't have the fault of using that horrible browser! Lets give them a chance to see your site in a proper way!</p>
-			</div>
-		</div>
-	</div>
-	<div class="section">Some section3</div>
-	<div class="section">Some section4</div>
-	<div class="section">Some section5</div>
-</div>
-
+    <div id="fullpage">
+        <div id="menu">
+            <ul>
+                <li data-menuanchor="firstPage" class="active"><a href="#firstPage">First section</a></li>
+                <li data-menuanchor="secondPage"><a href="#secondPage">Second section</a></li>
+                <li data-menuanchor="thirdPage"><a href="#thirdPage">Third section</a></li>
+                <li data-menuanchor="fourthPage"><a href="#fourthPage">Fourth section</a></li>
+                <li data-menuanchor="lastPage"><a href="#lastPage">five section</a></li>
+            </ul>
+        </div>
+        <div class="section">Some section1</div>
+        <div class="section">
+            <div class="slide">
+                <div class="intro">
+                    <h1>Create Sliders</h1>
+                    <p>Not only vertical scrolling but also horizontal scrolling. With fullPage.js you will be able to add horizontal sliders in the most simple way ever.</p>
+                    <img src="imgs/slider.png" alt="slider" />
+                </div>
+            </div>
+            <div class="slide">
+                <div class="intro">
+                    <img src="imgs/1.png" alt="simple" />
+                    <h1>Simple</h1>
+                    <p>Easy to use. Configurable and customizable.</p>
+                </div>
+            </div>
+            <div class="slide">
+                <div class="intro">
+                    <img src="imgs/2.png" alt="Cool" />
+                    <h1>Cool</h1>
+                    <p>It just looks cool. Impress everybody with a simple and modern web design!</p>
+                </div>
+            </div>
+            <div class="slide">
+                <div class="intro">
+                    <img src="imgs/3.png" alt="Compatible" />
+                    <h1>Compatible</h1>
+                    <p>Working in modern and old browsers too! IE 8 users don't have the fault of using that horrible browser! Lets give them a chance to see your site in a proper way!</p>
+                </div>
+            </div>
+        </div>
+        <div class="section">Some section3</div>
+        <div class="section">Some section4</div>
+        <div class="section">Some section5</div>
+    </div>
 </body>
+
 </html>
