@@ -24,6 +24,11 @@ class Index
         return view();
     }
 
+    public function scale()
+    {
+        return view();
+    }
+
     public function itest()
     {
         // dump(Agent::is('Windows'));

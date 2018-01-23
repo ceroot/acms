@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Examples</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link href="" rel="stylesheet">
+    <style type="text/css">
+    body,
+    ul,
+    ol {
+        padding: 0;
+        margin: 0;
+    }
+
+    header {
+        background: #ddd;
+        height: 30px;
+        line-height: 30px;
+        /*transition: background .3s ease;
+    	transition: height .3s;
+    	transition: line-height .3s;*/
+        transition: all .3s;
+        -webkit-transform: all .3s;
+        -ms-transform-origin: all .3s;
+    }
+
+    header a {
+        color: #fff;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    header.active,
+    header.hover,
+    header:hover {
+        background-color: #333;
+        color: #fff;
+        height: 50px;
+        line-height: 50px;
+    }
+
+
+
+    .lay-box {
+        background-color: rgba(51, 51, 51, .95);
+        color: #fff;
+        transition: -webkit-transform .3s ease-out;
+        transition: transform .3s ease-out;
+        transition: transform .3s ease-out, -webkit-transform .3s ease-out;
+        -webkit-transform: scaleY(0);
+        -ms-transform: scaleY(0);
+        transform: scaleY(0);
+        -webkit-transform-origin: center top;
+        -ms-transform-origin: center top;
+        transform-origin: center top
+    }
+
+    .lay-box.active,
+    .lay-box:hover {
+        -webkit-transform: scaleY(1);
+        -ms-transform: scaleY(1);
+        transform: scaleY(1)
+    }
+    </style>
+    <script type="text/javascript" src="__LIBS__/jquery/jquery-{$Think.config.static.jquery_version}.min.js"></script>
+    <script type="text/javascript">
+    $(function() {
+        var lay_box = $('.lay-box');
+        $('.test').hover(function() {
+            lay_box.addClass('active');
+        }, function() {
+            lay_box.removeClass('active');
+        });
+
+        $('.lay-box').hover(function() {
+            $('header').addClass('active');
+        }, function() {
+            $('header').removeClass('active');
+        });;
+
+    });
+    </script>
+</head>
+
+<body>
+    <header>
+        <a href="javascript:;" class="test">测试</a>
+    </header>
+    <div class="lay-box">
+        <ol>
+            <li>这是一</li>
+            <li>这是一</li>
+            <li>这是一</li>
+            <li>这是一</li>
+        </ol>
+    </div>
+</body>
+
+</html>
