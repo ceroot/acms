@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<title>{block name="title"}{/block}{$title ?? 'ACMS'} -- 后台管理</title>
+<meta name="author" content="{block name='author'}author{/block}">
+<meta name="keywords" content="{block name='keywords'}keywords{/block}">
+<meta name="description" content="{block name='description'}description{/block}">
+
+<!-- LayUi -->
+<link rel="stylesheet" type="text/css" href="__LIBS__/layui/{$Think.config.static.layui_version}/css/layui.css" media="all">
+<!-- sweetalert -->
+<link rel="stylesheet" type="text/css" href="__LIBS__/sweetalert/1.1.3/sweetalert.min.css">
+<!-- Theme pace -->
+<link rel="stylesheet" type="text/css" href="__LIBS__/pace/1.0.2/themes/orange/pace-theme-flash.css">
+<!-- Ionicons -->
+<link rel="stylesheet" type="text/css" href="__LIBS__/ionicons/2.0.1/css/ionicons.min.css">
+<!-- font-awesome -->
+<link rel="stylesheet" type="text/css" href="__LIBS__/font-awesome/4.7.0/css/font-awesome.css">
+<!-- animate.css -->
+<link rel="stylesheet" type="text/css" href="__LIBS__/animate.css/3.5.2/animate.css">
+<!-- base.css -->
+<link rel="stylesheet" type="text/css" href="__CONSOLE__/css/bw.base.css">
+<!-- console.css -->
+<link rel="stylesheet" type="text/css" href="__CONSOLE__/css/bw.console.css">
+<link rel="stylesheet" type="text/css" href="__CONSOLE__/css/bw.consolemin768.css">
+<link rel="stylesheet" type="text/css" href="__CONSOLE__/css/bw.consolemax768.css">
+<!-- Theme style -->
+<link rel="stylesheet" type="text/css" href="__CONSOLE__/css/skins/skin-default.css">
+<style type="text/css">
+    .overview-box {
+        position: absolute;
+        z-index: 9999;
+        top: 48px;
+        width: 100%;
+        padding: 15px;
+        /*background-color: rgba(51, 51, 51, .95);*/
+        /*background-color: rgba(2, 53, 84, .90);*/
+        background-color: rgba(7,42,63, .90);
+        
+        color: #fff;
+        transition: -webkit-transform .3s ease-out;
+        transition: transform .3s ease-out;
+        transition: transform .3s ease-out, -webkit-transform .3s ease-out;
+        -webkit-transform: scaleY(0);
+        -ms-transform: scaleY(0);
+        transform: scaleY(0);
+        -webkit-transform-origin: center top;
+        -ms-transform-origin: center top;
+        transform-origin: center top
+    }
+    .bw-header .sidebar-toggle.active{
+        background: #023554;
+    }
+    .overview-box.active,
+    .overview-box:hover {
+        -webkit-transform: scaleY(1);
+        -ms-transform: scaleY(1);
+        transform: scaleY(1)
+    }
+</style>
+{block name="css"}{/block}
+<!-- jQuery -->
+<script type="text/javascript" src="__LIBS__/jquery/jquery-{$Think.config.static.jquery_version}.min.js"></script>
+<!-- LayUi -->
+<script type="text/javascript" src="__LIBS__/layui/{$Think.config.static.layui_version}/layui.js"></script>
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+<script src="__LIBS__/html5shiv/3.7.3/html5shiv.min.js"></script>
+<script src="__LIBS__/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript">
+    $(function() {
+        var overview_box = $('.overview-box');
+        var overview_box_time;
+        $('.test').hover(function() {            
+            overview_box_time = setTimeout(function(){
+                overview_box.addClass('active');
+            },300);
+        }, function() {
+            clearTimeout(overview_box_time);
+            overview_box.removeClass('active');
+        });
+        overview_box.hover(function() {
+            $('.test').addClass('active');
+        }, function() {
+            $('.test').removeClass('active');
+        });
+    });
+</script>
+</head>
+<body class="{neq name="Think.session.collapsed" value="1"}sidebar-expanded{else/}sidebar-collapsed{/neq} skin-default">
+    <header class="bw-header">
+        <!-- Logo -->
+        <a href="/console/index" class="logo">
+            <span class="logo-mini"> <b>BW</b> </span>
+            <span class="logo-lg"> <b>BENWENG</b> </span>
+        </a>
+        <!-- /.Logo -->
+        <!-- nav header -->
+        <nav class="navbar navbar-static-top" role="navigation">
+            <a href="javascript:void(0)" class="sidebar-toggle bw-sidebar-toggle" title="">
+                <i class="layui-icon toggle-icon toggle-collapsed">&#xe649;</i>
+                <i class="layui-icon toggle-icon toggle-expanded">&#xe648;</i>
+            </a><a href="javascript:;" class="sidebar-toggle test" title="">总览</a>
+            <ul class="list-inline">
+                <li class="dropdown">
+                    <a href="" data-toggle="dropdown" title="">
+                        <i class="fa fa-envelope-o"></i>
+                        <span class="label label-success">5</span>
+                    </a>
+                    <ul class="dropdown-menu animated-nav fadeIn">
+                        <li>
+                            <a href="http://www.baidu.com">百度</a>
+                        </li>
+                        <li><a href="{:url('console/index/copyright')}" title="系统信息">系统信息</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="" data-toggle="dropdown" title="">
+                        <i class="fa fa-bell-o"></i>
+                        <span class="label label-warning">5</span>
+                    </a>
+                    <ul class="dropdown-menu animated-nav flipInX">
+                        <li><a href="{:url('console/manager/password')}" title="系统信息">密码修改</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="" data-toggle="dropdown" title="">
+                        <i class="fa fa-user"></i>
+                    </a>
+                    <ul class="dropdown-menu animated flipInX">
+                        <li><a href="{:url('console/manager/password')}" title="系统信息">密码修改</a></li>
+                        <li><a href="{:url('console/manager/password')}" title="系统信息">空子</a></li>
+                        <li><a href="{:url('console/manager/password')}" title="系统信息">空子3</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="" data-toggle="dropdown" title="">
+                        <i class="fa fa-cogs fa-spin"></i>
+                    </a>
+                    <ul class="dropdown-menu animated flipInY">
+                        <li>
+                            <a href="{:url('cache/index')}" title="更新缓存">更新缓存</a>
+                        </li>
+                        <li>
+                            <a href="{:logouturl()}" class="logout" title="退出">退出</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <div class="overview-box">
+        <ol>
+            <li>这是一</li>
+            <li>这是一</li>
+            <li>这是一</li>
+            <li>这是一</li>
+            <li>这是一</li>
+            <li>这是一</li>
+            <li>这是一</li>
+            <li>这是一</li>
+        </ol>
+        <ol>
+            <li>这是一</li>
+            <li>这是一</li>
+            <li>这是一</li>
+            <li>这是一</li>
+            <li>这是一</li>
+            <li>这是一</li>
+            <li>这是一</li>
+            <li>这是一</li>
+        </ol>
+    </div>
+    <!-- /.nav header -->
+    <!-- Left side column. contains the logo and sidebar -->
+    <aside class="bw-sidebar">
+        <section class="sidebar">
+            <ul>
+                {volist name="menus.menu" id="menu"}
+                    {eq name="menu.isnavshow" value="1"}
+                        <li {if condition="$menu.active"}class="active"{/if}>
+                            <dl>
+                                <dt>
+                                    <a href="{$menu.url}" title="{$menu.title}">
+                                        <i class="fa {empty name="menu.icon"}fa-circle-o{else /}{$menu.icon}{/empty}"></i>
+                                        <span>{$menu.title}</span>
+                                        {notempty name="menu.items"}
+                                            <em class="fa fa-angle-left"></em>
+                                        {/notempty}
+                                    </a>
+                                </dt>
+                                {notempty name="menu.items"}
+                                    <dd {if condition="$menu.active"}style="display: block;"{/if}>
+                                        {volist name="menu.items" id="items"}
+                                            {eq name="items.isnavshow" value="1"}
+                                                <a {if condition="$items.active"}class="active"{/if} href="{$items.url}" title="{$items.title}">
+                                                  <i class="fa fa-circle-o"></i>
+                                                  {$items.title}
+                                                </a>
+                                            {/eq}
+                                        {/volist}
+                                    </dd>
+                                {/notempty}
+                            </dl>
+                        </li>
+                    {/eq}
+                {/volist}
+            </ul>
+        </section>
+        <!-- /.sidebar -->
+        <div class="copyright">
+            Copyright &copy; 2015-{:date('Y')}
+            <br/>
+            <a href="http://www.benweng.com" title="SpringYang Studio">Benweng</a>
+            . All rights reserved.
+        </div>
+    </aside>
+    <!-- /.sidebar -->
+    <!-- Content Wrapper. Contains page content -->
+    <div class="bw-wrapper {empty name="second.data"}product-sidebar-fold{/empty}">
+        <!-- Product Sidebar -->
+        {notempty name="second.data"}
+            <div class="product-sidebar">
+                <section class="product-sidebar-wrapper">
+                    <dl>
+                        <dt>{$second.title}</dt>
+                        <dd>
+                            {volist name="second.data" id="second"}
+                                {if condition="$second.isnavshow"}
+                                    <a {if condition="$second.active"}class="active"{/if} href="{$second.url}" title="{$second.title}">{$second.title}</a>
+                                {/if}
+                            {/volist}
+                        </dd>
+                    </dl>
+                </section>
+                <div class="product-sidebar-control second-sidebar-toggle">
+                    <a class="second-sidebar-sold-left" href="javascript:void(0)" title="隐藏">
+                        <i class="fa fa-angle-double-left"></i>
+                    </a>
+                    <a class="second-sidebar-sold-right" href="javascript:void(0)" title="展开">
+                        <i class="fa fa-angle-double-right"></i>
+                    </a>
+                </div>
+            </div>
+        {/notempty}
+        <!-- /.product-sidebar -->
+        <div class="content-wrapper">
+            <div class="full-control" style="display:none">
+                <a href="javascript:void(0)" title="全屏">
+                    <i class="fa fa-arrows-alt"></i>
+                </a>
+            </div>
+            <div class="content-main">
+                <section class="content-header">
+                    <ol class="breadcrumb">
+                        <li>
+                            <a href="{:url('index/index')}">
+                                <i class="fa fa-dashboard"></i>
+                                控制台
+                            </a>
+                        </li>
+                        {volist name="bread" id="breads"}
+                            <li {if condition="$breads.active"}class="active"{/if}>
+                                {if condition="$i eq count($bread)"}
+                                    {$breads.title}
+                                {else /}
+                                    <a href="{$breads.url}" title="{$breads.title}">{$breads.title}</a>
+                                {/if}
+                            </li>
+                        {/volist}
+                        <!-- <li class="active">Dashboard</li> -->
+                    </ol>
+                    <h1> <strong>{$title}</strong></h1>
+                </section>
+                <!-- Main content -->
+                <section class="content-body">{block name="content"}内容区{/block}</section>
+            </div>
+        </div>
+      <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <!-- ./wrapper -->
+    <!-- <div class="page-loading" id="page-loading">
+        <span>正在加载……</span>
+    </div> -->
+<!-- sweetalert -->
+<script type="text/javascript" src="__LIBS__/sweetalert/1.1.3/sweetalert.min.js"></script>
+<!-- pace -->
+<script type="text/javascript" src="__LIBS__/pace/1.0.2/pace.min.js"></script>
+<!-- Slimscroll -->
+<script type="text/javascript" src="__LIBS__/slimScroll/1.3.8/jquery.slimscroll.min.js"></script>
+<!-- dropdown.js -->
+<script type="text/javascript" src="__LIBS__/bootstrap/3.3.7/js/dropdown.js"></script>
+<!-- console.js -->
+<script type="text/javascript" src="__CONSOLE__/js/bw.console.js"></script>
+{block name="script"}{/block}
+</body>
+</html>

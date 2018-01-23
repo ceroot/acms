@@ -81,6 +81,7 @@ function _init(){
         activate:function(){
             var _this  = this;
             _this.main();
+            _this.overview();
             _this.slimScroll();
             _this.productSidebar();
             _this.logout(); // 退出
@@ -97,6 +98,42 @@ function _init(){
         },
         main:function(){
             
+        },
+        // 概览
+        overview:function(){  
+            var overview_action = $('.overview-action'),
+                overview_box = $('.overview-box'),
+                _time = 50,
+                _time0,_time1,_time2;
+
+            // 概览按钮
+            overview_action.hover(function() {
+                clearTimeout(_time1);
+                clearTimeout(_time2);
+                _time0 = setTimeout(function(){
+                    overview_box.addClass('active');
+                },_time);
+            }, function() {
+                clearTimeout(_time0);
+                _time1 = setTimeout(function(){
+                    overview_box.removeClass('active');
+                },_time);
+            });
+
+            // 概览 box
+            overview_box.hover(function() {
+                clearTimeout(_time1);
+                clearTimeout(_time2);
+                $(this).addClass('active');
+                overview_action.addClass('active');
+            }, function() {
+                var _temp_seft = $(this);
+                clearTimeout(_time1);
+                _time2 = setTimeout(function(){
+                    _temp_seft.removeClass('active');
+                    overview_action.removeClass('active');
+                },_time);
+            });
         },
 
         // 滚动条
@@ -295,39 +332,47 @@ function _init(){
             });
         },
         hover:function(){
+            var _timeout;
             // 主菜单鼠标移上去
             $('body').on('mouseenter', '.sidebar ul>li', function(event) {
                 event.preventDefault();
-                /* Act on the event */
-                if($('body').hasClass('sidebar-collapsed')){
-                    var _self      = $(this);
-                    var offsetY    = _self.offset().top;
-                    var index      = _self.index();
-                    var dlHtml;
+                var _self      = $(this);
 
-                    $('.sidebar>li>dl>dt').find('a').removeClass('current');
+                _timeout = setTimeout(function(){
+                    if($('body').hasClass('sidebar-collapsed')){
 
-                    if($('body').find('.sidebar-tooltip').length==0){
-                        var tooltipHtml  = '<div class="sidebar-tooltip" data-tooltip="0"></div>';
-                        $('.bw-sidebar').append(tooltipHtml);
-                    }
+                        var offsetY    = _self.offset().top;
+                        var index      = _self.index();
+                        var dlHtml;
 
-                    if($('body').find('.sidebar-tooltip').length>0){
-                        $('body').find('.sidebar-tooltip').hide().fadeIn(150).css({'top':offsetY}).prop('data-tooltip',index);
-                        if(_self.find('dl').length>0){
-                            dlHtml  = _self.find('dl').prop('outerHTML');
-                            $('body').find('.sidebar-tooltip').html(dlHtml);
+                        $('.sidebar>li>dl>dt').find('a').removeClass('current');
+
+                        if($('body').find('.sidebar-tooltip').length==0){
+                            var tooltipHtml  = '<div class="sidebar-tooltip" data-tooltip="0"></div>';
+                            $('.bw-sidebar').append(tooltipHtml);
+                        }
+
+                        if($('body').find('.sidebar-tooltip').length>0){
+                            $('body').find('.sidebar-tooltip').hide().fadeIn(150).css({'top':offsetY}).prop('data-tooltip',index);
+                            if(_self.find('dl').length>0){
+                                dlHtml  = _self.find('dl').prop('outerHTML');
+                                $('body').find('.sidebar-tooltip').html(dlHtml);
+                            }
+                        }
+
+                        if($('body').find('.sidebar-tooltip dd').length>0){
+                            $('body').find('.sidebar-tooltip dt').addClass('bbrr-no');
+                        }else{
+                            $('body').find('.sidebar-tooltip dt').removeClass('bbrr-no');
                         }
                     }
-
-                    if($('body').find('.sidebar-tooltip dd').length>0){
-                        $('body').find('.sidebar-tooltip dt').addClass('bbrr-no');
-                    }else{
-                        $('body').find('.sidebar-tooltip dt').removeClass('bbrr-no');
-                    }
-
-                }
+                },200);
             });
+
+            $('body').on('mouseleave', '.sidebar ul>li', function(event) {
+                event.preventDefault();
+                 clearTimeout(_timeout);
+            });;
         },
         fold:function(){
             // 侧边栏折叠
