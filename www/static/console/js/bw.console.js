@@ -103,7 +103,7 @@ function _init(){
         overview:function(){  
             var overview_action = $('.overview-action'),
                 overview_box = $('.overview-box'),
-                _time = 50,
+                _time = 100,
                 _time0,_time1,_time2;
 
             // 概览按钮
@@ -476,11 +476,11 @@ function _init(){
                     //支持所有基础参数
                 }); 
                 // console.log(cols);
-                var __height = $('body').find('nav.navbar').height();
+                var __height = $('body').find('header').height();
                 // __height += $('body').find('.content-header > h1').height();
                 __height += parseInt($('body').find('.content-body').css('padding-top'));  
                 if($('body').find('.table-item-search-area').length>0){
-                    __height += $('body').find('.table-item-search-area').height();
+                    __height += parseInt($('body').find('.table-item-search-area').height());
                 }
                 __height += 20;
                 // console.log(__height);
