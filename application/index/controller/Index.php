@@ -2,6 +2,8 @@
 namespace app\index\controller;
 
 use Jenssegers\Agent\Agent;
+use think\helper\Str;
+use think\helper\Time;
 
 class Index
 {
@@ -16,6 +18,17 @@ class Index
     }
     public function test1()
     {
+        list($start, $end) = Time::today();
+
+        echo $start; // 零点时间戳
+        echo '<br/>';
+        echo $end; // 23点59分59秒的时间戳
+
+        dump(date('Y-m-d H:i:s', $end));
+        dump(Time::daysAgo(7));
+        dump(Time::daysToSecond(5));
+        dump(Str::random());
+
         return view();
     }
 

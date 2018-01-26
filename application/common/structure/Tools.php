@@ -600,7 +600,7 @@ class Tools extends Base
     }
 
     /**
-     * [ getFirstLastDayMonth function_description ]
+     * [ getFirstLastDayMonth 给定日期取得某个月的开始天和结束天 ]
      * @author SpringYang
      * @email    ceroot@163.com
      * @dateTime 2018-01-15T15:37:16+0800

@@ -13,14 +13,16 @@ Route::get('think', function () {
     return 'hello,ThinkPHP5!';
 });
 
+Route::get('hello/:name', 'index/hello');
+
+// Route::rule('my', 'Member/myinfo'); // 静态地址路由
+
 Route::rule('document$', 'index/Document/index');
 Route::rule('document/lists', 'index/Document/lists');
 Route::rule('document/lists/:id', 'index/Document/lists');
 Route::rule('document/reader/:id', 'index/Document/reader');
 // Route::rule('document/category/:time', 'index/Document/lists');
 
-Route::get('hello/:name', 'index/hello');
-// Route::rule('my', 'Member/myinfo'); // 静态地址路由
 Route::rule('bing$', 'index/Bing/index');
 Route::rule('bing/details/:id', 'index/Bing/details');
 Route::rule('bing/download/:id', 'index/Bing/download');

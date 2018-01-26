@@ -133,8 +133,8 @@ class Bing extends Base
             $datesign         = $value['datesign'];
             $value['brief']   = model('BingBranchBrief')->where('datesign', $datesign)->select();
             $value['details'] = model('BingBranchDetails')->where('datesign', $datesign)->select();
-            $value['id']      = authcode($value['id']);
-            $newdata[]        = $value;
+            // $value['id']      = authcode($value['id']);
+            $newdata[] = $value;
         }
 
         $page = $data->render();
@@ -150,7 +150,7 @@ class Bing extends Base
     {
         // dump('details');
         $id || $this->error('参数错误');
-        $id = deauthcode($id);
+        // $id = deauthcode($id);
         $id || $this->error('参数值错误');
 
         // dump($id);die;

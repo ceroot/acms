@@ -64,7 +64,7 @@
 				<div class="w-100 mt-4"></div>
 				<div class="col-6">
 					{if condition="is_numeric($data.previd)"}
-						<a href="{:url('index/Bing/details',['id'=>authcode($data.previd)])}" title="上一个"><i class="fa fa-angle-left fa-fw"></i>上一个</a>
+						<a href="{:url('index/Bing/details',['id'=>$data.previd])}" title="上一个"><i class="fa fa-angle-left fa-fw"></i>上一个</a>
 					{else }
 						<span class="previ-next-tips">{$data.previd}</span>
 					{/if}
@@ -72,7 +72,7 @@
 				<div class="col-6">
 					<span class="pull-right">
 						{if condition="is_numeric($data.nextid)"}
-							<a href="{:url('index/Bing/details',['id'=>authcode($data.nextid)])}" title="下一个">下一个<i class="fa fa-angle-right fa-fw"></i></a>
+							<a href="{:url('index/Bing/details',['id'=>$data.nextid])}" title="下一个">下一个<i class="fa fa-angle-right fa-fw"></i></a>
 						{else }
 							<span class="previ-next-tips">{$data.nextid}</span>
 						{/if}
@@ -91,13 +91,13 @@
 				    		<div class="box-content">
 				    			<div class="box-body">
 					    			<div class="img-box">
-							    	  	<a href="{:url('index/Bing/details',['id'=>authcode($lists.id)])}" target="_blank" title="{$lists.title}">
+							    	  	<a href="{:url('index/Bing/details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">
 								    		<img class="lazyload" data-src="{$imgbaseurl}{$lists.datesign|strtotime|date='Y/m/d/'}{$lists.newname}" src="{$imgbaseurl}default.gif" alt="{$lists.title}" />
 								    	</a>
 							    	</div>
 							    	{notempty name="$lists.item_ttl"}<small><i class="fa fa-deaf fa-fw" title=""></i>{$lists.item_ttl}</small>{/notempty}
 							    	<h6>
-							    		<a href="{:url('index/Bing/details',['id'=>authcode($lists.id)])}" target="_blank" title="{$lists.title}">{$lists.title}</a>
+							    		<a href="{:url('index/Bing/details',['id'=>$lists.id])}" target="_blank" title="{$lists.title}">{$lists.title}</a>
 							    	</h6>
 							    </div>
 						    	<div class="box-footer">
