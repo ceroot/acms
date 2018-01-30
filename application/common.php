@@ -14,8 +14,10 @@
 
 use app\facade\Tools;
 use app\facade\User;
+use think\Config;
 use think\facade\Env;
 use think\facade\Request;
+use Wechat\Loader;
 
 /**
  * [ip2int ip地址转换为int]
@@ -29,6 +31,25 @@ if (!function_exists('ip2int')) {
         $ip = $ip ?: Request::ip();
         return sprintf("%u", ip2long($ip));
     }
+}
+
+/**
+ * 获取微信操作对象
+ * @staticvar array $wechat
+ * @param type $type
+ * @return WechatReceive
+ */
+function &load_wechat($type = '')
+{
+    static $wechat = [];
+    $index         = md5(strtolower($type));
+    $runTimePath   = Env::get('runtime_path'); // 运行目录
+    if (!isset($wechat[$index])) {
+        $config              = Config::get('wechat');
+        $config['cachepath'] = $runTimePath . 'data/';
+        $wechat[$index]      = Loader::get($type, $config);
+    }
+    return $wechat[$index];
 }
 
 /**
