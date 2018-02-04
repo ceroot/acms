@@ -193,6 +193,8 @@ class Bing extends Base
 
         $prevId = $this->getPrevNextId($id);
         $nextId = $this->getPrevNextId($id, 1);
+        // $prevData         = Tools::getPrevNextId('Document', $id);
+        // $nextData         = Tools::getPrevNextId('Document', $id, 1);
         // $data['previd'] = is_numeric($prevId) ? authcode($prevId) : $prevId;
         // $data['nextid'] = is_numeric($nextId) ? authcode($nextId) : $nextId;
         $data['previd']   = $prevId;
@@ -225,11 +227,11 @@ class Bing extends Base
         $model  = model('BingWallpaper');
         $tempId = $id;
         if ($type) {
-            $id     = $id + 1;
+            $id     = (int) $id + 1;
             $tipsId = $model->max('id');
             $tips   = '未来在路上，请稍等……';
         } else {
-            $id     = $id - 1;
+            $id     = (int) $id - 1;
             $tipsId = $model->min('id');
             $tips   = '已经是第一个了';
         }

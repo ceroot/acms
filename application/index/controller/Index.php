@@ -16,8 +16,21 @@ class Index
     {
         return 'hello,' . $name;
     }
+    public function test()
+    {
+        return view();
+    }
     public function test1()
     {
+        $dd   = \Db::name('wechatConfig'); //
+        $fi   = $dd->getTableFields();
+        $ft   = $dd->getFieldsType();
+        $data = $dd->find(1);
+        // dump($fi);
+        // dump($ft);
+        // dump($data);
+        // die;
+
         list($start, $end) = Time::today();
 
         echo $start; // 零点时间戳
@@ -29,6 +42,11 @@ class Index
         dump(Time::daysToSecond(5));
         dump(Str::random());
 
+        return view();
+    }
+
+    public function dj()
+    {
         return view();
     }
 
@@ -82,5 +100,10 @@ class Index
         // 获取系统版本
         dump($platform = $agent->platform());
         dump($version = $agent->version($platform));
+    }
+
+    public function livesone()
+    {
+        return view();
     }
 }

@@ -19,6 +19,6 @@
 
 return [
     'layui_version'     => '2.2.5',
-    'jquery_version'    => '3.2.1',
+    'jquery_version'    => '3.3.1',
     'bootstrap_version' => '4.0.0',
 ];

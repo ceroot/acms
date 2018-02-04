@@ -14,7 +14,7 @@
 
 use app\facade\Tools;
 use app\facade\User;
-use think\Config;
+use think\Db;
 use think\facade\Env;
 use think\facade\Request;
 use Wechat\Loader;
@@ -37,18 +37,54 @@ if (!function_exists('ip2int')) {
  * 获取微信操作对象
  * @staticvar array $wechat
  * @param type $type
+ * @param integer $mid
  * @return WechatReceive
  */
-function &load_wechat($type = '')
+// 通过load_wechat助手函数实现功能
+
+// 微信多客服接口
+// $custom = & load_wechat('Custom');
+
+// 微信周边设备接口
+// $device = & load_wechat('Device');
+
+// 微信其它工具接口
+// $extends = & load_wechat('Extends');
+
+// 微信媒体素材接口
+// $media = & load_wechat('Media');
+
+// 微信菜单操作接口
+// $menu = & load_wechat('Menu');
+
+// 微信网页授权接口
+// $oauth = & load_wechat('Oauth');
+
+// 微信支付相关接口
+// $pay = & load_wechat('Pay');
+
+// 微信被动消息处理SDK
+// $receive = & load_wechat('Receive');
+
+// 微信网页脚本工具
+// $script = & load_wechat('Script');
+
+// 微信粉丝操作接口
+// $user = & load_wechat('User');
+function &load_wechat($type = '', $mid = 1)
 {
     static $wechat = [];
     $index         = md5(strtolower($type));
-    $runTimePath   = Env::get('runtime_path'); // 运行目录
+
     if (!isset($wechat[$index])) {
-        $config              = Config::get('wechat');
+        // $config = Config::pull('wechat');
+        $config = Db::name('wechatConfig')->find($mid);
+        // dump($config);
+        $runTimePath         = Env::get('runtime_path'); // 运行目录
         $config['cachepath'] = $runTimePath . 'data/';
         $wechat[$index]      = Loader::get($type, $config);
     }
+    // dump($wechat[$index]);
     return $wechat[$index];
 }
 

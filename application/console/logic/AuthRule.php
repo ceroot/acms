@@ -112,6 +112,22 @@ class AuthRule extends Extend
                 $controller      = toCamel(request()->controller());
                 $action          = toCamel(request()->action());
 
+                // 微信管理菜单显示
+                if (strstr(strtolower($controller), 'wechat') === false) {
+                    if (strstr(strtolower($value['name']), 'wechat') !== false && strtolower($value['name']) != 'wechat') {
+                        continue;
+                    }
+                } else {
+                    if (strtolower($controller) == 'wechat') {
+                        if (strstr(strtolower($value['name']), 'wechat') &&
+                            strtolower($value['name']) != 'wechat' &&
+                            strtolower($value['name']) != 'wechat/index'
+                        ) {
+                            continue;
+                        }
+                    }
+                }
+
                 // 取得当前控制器id与方法id
                 if (strtolower($value['name']) == strtolower($controller . '/' . $action)) {
                     $currentData = [
@@ -140,10 +156,16 @@ class AuthRule extends Extend
                     default:
                         $url = $value['url'] ?: url($value['name']);
                 }
+                // 微信管理 url 处理
+                if (strstr(strtolower($value['name']), 'wechat') && strtolower($value['name']) != 'wechat/index') {
+                    $url = $value['url'] ?: url($value['name'], ['mid' => input('mid')]);
+                }
                 $value['url'] = $url;
                 $navdata[]    = $value;
             }
         }
+
+        // dump($navdata);die;
 
         // 判断处理
         if (!isset($currentData)) {

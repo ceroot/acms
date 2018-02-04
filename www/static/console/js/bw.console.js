@@ -550,7 +550,6 @@ function _init(){
                         // 
                     },
                     selectSancel: function(){ // 取消选择
-
                         $('input[name="layTableCheckbox"]').prop('checked','');
                         _this.attr('data-type','selectAll').text('全选');
 

@@ -26,7 +26,7 @@ use Qcloud_cos\Cosapi;
 use QL\QueryList;
 use traits\controller\Jump;
 
-class Bing extends Extend
+class Bingback extends Extend
 {
     use Jump;
 

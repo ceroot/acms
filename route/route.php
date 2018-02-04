@@ -16,6 +16,7 @@ Route::get('think', function () {
 Route::get('hello/:name', 'index/hello');
 
 // Route::rule('my', 'Member/myinfo'); // 静态地址路由
+route::rule('lives', 'index/Index/livesone');
 
 Route::rule('document$', 'index/Document/index');
 Route::rule('document/lists', 'index/Document/lists');

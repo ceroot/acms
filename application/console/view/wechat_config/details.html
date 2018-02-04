@@ -1,0 +1,74 @@
+{extend name="mould:base" /}
+{block name="title"}查看详情{/block}
+{block name="content"}
+	<div class="details-content">
+	    <table class="layui-table">
+	        <colgroup>
+		        <col width="120">
+		        <col>
+	        </colgroup>
+	        <tbody>
+	          	<tr>
+		          	<td align="right">id</td>
+		          	<td>{$one.id}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">名称</td>
+		            <td>{$one.title}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">应用id</td>
+		            <td>{$one.appid}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">应用密钥</td>
+		            <td>{$one.appsecret}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">传输加密</td>
+		          	<td>{$one.encodingaeskey}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">支付商户ID</td>
+		            <td>{$one.mch_id}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">支付密钥</td>
+		            <td>{$one.partnerkey}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">支付证书cer</td>
+		            <td>{$one.ssl_cer}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">支付证书key</td>
+		            <td>{$one.ssl_key}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">创建人</td>
+		            <td>{$one.create_uid}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">创建时间</td>
+		            <td>{$one.create_time|date="Y-m-d H:i:s"}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">创建ip</td>
+		            <td>{$one.create_ip|long2ip}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">更新人</td>
+		            <td>{$one.update_uid}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">更新时间</td>
+		            <td>{$one.update_time|date="Y-m-d H:i:s"}</td>
+	          	</tr>
+	          	<tr>
+		          	<td align="right">更新ip</td>
+		            <td>{$one.update_ip|long2ip}</td>
+	          	</tr>
+	        </tbody>
+		</table>
+	</div>
+{/block}

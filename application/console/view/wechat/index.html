@@ -1,0 +1,43 @@
+{extend name="mould:base" /}
+{block name="title"}{/block}
+{block name="css"}
+
+{/block}
+{block name="content"}
+    <table class="layui-table" lay-size="sm">
+        <colgroup>
+	        <col width="80">
+	        <col width="120">
+	        <col width="180">
+	        <col>
+	        <col width="160">
+        </colgroup>
+        <thead>
+          <tr>
+            <td align='center'>id</td>
+            <td>名称</td>
+            <td>token</td>
+            <td></td>
+            <td align='center'>管理操作</td>
+          </tr>
+        </thead>
+        <tbody>
+			{volist name='lists' id='list'}
+		        <tr>
+					<td align='center'>{$list.id}</td>
+					<td align='center'>{$list.title}</td>
+					<td>{$list.token}</td>
+					<td></td>
+					<td align='center' >
+						<a href="{:url('edit?id='.authcode($list['id']))}" title="修改"><i class="fa fa-pencil"></i></a> | 
+						<a class="cy-ajax" href="{:url('del?id='.authcode($list['id']))}" data-layer-msg="删除" data-layer-okbtn="删除" title="删除" data-layer-confirm="true" title="删除"><i class="fa fa-trash-o warning"></i></a> | 
+						<a href="{:url('WechatConfig/index',['mid'=>authcode($list['id'])])}">进入管理</a>
+					</td>
+				</tr>
+			{/volist}
+		</tbody>
+	</table>
+{/block}
+{block name="script"}
+
+{/block}
