@@ -120,6 +120,7 @@ class WechatService
     public static function syncFansTags()
     {
         $wechat = load_wechat("User");
+        dump($result = $wechat->getTags());die;
         if (($result = $wechat->getTags()) !== false) {
             Db::name('WechatFansTags')->where('appid', $wechat->getAppid())->delete();
             foreach (array_chunk($result['tags'], 100) as $list) {
@@ -165,6 +166,8 @@ class WechatService
             isset($user[$k]) && $user[$k] = ToolsService::emojiEncode($user[$k]);
         }
         $user['appid'] = $appid;
+        // dump($user);
+        // return Db::name('WechatFans')->insert($user);
         return DataService::save('WechatFans', $user, 'openid');
     }
 
@@ -204,9 +207,8 @@ class WechatService
                 Log::error("获取用户信息失败, {$wechat->errMsg} [{$wechat->errCode}]");
                 return false;
             }
-            // dump($info);die;
             foreach ($info as $user) {
-                dump($user);
+                // dump($user);
                 if (false === self::setFansInfo($user, $appid)) {
                     Log::error('更新粉丝信息更新失败!');
                     return false;
@@ -216,7 +218,7 @@ class WechatService
                 }
             }
         }
-        die;
+        // die;
         return empty($result['next_openid']) ? true : self::syncAllFans($result['next_openid']);
     }
 

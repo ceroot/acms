@@ -84,10 +84,10 @@ class AuthRule extends Extend
      */
     public function consoleMenu()
     {
-        $cache = Cache::get('authrule');
+        $data = Cache::get('authrule');
         // 判断是不是超级管理员
         if (in_array(Session::get('manager_id'), Config::get('auth_superadmin'))) {
-            $data = $cache;
+            // $data = $cache;
         } else {
             // 根据用户id来选择id所对应的用户拥有的显示数据
             // 满足条件
@@ -95,10 +95,10 @@ class AuthRule extends Extend
             // 2 不需要进行权限验证的
             $notAuth = Cache::get('not_auth'); // 从缓存取得不需要进行权限验证的数据
             // dump($notAuth);die;
-            $data = [];
-            foreach ($cache as $value) {
+            // $data = [];
+            foreach ($data as &$value) {
                 if (Auth::check($value['name'], Session::get('manager_id')) || in_array(strtolower($value['name']), $notAuth)) {
-                    $data[] = $value;
+                    // $data[] = $value;
                 }
 
             }

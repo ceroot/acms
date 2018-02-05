@@ -21,7 +21,7 @@ trait Admin
      * @dateTime 2017-10-27T16:26:28+0800
      * @return   [type]                   [description]
      */
-    protected function _lists()
+    protected function _lists($map = [])
     {
         $data      = Request::param(); // 获得 post 数据
         $pageLimit = Request::param('limit'); // 取得每页数量
@@ -36,7 +36,7 @@ trait Admin
         //$search    = input('param.search'); // 搜索标记
         //$page      = input('param.page');
         //$like      = input('param.like'); // 字段模糊查询标记
-        $map = [];
+        // $map = [];
         // return $data;
         // $search = 1; // 搜索标记
         //

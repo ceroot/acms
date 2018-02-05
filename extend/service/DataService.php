@@ -90,12 +90,14 @@ class DataService
      */
     public static function save($dbQuery, $data, $key = 'id', $where = [])
     {
-        $db = is_string($dbQuery) ? Db::name($dbQuery) : $dbQuery;
+        $db          = is_string($dbQuery) ? Db::name($dbQuery) : $dbQuery;
+        $db1         = is_string($dbQuery) ? Db::name($dbQuery) : $dbQuery;
         $where[$key] = isset($data[$key]) ? $data[$key] : '';
         if ($db->where($where)->count() > 0) {
             return $db->where($where)->update($data) !== false;
         }
-        return $db->insert($data) !== false;
+
+        return $db1->insert($data) !== false;
     }
 
     /**
@@ -106,12 +108,12 @@ class DataService
      */
     public static function update(&$dbQuery, $where = [])
     {
-        $request = Request::instance();
-        $db = is_string($dbQuery) ? Db::name($dbQuery) : $dbQuery;
-        $ids = explode(',', $request->post('id', ''));
-        $field = $request->post('field', '');
-        $value = $request->post('value', '');
-        $pk = $db->getPk(['table' => $db->getTable()]);
+        $request                        = Request::instance();
+        $db                             = is_string($dbQuery) ? Db::name($dbQuery) : $dbQuery;
+        $ids                            = explode(',', $request->post('id', ''));
+        $field                          = $request->post('field', '');
+        $value                          = $request->post('value', '');
+        $pk                             = $db->getPk(['table' => $db->getTable()]);
         $where[empty($pk) ? 'id' : $pk] = ['in', $ids];
         // 删除模式，如果存在 is_deleted 字段使用软删除
         if ($field === 'delete') {
