@@ -39,21 +39,21 @@ class WechatMenu extends WechatBase
         'location_select'    => '弹出地理位置选择器',
     ];
 
+    protected $wechat; // 微信实例化
+
     public function initialize()
     {
         parent::initialize();
+        $this->wechat = new \WeChat\Menu($this->config); // 微信菜单实例化
     }
 
     public function index()
     {
         if ($this->app->request->isPost()) {
             $data = $this->app->request->param();
-            // $post = $this->app->reques->post();
-            // $data = $post['data'];
             $data = $data['data'];
-            Db::name('WechatMenu')->where('mid', $this->mid)->delete(true);
-            // Db::name('WechatMenu')->delete(true);
-            // Db::name('WechatMenu')->delete(true);
+            Db::name('WechatMenu')->where('mid', $this->mid)->delete(true); // 清空原有的
+
             foreach ($data as &$vo) {
                 if (isset($vo['content'])) {
                     $vo['content'] = str_replace('"', "'", $vo['content']);
@@ -62,13 +62,7 @@ class WechatMenu extends WechatBase
             }
             // return $data;
             if (Db::name('WechatMenu')->insertAll($data)) {
-                $result = $this->_push();
-                // $result = 1;
-                // if ($result) {
-                //     $this->success('成功');
-                // } else {
-                //     $this->error($result['errmsg']);
-                // }
+                $result = $this->_push(); // 推送到微信服务器
                 $result ? $this->success('成功') : $this->error($result['errmsg']);
             } else {
                 return $this->error('失败');
@@ -79,6 +73,12 @@ class WechatMenu extends WechatBase
             $this->assign('list', $data);
             return $this->menusView();
         }
+    }
+
+    public function getmenu()
+    {
+        $data = $this->wechat->get();
+        dump($data);
     }
 
     /**
@@ -133,11 +133,17 @@ class WechatMenu extends WechatBase
 
         $menus = ['button' => $menus]; // 增加 button
 
-        $wechat = load_wechat('Menu', $this->mid);
-        if (false !== $wechat->createMenu($menus)) {
-            return ['status' => true, 'errmsg' => ''];
+        try {
+            if ($this->wechat->create($menus) !== false) {
+                return ['status' => true, 'errmsg' => ''];
+            } else {
+                return ['status' => false, 'errmsg' => $this->wechat->getError()];
+            }
+        } catch (Exception $e) {
+            // return $error = $e->getMessate();
+            return ['status' => false, 'errmsg' => $e->getMessate()];
         }
-        return ['status' => false, 'errmsg' => $wechat->getError()];
+
     }
 
     /**
@@ -145,11 +151,15 @@ class WechatMenu extends WechatBase
      */
     public function cancel()
     {
-        $wehcat = load_wechat('Menu', $this->mid);
-        if (false !== $wehcat->deleteMenu()) {
-            $this->success('菜单取消成功，重新关注可立即生效！', '');
+        try {
+            if (false !== $this->wechat->delete()) {
+                return $this->success('菜单取消成功，重新关注可立即生效！');
+            } else {
+                return $this->error('菜单取消失败，' . $this->wechat->getError());
+            }
+        } catch (Exception $e) {
+            return $this->error($e->getMessate());
         }
-        $this->error('菜单取消失败，' . $wehcat->getError());
     }
 
 }

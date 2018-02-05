@@ -81,12 +81,12 @@
         </li>
     </ul>
 </div>
-<div class="pull-left">
+<div class="pull-left" style="position:absolute">
     <div class="popover fade right up in menu-editor">
         <div class="arrow"></div>
         <h3 class="popover-title">
             菜单名称
-            <a class="pull-right menu-delete">删除</a>
+            <a class="pull-right menu-delete" href="javascript:;">删除</a>
         </h3>
         <div class="popover-content menu-content"></div>
     </div>
@@ -144,43 +144,51 @@
 </div>
 <div style="clear:both"></div>
 <div style="width:830px;padding-top:40px;text-align:center">
-
     <button class="layui-btn menu-submit">保存发布</button>
-
     <a href="{:url('cancel',['mid'=>input('mid')])}" data-load='' class="layui-btn layui-btn-danger">取消发布</a>
-
 </div>
-
-
 
 {/block}
 {block name="script"}
-<script>
+<script type="text/javascript">
     $(function () {
-
+        /**
+         * 菜单事件构造方法
+         * @returns {menu.index_L2.menu}
+         */
         var menu = function () {
+            this.version = '1.0';
             this.$btn;
             this.listen();
         };
+        /**
+         * 控件默认事件
+         * @returns {undefined}
+         */
+        var layer;
+        layui.use('layer', function(){
+             layer = layui.layer;
 
+        });
         menu.prototype.listen = function () {
-            var self = this;
-            $('.mobile-footer').on('click', 'li a', function () {
-                self.$btn = $(this);
-                self.$btn.parent('li').hasClass('menu-add') ? self.add() : self.checkShow();
-            }).find('li:first a:first').trigger('click');
-
-            $('.menu-delete').on('click', function () {
-                // var index = $.msg.confirm('删除后菜单下设置的内容将被删除！', function () {
-                //     self.del(), $.msg.close(index);
-                // });
-                self.del();
-            });
-            $('.menu-submit').on('click', function () {
-                self.submit();
-            });
+                var self = this;
+                $('.mobile-footer').on('click', 'li a', function () {
+                    self.$btn = $(this);
+                    self.$btn.parent('li').hasClass('menu-add') ? self.add() : self.checkShow();
+                }).find('li:first a:first').trigger('click');
+                $('.menu-delete').on('click', function () {
+                    var index = layer.confirm('确定删除吗？', function () {
+                        self.del(), layer.close(index);
+                    });
+                });
+                $('.menu-submit').on('click', function () {
+                    self.submit();
+                });
         };
-
+        /**
+         * 添加一个菜单
+         * @returns {undefined}
+         */
         menu.prototype.add = function () {
             var $add = this.$btn.parent('li'), $ul = $add.parent('ul');
             if ($ul.hasClass('mobile-footer')) { /* 添加一级菜单 */
@@ -192,7 +200,10 @@
             }
             this.checkShow();
         };
-
+        /**
+         * 数据校验显示
+         * @returns {unresolved}
+         */
         menu.prototype.checkShow = function () {
             var $li = this.$btn.parent('li'), $ul = $li.parent('ul');
             /* 选中一级菜单时显示二级菜单 */
@@ -219,7 +230,10 @@
             this.renderEdit();
             return $ul;
         };
-
+        /**
+         * 删除当前菜单
+         * @returns {undefined}
+         */
         menu.prototype.del = function () {
             var $li = this.$btn.parent('li'), $ul = $li.parent('ul');
             var $default = function () {
@@ -238,9 +252,13 @@
             this.$btn = $default.find('a:first');
             this.checkShow();
         };
-
+        /**
+         * 显示当前菜单的属性值
+         * @returns {undefined}
+         */
         menu.prototype.renderEdit = function () {
-            var $span = this.$btn.find('span'), $li = this.$btn.parent('li'), $ul = $li.parent('ul'), $html = '';
+            var $span = this.$btn.find('span'), $li = this.$btn.parent('li'), $ul = $li.parent('ul');
+            var $html = '';
             if ($li.find('ul li').length > 1) { /*父菜单*/
                 $html = $($('.menu-editor-parent-tpl').html());
                 $html.find('input[name="menu-name"]').val($span.text()).on('change keyup', function () {
@@ -256,16 +274,12 @@
                 var type = $span.attr('data-type') || 'text';
                 $html.find('input[name="menu-type"]').on('click', function () {
                     $span.attr('data-type', this.value || 'text');
-                    var type = this.value, content = $span.data('content') || '请输入内容';
+                    var content = $span.data('content') || '';
+                    var type = this.value;
                     var html = function () {
                         switch (type) {
                             case 'miniprogram':
-                                var tpl = '\
-<div>\
-    <div>appid<input style="display:block;margin-bottom:10px" class="form-control input-sm" value="{appid}" name="appid"></div>\
-    <div>url<input style="display:block;margin-bottom:10px" class="form-control input-sm" value="{url}" name="url"></div>\
-    <div>pagepath<input style="display:block" name="pagepath" class="form-control input-sm" value={pagepath}></div>\
-</div>';
+                                var tpl = '<div><div class="layui-form-item"><label class="layui-form-label">appid</label><div class="layui-input-block"><input type="text" name="appid" required="" lay-verify="required" placeholder="appid" autocomplete="off" class="layui-input" value="{appid}"></div></div><div class="layui-form-item"><label class="layui-form-label">url</label><div class="layui-input-block"><input type="text" name="url" required="" lay-verify="required" placeholder="url" autocomplete="off" class="layui-input" value="/mp/mp/menu/mid/1.html"></div></div><div class="layui-form-item"><label class="layui-form-label">pagepath</label><div class="layui-input-block"><input type="text" name="pagepath" required="" lay-verify="required" placeholder="pagepath" autocomplete="off" class="layui-input" value="{pagepath}"></div></div></div>';
                                 var _appid = '', _pagepath = '', _url = '';
                                 if (content.indexOf(',') > 0) {
                                     _appid = content.split(',')[0] || '';
@@ -273,14 +287,14 @@
                                     _pagepath = content.split(',')[2] || '';
                                 }
                                 $span.data('appid', _appid), $span.data('url', _url), $span.data('pagepath', _pagepath);
-                                return tpl.replace('{appid}', _appid).replace('{url}', _url).replace('{pagepath}', _pagepath);
+                                return tpl.replace('{appid}', _appid).replace('/mp/mp/menu/mid/1.html', _url).replace('{pagepath}', _pagepath);
                             case 'customservice':
                             case 'text':
                                 return '<div>回复内容<textarea style="resize:none;height:225px" name="content" class="form-control input-sm">{content}</textarea></div>'.replace('{content}', content);
                             case 'view':
-                                return '<div>跳转地址<textarea style="resize:none;height:225px" name="content" class="form-control input-sm">{content}</textarea></div>'.replace('{content}', content);
+                                return '<div class="layui-form-item layui-form-text"><label class="layui-form-label">跳转地址</label><div class="layui-input-block"><textarea placeholder="请输入内容" class="layui-textarea" name="content">{content}</textarea></div></div>'.replace('{content}', content);
                             case 'keys':
-                                return '<div>匹配内容<textarea style="resize:none;height:225px" name="content" class="form-control input-sm">{content}</textarea></div>'.replace('{content}', content);
+                                return '<div class="layui-form-item layui-form-text"><label class="layui-form-label">匹配内容</label><div class="layui-input-block"><textarea placeholder="请输入内容" class="layui-textarea" name="content">{content}</textarea></div></div>'.replace('{content}', content);
                             case 'event':
                                 var options = {
                                     'scancode_push': '扫码推事件',
@@ -288,10 +302,8 @@
                                     'pic_sysphoto': '弹出系统拍照发图',
                                     'pic_photo_or_album': '弹出拍照或者相册发图',
                                     'pic_weixin': '弹出微信相册发图器',
-                                    'location_select': '弹出地理位置选择器'
-                                };
-                                var select = [],
-                                    tpl = '<div><label class="font-noraml"><input class="cuci-radio" name="content" type="radio" {checked} value="{value}"> {title}</label></div>';
+                                    'location_select': '弹出地理位置选择器'};
+                                var select = [], tpl = '<div class="layui-form-item layui-form-text" style="margin-bottom: auto;"><label class="layui-form-label"></label><div><label><input class="cuci-radio" name="content" type="radio" {checked} value="{value}"> {title}</label></div></div>';
                                 if (!(options[content] || false)) {
                                     content = 'scancode_push';
                                     $span.data('content', content);
@@ -315,9 +327,20 @@
                 }).filter('input[value="{type}"]'.replace('{type}', type)).trigger('click');
             }
         };
-
+        /**
+         * 提交数据
+         * @returns {undefined}
+         */
         menu.prototype.submit = function () {
             var data = [];
+            function getdata($span) {
+                var menudata = {};
+                menudata.name = $span.text();
+                menudata.type = $span.attr('data-type');
+                menudata.content = $span.data('content') || '';
+                return menudata;
+            }
+
             $('li.parent-menu').map(function (index, item) {
                 if (!$(item).hasClass('menu-add')) {
                     var menudata = getdata($(item).find('a:first span'));
@@ -335,29 +358,28 @@
                     });
                 }
             });
-			console.log(data);
-            // $.form.load('', {data: data}, 'POST');
+//            console.log(data);return;
+            var data = (data == '')?'':data;
+            var load = layer.load(1);
+            $.post(
+                window.location,
+                {data:data},
+                function (res) {
+                    console.log(res);
+                    if(res.code=='0'){
+                        layer.close(load);
+                        layer.alert(res.msg);
+                    }
+                    if(res.code=='1'){
+                        layer.close(load);
+                        layer.msg(res.msg,{time:1000},function () {
 
-		    $.ajax({
-		        url: window.location,
-		        type: 'POST',
-		        dataType: 'json',
-		        data:{data:data},  // data: _form.serialize(),
-		    }).done(function(redata){
-		    	console.log(redata);
-		    	layer.msg(redata.msg);
-		    });
-
-            function getdata($span) {
-                var menudata = {};
-                menudata.name = $span.text();
-                menudata.type = $span.attr('data-type');
-                menudata.content = $span.data('content') || '';
-                return menudata;
-            }
-
+                        });
+                    }
+                },
+                "json"
+            )
         };
-
         new menu();
     });
 </script>
