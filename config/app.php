@@ -93,7 +93,7 @@ return [
     // 是否强制使用路由
     'url_route_must'         => false,
     // 路由是否完全匹配
-    'route_complete_match'   => false,
+    'route_complete_match'   => true,
     // 使用注解路由
     'route_annotation'       => false,
     // 域名根，如thinkphp.cn

@@ -52,13 +52,13 @@ class WechatMenu extends WechatBase
         if ($this->app->request->isPost()) {
             $data = $this->app->request->param();
             $data = $data['data'];
-            Db::name('WechatMenu')->where('mid', $this->mid)->delete(true); // 清空原有的
+            Db::name('WechatMenu')->where('mpid', $this->mpid)->delete(true); // 清空原有的
 
             foreach ($data as &$vo) {
                 if (isset($vo['content'])) {
                     $vo['content'] = str_replace('"', "'", $vo['content']);
                 }
-                $vo['mid'] = $this->mid;
+                $vo['mpid'] = $this->mpid;
             }
             // return $data;
             if (Db::name('WechatMenu')->insertAll($data)) {
@@ -68,7 +68,7 @@ class WechatMenu extends WechatBase
                 return $this->error('失败');
             };
         } else {
-            $data = Db::name('WechatMenu')->where('mid', $this->mid)->select();
+            $data = Db::name('WechatMenu')->where('mpid', $this->mpid)->select();
             $data = ToolsService::arr2tree($data, 'index', 'pindex');
             $this->assign('list', $data);
             return $this->menusView();
@@ -90,7 +90,7 @@ class WechatMenu extends WechatBase
         $fields = 'id,index,pindex,name,type,content';
         $map    = [
             ['status', '=', 1],
-            ['mid', '=', $this->mid],
+            ['mpid', '=', $this->mpid],
         ];
 
         $result = (array) Db::name('WechatMenu')->where($map)->field($fields)->order('sort ASC,id ASC')->select();
@@ -121,12 +121,12 @@ class WechatMenu extends WechatBase
 
         //去除无效的字段
         foreach ($menus as &$menu) {
-            unset($menu['index'], $menu['pindex'], $menu['id'], $menu['mid']);
+            unset($menu['index'], $menu['pindex'], $menu['id'], $menu['mpid']);
             if (empty($menu['sub_button'])) {
                 continue;
             }
             foreach ($menu['sub_button'] as &$submenu) {
-                unset($submenu['index'], $submenu['pindex'], $submenu['id'], $menu['mid']);
+                unset($submenu['index'], $submenu['pindex'], $submenu['id'], $menu['mpid']);
             }
             unset($menu['type']);
         }

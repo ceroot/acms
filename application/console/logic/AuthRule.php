@@ -158,7 +158,7 @@ class AuthRule extends Extend
                 }
                 // 微信管理 url 处理
                 if (strstr(strtolower($value['name']), 'wechat') && strtolower($value['name']) != 'wechat/index') {
-                    $url = $value['url'] ?: url($value['name'], ['mid' => input('mid')]);
+                    $url = $value['url'] ?: url($value['name'], ['mpid' => input('mpid')]);
                 }
                 $value['url'] = $url;
                 $navdata[]    = $value;

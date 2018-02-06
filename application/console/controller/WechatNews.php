@@ -61,8 +61,9 @@ class WechatNews extends WechatBase
 
     }
 
-    public function wtest()
+    public function wtest($name = 'ddd')
     {
+        dump($name);die;
         // $media_id = 'pOoIye4ddDRZxKnvP5Bei15Bs7kUECQUFhNBGc5aZ0ddmjvsP-Fgw_UVOhZk_sB6';
         // $result   = $this->wechat->get($media_id);
         // $result   = '<img src="' . $result . '">';

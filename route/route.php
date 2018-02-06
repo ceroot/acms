@@ -13,7 +13,7 @@ Route::get('think', function () {
     return 'hello,ThinkPHP5!';
 });
 
-Route::get('hello/:name', 'index/hello');
+Route::get('hello/[:name]', 'index/hello');
 
 // Route::rule('my', 'Member/myinfo'); // 静态地址路由
 route::rule('lives', 'index/Index/livesone');

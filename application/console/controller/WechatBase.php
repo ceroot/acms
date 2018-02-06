@@ -24,17 +24,17 @@ use think\Db;
 
 class WechatBase extends Base
 {
-    protected $mid;
+    protected $mpid;
     protected $config = [];
 
     public function initialize()
     {
         parent::initialize();
 
-        $this->app->request->has('mid') || $this->error('参数错误');
-        $this->mid = deauthcode($this->app->request->param('mid'));
-        $this->mid || $this->error('参数错误');
-        $this->config = Db::name('WechatConfig')->find($this->mid);
+        $this->app->request->has('mpid') || $this->error('参数错误');
+        $this->mpid = deauthcode($this->app->request->param('mpid')); // 解密
+        $this->mpid || $this->error('参数错误');
+        $this->config = Db::name('WechatConfig')->find($this->mpid); // 查询配置参数
         $this->config || $this->error('数据错误');
 
     }
