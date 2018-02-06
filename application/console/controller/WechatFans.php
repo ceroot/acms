@@ -116,7 +116,8 @@ class WechatFans extends WechatBase
         $result = $wechat->getUserList($next_openid);
         dump($result);
         if ($result === false || empty($result['next_openid'])) {
-            Log::error("获取用户信息失败, {$wechat->errMsg} [{$wechat->errCode}]");
+            // Log::error("获取用户信息失败, {$wechat->errMsg} [{$wechat->errCode}]");
+            Log::error("获取用户信息失败");
             return false;
         }
 
@@ -130,7 +131,7 @@ class WechatFans extends WechatBase
             dump($userInfo);
 
         }
-        dump($wechat->getUserList('odL5RwoalBUe4nrmyrZ27FvykwjE'));
+        // dump($wechat->getUserList('odL5RwoalBUe4nrmyrZ27FvykwjE'));
         // $userInfo = $wechat->getBatchUserInfo($result['data']['openid']);
         return empty($result['next_openid']) ? true : self::synctest1($result['next_openid']);
     }

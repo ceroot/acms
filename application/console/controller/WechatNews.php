@@ -24,13 +24,13 @@ use app\console\controller\WechatBase;
 
 class WechatNews extends WechatBase
 {
-
-    protected $wechat; // 微信实例化
+    protected $wechat;
 
     public function initialize()
     {
         parent::initialize();
-        $this->wechat = new \WeChat\Media($this->config); // 微信菜单实例化
+
+        $this->wechat = new \WeChat\Media($this->config);
     }
 
     public function index()
@@ -45,7 +45,8 @@ class WechatNews extends WechatBase
         if (file_exists($filename)) {
             $type = 'image';
             try {
-                $result = $this->wechat->uploadImg($filename);
+                // $result = $this->wechat->uploadImg($filename);
+                $result = $this->wechat->addMaterial($filename);
                 dump($result);
                 if ($result) {
                     dump($result);
@@ -78,6 +79,23 @@ class WechatNews extends WechatBase
         $result = $this->wechat->batchGetMaterial($type, $offset, $count);
         dump($result);
 
+    }
+
+    public function getlist()
+    {
+        try {
+
+            // 实例接口
+            $wechat = new \WeChat\Media($this->config);
+
+            // 执行操作
+            // $result = $wechat->batchGetMaterial($type, $offset, $count);
+            $result = $wechat->batchGetMaterial('image');
+            dump($result);
+        } catch (Exception $e) {
+            // 异常处理
+            echo $e->getMessage();
+        }
     }
 
 }

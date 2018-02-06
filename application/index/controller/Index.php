@@ -11,7 +11,11 @@ class Index
     {
         return view();
     }
-
+    public function getdata()
+    {
+        $data = cache('wechatdata');
+        dump($data);
+    }
     public function hello($name = 'ThinkPHP5')
     {
         return 'hello,' . $name;
