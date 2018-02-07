@@ -15,7 +15,7 @@
 namespace service;
 
 use think\Db;
-use think\facade\Log;
+use think\Log;
 
 /**
  * 微信数据服务
@@ -26,12 +26,6 @@ use think\facade\Log;
  */
 class WechatService
 {
-
-    protected static function config()
-    {
-
-        return Db::name('WechatConfig')->find(3);
-    }
 
     /**
      * 通过图文ID读取图文信息
@@ -160,8 +154,7 @@ class WechatService
      */
     public static function setFansInfo($user, $appid = '')
     {
-        if (!empty($user['create_time'])) {
-            $user['create_time']  =
+        if (!empty($user['subscribe_time'])) {
             $user['subscribe_at'] = date('Y-m-d H:i:s', $user['subscribe_time']);
         }
         if (!empty($user['tagid_list']) && is_array($user['tagid_list'])) {
@@ -173,10 +166,9 @@ class WechatService
             isset($user[$k]) && $user[$k] = ToolsService::emojiEncode($user[$k]);
         }
         $user['appid'] = $appid;
-
-        $where[] = ['openid', '=', $user['openid']];
-        return DataService::save('WechatFans', $user, null, $where);
-        // return DataService::save('WechatFans', $user, 'openid');
+        // dump($user);
+        // return Db::name('WechatFans')->insert($user);
+        return DataService::save('WechatFans', $user, 'openid');
     }
 
     /**
@@ -203,40 +195,31 @@ class WechatService
      */
     public static function syncAllFans($next_openid = '')
     {
-        try {
-            $option = self::config();
-
-            // 实例接口
-            $wechat = new \WeChat\User($option);
-
-            $result = $wechat->getUserList($next_openid);
-
-            $appid = $option['appid']; // 公众号 APPID
-
-            if (!is_array($result) || empty($result['next_openid'])) {
-                Log::error("获取用户信息失败");
-                return true;
+        $wechat = load_wechat('User');
+        $appid  = $wechat->getAppid();
+        // dump($result = $wechat->getUserList($next_openid));die;
+        if (false === ($result = $wechat->getUserList($next_openid)) || empty($result['data']['openid'])) {
+            Log::error("获取粉丝列表失败, {$wechat->errMsg} [{$wechat->errCode}]");
+            return false;
+        }
+        foreach (array_chunk($result['data']['openid'], 100) as $openids) {
+            if (false === ($info = $wechat->getUserBatchInfo($openids)) || !is_array($info)) {
+                Log::error("获取用户信息失败, {$wechat->errMsg} [{$wechat->errCode}]");
+                return false;
             }
-
-            foreach (array_chunk($result['data']['openid'], 100) as $openids) {
-                if (false === ($userInfo = $wechat->getBatchUserInfo($openids)) || !is_array($userInfo)) {
-                    Log::error("获取用户信息失败");
+            foreach ($info as $user) {
+                // dump($user);
+                if (false === self::setFansInfo($user, $appid)) {
+                    Log::error('更新粉丝信息更新失败!');
                     return false;
                 }
-
-                foreach ($userInfo['user_info_list'] as $user) {
-                    if (!self::setFansInfo($user, $appid)) {
-                        Log::error('更新粉丝信息更新失败!');
-                        return false;
-                    };
+                if ($result['next_openid'] === $user['openid']) {
+                    unset($result['next_openid']);
                 }
-
             }
-            return empty($result['next_openid']) ? true : self::syncAllFans($result['next_openid']);
-        } catch (Exception $e) {
-            // 异常处理
-            echo $e->getMessage();
         }
+        // die;
+        return empty($result['next_openid']) ? true : self::syncAllFans($result['next_openid']);
     }
 
     /**
@@ -246,12 +229,8 @@ class WechatService
      */
     public static function syncBlackFans($next_openid = '')
     {
-        // $wechat = load_wechat('User');
-        $option = self::config();
-
-        // 实例接口
-        $wechat = new \WeChat\User($option);
-        $result = $wechat->getBlackList($next_openid);
+        $wechat = load_wechat('User');
+        $result = $wechat->getBacklist($next_openid);
         if ($result === false || empty($result['data']['openid'])) {
             if (empty($result['total'])) {
                 return true;

@@ -85,47 +85,19 @@ class DataService
      * @param \think\db\Query|string $dbQuery 数据查询对象
      * @param array $data 需要保存或更新的数据
      * @param string $key 条件主键限制
-     * @param array $where 其它的where条件 $where[] = ['status', '=', 1];
+     * @param array $where 其它的where条件
      * @return bool
      */
     public static function save($dbQuery, $data, $key = 'id', $where = [])
     {
-        $db = is_string($dbQuery) ? Db::name($dbQuery) : $dbQuery;
-
-        $key = empty($key) ? 'id' : $key;
-
-        isset($data[$key]) && $where[] = [$key, '=', $data[$key]];
-
+        $db          = is_string($dbQuery) ? Db::name($dbQuery) : $dbQuery;
+        $db1         = is_string($dbQuery) ? Db::name($dbQuery) : $dbQuery;
+        $where[$key] = isset($data[$key]) ? $data[$key] : '';
         if ($db->where($where)->count() > 0) {
-            $dataSql    = $db->removeOption()->where($where)->find();
-            $data[$key] = $dataSql[$key];
-
-            return $db->update($data) !== false;
-        }
-        return $db->removeOption()->insert($data) !== false;
-    }
-
-    public static function save1($dbQuery, $data, $key = 'id', $isForce = false)
-    {
-        $db = is_string($dbQuery) ? Db::name($dbQuery) : $dbQuery;
-
-        if ($isForce) {
-            unset($data[$key]);
-            return $db->removeOption()->insert($data) !== false;
+            return $db->where($where)->update($data) !== false;
         }
 
-        if (isset($data[$key]) || array_key_exists($key, $data)) {
-            // echo 'yes'; # code...
-            $dd = $db->find($data[$key]);
-            if ($dd) {
-                return $db->removeOption()->update($data) !== false;
-            } else {
-                return self::save1($data, true);
-            }
-        } else {
-            // echo 'no'; # code...
-            return $db->removeOption()->insert($data) !== false;
-        }
+        return $db1->insert($data) !== false;
     }
 
     /**

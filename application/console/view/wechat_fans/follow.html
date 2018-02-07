@@ -12,6 +12,7 @@
         </div>
         <button class="layui-btn layui-btn-sm" data-type="search">搜索</button>
         <button class="layui-btn layui-btn-sm" data-type="allShow">全部</button>
+        <a href="{:url('sync',['mpid'=>input('mpid')])}" class="layui-btn layui-btn-sm" data-type="syncFollow" data-url="">同步微信数据</a>
     </div>
 </div>
 <table class="layui-hide" id="table_list" lay-filter="#table_list" data-url="{:url('',['mpid'=>input('mpid')])}">
