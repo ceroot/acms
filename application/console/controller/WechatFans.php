@@ -117,6 +117,7 @@ class WechatFans extends WechatBase
             $wechat = new \WeChat\User($this->config);
 
             $result = $wechat->getUserList($next_openid);
+            $result = $wechat->getUserInfo('o-7QZ1F-feo9U1PqDU3tyrDd8P8U');
             dump($result);die;
             if (!is_array($result) || empty($result['next_openid'])) {
                 // Log::error("获取用户信息失败, {$wechat->errMsg} [{$wechat->errCode}]");

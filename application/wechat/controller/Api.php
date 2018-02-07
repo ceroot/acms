@@ -39,12 +39,15 @@ class Api extends Controller
      */
     protected $wechat;
 
+    protected $mpid;
+
     protected $getReceive; // 获取当前推送的所有数据
 
     public function initialize()
     {
         parent::initialize();
-        $config = Db::name('wechatConfig')->find(1);
+        $this->mpid = input('spm');
+        $config     = Db::name('wechatConfig')->find($this->mpid);
         // $data   = cache('wechatdata');
         // dump($data);die;
         $this->wechat = new \WeChat\Receive($config); // 微信菜单实例化
@@ -97,7 +100,7 @@ class Api extends Controller
             // 获取当前推送来源用户的openid
             $openid = $this->wechat->getOpenid();
 
-            // return $this->wechat->text('test')->reply();
+            // return $this->wechat->text($spm)->reply();
 
             switch ($msgType) {
                 case 'text':
@@ -202,7 +205,10 @@ class Api extends Controller
         // return $this->wechat->text($keys)->reply();
         // return $this->wechat->text($keys)->reply();
         list($table, $field, $value) = explode('#', $keys . '##');
-        $info                        = Db::name($table)->where($field, $value)->find();
+        $where                       = [
+            [$field, '=', $value],
+        ];
+        $info = Db::name($table)->where($where)->find();
 
         if (is_array($info) && isset($info['type'])) {
             if (array_key_exists('status', $info) && empty($info['status'])) {
