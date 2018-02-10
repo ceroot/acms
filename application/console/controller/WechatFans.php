@@ -90,8 +90,14 @@ class WechatFans extends WechatBase
 
     public function synctest()
     {
-        $data = WechatService::syncAllFans();
-        dump($data);
+        WechatService::syncAllFans();
+        die;
+        // 实例接口
+        $wechat = new \WeChat\User($this->config);
+
+        // 执行操作
+        $result = $wechat->getUserList();
+        dump($result);
     }
 
     public function ggggg()

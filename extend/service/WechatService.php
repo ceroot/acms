@@ -29,8 +29,10 @@ class WechatService
 
     protected static function config()
     {
-
-        return Db::name('WechatConfig')->find(3);
+        $mpid = input('mpid');
+        $mpid = deauthcode($mpid);
+        // dump($mpid);die;
+        return Db::name('WechatConfig')->find($mpid);
     }
 
     /**
@@ -175,6 +177,7 @@ class WechatService
         $user['appid'] = $appid;
 
         $where[] = ['openid', '=', $user['openid']];
+        // dump($user);
         return DataService::save('WechatFans', $user, null, $where);
         // return DataService::save('WechatFans', $user, 'openid');
     }
@@ -210,7 +213,7 @@ class WechatService
             $wechat = new \WeChat\User($option);
 
             $result = $wechat->getUserList($next_openid);
-
+            // dump($result);die;
             $appid = $option['appid']; // 公众号 APPID
 
             if (!is_array($result) || empty($result['next_openid'])) {
