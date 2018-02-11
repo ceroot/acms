@@ -22,7 +22,6 @@ use service\DataService;
 use service\WechatService;
 use think\Controller;
 use think\Db;
-use think\facade\Log;
 use think\facade\Request;
 use Wechat\WechatReceive;
 
@@ -40,15 +39,69 @@ class Api extends Controller
      */
     protected $wechat;
 
+    protected $mpid;
+
+    protected $getReceive; // 获取当前推送的所有数据
+
     public function initialize()
     {
         parent::initialize();
+        // $data = [
+        //     [
+        //         'Title'       => '图文消息标题',
+        //         'Description' => '图文消息描述',
+        //         'PicUrl'      => 'http://mmbiz.qpic.cn/mmbiz_jpg/dmL30YFS5KpEBtIT8TR5KTHXM6t8EiaQmEqgA0uibmFZyBmGENjVlTeugsaOT6GAxFFdcBuLVBia9lHOytHqgOyVg/0?wx_fmt=jpeg',
+        //         'Url'         => 'http://mmbiz.qpic.cn/mmbiz_jpg/dmL30YFS5KpEBtIT8TR5KTHXM6t8EiaQmEqgA0uibmFZyBmGENjVlTeugsaOT6GAxFFdcBuLVBia9lHOytHqgOyVg/0?wx_fmt=jpeg',
+        //     ],
+        // ];
+
+        // dump($data);
+        // dump(count($data));
+        // die;
+        // $this->mpid = input('spm');
         $config = Db::name('wechatConfig')->find(1);
         // $data   = cache('wechatdata');
         // dump($data);die;
         $this->wechat = new \WeChat\Receive($config); // 微信菜单实例化
+
+        $this->getReceive = $this->wechat->getReceive(); // 获取当前推送的所有数据
+
+        // $data = $this->wechat->getReceive();
+        // cache('wechatdata', $this->getReceive);
     }
 
+    // 实例接口，同时实现接口配置验证与解密处理
+    // $api = new \WeChat\Receive($config);
+
+    // 获取当前推送接口类型 ( text,image,loction,event... )
+    // $msgType = $api->getMsgType();
+
+    // 获取当前推送来源用户的openid
+    // $openid = $api->getOpenid();
+
+    // 获取当前推送的所有数据
+    // $data = $api->getReceive();
+
+    // 回复文本消息
+    // $api->text($content)->reply();
+
+    // 回复图文消息（高级图文或普通图文，数组）
+    // $api->news($news)->reply();
+
+    // 回复图片消息（需先上传到微信服务器生成 media_id）
+    // $api->image($media_id)->reply();
+
+    // 回复语音消息（需先上传到微信服务器生成 media_id）
+    // $api->voice($media_id)->reply();
+
+    // 回复视频消息（需先上传到微信服务器生成 media_id）
+    // $api->video($media_id,$title,$desc)->reply();
+
+    // 回复音乐消息
+    // $api->music($title,$desc,$musicUrl,$hgMusicUrl,$thumbe)->reply();
+
+    // 将消息转发给多客服务
+    // $api->transferCustomerService($account)->reply();
     public function index()
     {
         try {
@@ -57,38 +110,81 @@ class Api extends Controller
             $msgType = $this->wechat->getMsgType();
 
             // 获取当前推送来源用户的openid
-            $openid = $this->wechat->getOpenid();
+            $openid       = $this->wechat->getOpenid();
+            $FromUserName = $this->wechat->getToOpenid();
 
-            // 获取当前推送的所有数据
-            $data = $this->wechat->getReceive();
-            // cache('wechatdata', $data);
-            // $data
-            // ["ToUserName"] => string(15) "gh_4eb692efe6af"
-            // ["FromUserName"] => string(28) "odL5Rwjo3wFc17EFiKVACH0DJCFY"
-            // ["CreateTime"] => string(10) "1517929336"
-            // ["MsgType"] => string(4) "text"
-            // ["Content"] => string(2) "11"
-            // ["MsgId"] => string(19) "6519456856181716950"
-            // cache('wechatdata', $data);
-            // return 12;
-            // return $this->wechat->text($data['Content'])->reply();
+            // $ddd = "<xml><CreateTime>1518331092</CreateTime><MsgType><![CDATA[news]]></MsgType><Articles><0><Title><![CDATA[图文消息标题]]></Title><Description><![CDATA[图文消息描述]]></Description><PicUrl><![CDATA[http://mmbiz.qpic.cn/mmbiz_jpg/dmL30YFS5KpEBtIT8TR5KTHXM6t8EiaQmEqgA0uibmFZyBmGENjVlTeugsaOT6GAxFFdcBuLVBia9lHOytHqgOyVg/0?wx_fmt=jpeg]]></PicUrl><Url><![CDATA[http://mmbiz.qpic.cn/mmbiz_jpg/dmL30YFS5KpEBtIT8TR5KTHXM6t8EiaQmEqgA0uibmFZyBmGENjVlTeugsaOT6GAxFFdcBuLVBia9lHOytHqgOyVg/0?wx_fmt=jpeg]]></Url></0></Articles><ToUserName><![CDATA[odL5Rwjo3wFc17EFiKVACH0DJCFY]]></ToUserName><FromUserName><![CDATA[gh_4eb692efe6af]]></FromUserName><ArticleCount>1</ArticleCount></xml>";
+
+            $picUrl = 'http://mmbiz.qpic.cn/mmbiz_jpg/dmL30YFS5KpEBtIT8TR5KTHXM6t8EiaQmEqgA0uibmFZyBmGENjVlTeugsaOT6GAxFFdcBuLVBia9lHOytHqgOyVg/0?wx_fmt=jpeg';
+            $url    = 'http://mmbiz.qpic.cn/mmbiz_jpg/dmL30YFS5KpEBtIT8TR5KTHXM6t8EiaQmEqgA0uibmFZyBmGENjVlTeugsaOT6GAxFFdcBuLVBia9lHOytHqgOyVg/0?wx_fmt=jpeg';
+
+            $dd = '<xml><ToUserName><![CDATA[' . $FromUserName . ']]></ToUserName><FromUserName><![CDATA[' . $openid . ']]></FromUserName><CreateTime>' . time() . '</CreateTime><MsgType><![CDATA[news]]></MsgType><ArticleCount>2</ArticleCount><Articles><item><Title><![CDATA[图文消息标题1]]></Title> <Description><![CDATA[图文消息描述1]]></Description><PicUrl><![CDATA[' . $picUrl . ']]></PicUrl><Url><![CDATA[' . $url . ']]></Url></item><item><Title><![CDATA[图文消息标题2]]></Title><Description><![CDATA[图文消息描述2]]></Description><PicUrl><![CDATA[' . $picUrl . ']]></PicUrl><Url><![CDATA[' . $url . ']]></Url></item></Articles></xml>';
+
+            // echo $ddd;
+            // @ob_clean();
+            // return $dd;
+            // die;
+
+            $newsData = [
+                [
+                    'Title'       => '图文消息标题',
+                    'Description' => '图文消息描述',
+                    'PicUrl'      => 'http://mmbiz.qpic.cn/mmbiz_jpg/dmL30YFS5KpEBtIT8TR5KTHXM6t8EiaQmEqgA0uibmFZyBmGENjVlTeugsaOT6GAxFFdcBuLVBia9lHOytHqgOyVg/0?wx_fmt=jpeg',
+                    'Url'         => 'http://mmbiz.qpic.cn/mmbiz_jpg/dmL30YFS5KpEBtIT8TR5KTHXM6t8EiaQmEqgA0uibmFZyBmGENjVlTeugsaOT6GAxFFdcBuLVBia9lHOytHqgOyVg/0?wx_fmt=jpeg',
+                ],
+            ];
+
+            $newsData = [
+                'CreateTime'   => time(),
+                'MsgType'      => 'news',
+                'Articles'     => $newsData,
+                'ToUserName'   => $openid,
+                'FromUserName' => $FromUserName,
+                'ArticleCount' => count($newsData),
+            ];
+            // cache('wechatdata', null);
+            // cache('wechatdata', $newsData);
+
+            // @ob_clean();
+            // return $this->wechat->reply($newsData, true);
+            // die;
+            // @ob_clean();
+
+            // return $this->wechat->text($FromUserName)->reply();
 
             switch ($msgType) {
-                case WechatReceive::MSGTYPE_TEXT:
-                    // return $this->wechat->text($data['Content'])->reply();
+                case 'text':
+                    $data = $this->getReceive;
                     return $this->_keys("WechatKeys#keys#" . $data['Content']);
-                // return $this->_keys("WechatKeys#keys#" . $this->wechat->getRevContent());
-                case WechatReceive::MSGTYPE_EVENT:
+                    break;
+                case 'event':
+                    // return $this->wechat->text($msgType)->reply();
                     return $this->_event();
-                case WechatReceive::MSGTYPE_IMAGE:
+                    break;
+                case 'image':
                     return $this->_image();
-                case WechatReceive::MSGTYPE_LOCATION:
+                    break;
+                case 'location':
                     return $this->_location();
+                    break;
+                case 'voice':
+                    return $this->_voice();
+                    break;
+                case 'video':
+                    return $this->_video();
+                    break;
+                case 'file':
+                    return $this->_file();
+                    # code...
+                    break;
+                case 'link':
+                    return $this->_link();
+                    break;
                 default:
                     return 'success';
             }
 
-            $this->wechat->text($openid)->reply();
+            // $this->wechat->text($openid)->reply();
 
         } catch (Exception $e) {
             // 处理异常
@@ -99,6 +195,27 @@ class Api extends Controller
 
     public function getdata()
     {
+        $openid       = $this->wechat->getOpenid();
+        $FromUserName = $this->wechat->getToOpenid();
+
+        $newsData = [
+            [
+                'Title'       => '图文消息标题',
+                'Description' => '图文消息描述',
+                'PicUrl'      => 'http://mmbiz.qpic.cn/mmbiz_jpg/dmL30YFS5KpEBtIT8TR5KTHXM6t8EiaQmEqgA0uibmFZyBmGENjVlTeugsaOT6GAxFFdcBuLVBia9lHOytHqgOyVg/0?wx_fmt=jpeg',
+                'Url'         => 'http://mmbiz.qpic.cn/mmbiz_jpg/dmL30YFS5KpEBtIT8TR5KTHXM6t8EiaQmEqgA0uibmFZyBmGENjVlTeugsaOT6GAxFFdcBuLVBia9lHOytHqgOyVg/0?wx_fmt=jpeg',
+            ],
+        ];
+
+        $newsData = [
+            'CreateTime'   => time(),
+            'MsgType'      => 'news',
+            'Articles'     => $newsData,
+            'ToUserName'   => $openid,
+            'FromUserName' => $FromUserName,
+            'ArticleCount' => count($newsData),
+        ];
+        dump($newsData);
         $data = cache('wechatdata');
         dump($data);
     }
@@ -107,63 +224,19 @@ class Api extends Controller
      * 微信消息接口
      * @return string
      */
-    public function index1()
-    {
-        // 实例接口对象
-        // $this->wechat = &load_wechat('Receive');
-        $config       = Db::name('wechatConfig')->find(1);
-        $this->wechat = new \WeChat\Receive($config); // 微信菜单实例化
-        //ob_clean();
-        // $keys = $this->wechat->getRevContent();
-        // return $this->wechat->text($keys)->reply();
-
-        // 验证接口请求
-        if ($this->wechat->valid() === false) {
-
-            $msg = "{$this->wechat->errMsg}[{$this->wechat->errCode}]";
-            // Log::error($this->wechat->errMsg);
-            // Log::error($this->wechat->errCode);
-            Log::error($msg);
-            Log::record('[ wechat ]：' . $msg);
-            // dump("{$this->wechat->errMsg}");
-            // dump("{$this->wechat->errCode}");
-            // dump($msg);
-            return $msg;
-        }
-
-        // 获取消息来源用户OPENID
-        $this->openid = $this->wechat->getRev()->getRevFrom();
-        // 获取并同步粉丝信息到数据库
-        $this->_updateFansInfo(true);
-        //return $this->wechat->text($this->wechat->getRev()->getRevType())->reply();
-        // 分别执行对应类型的操作
-        switch ($this->wechat->getRev()->getRevType()) {
-            case WechatReceive::MSGTYPE_TEXT:
-                return $this->_keys("WechatKeys#keys#" . $this->wechat->getRevContent());
-            // return $this->_keys("WechatKeys#keys#" . $this->wechat->getRevContent());
-            case WechatReceive::MSGTYPE_EVENT:
-                return $this->_event();
-            case WechatReceive::MSGTYPE_IMAGE:
-                return $this->_image();
-            case WechatReceive::MSGTYPE_LOCATION:
-                return $this->_location();
-            default:
-                return 'success';
-        }
-    }
 
     public function test()
     {
-        $keys = 'WechatKeys#keys#' . 'default';
+        $data = [
+            [
+                'Title'       => '图文消息标题',
+                'Description' => '图文消息描述',
+                'PicUrl'      => 'http://mmbiz.qpic.cn/mmbiz_jpg/dmL30YFS5KpEBtIT8TR5KTHXM6t8EiaQmEqgA0uibmFZyBmGENjVlTeugsaOT6GAxFFdcBuLVBia9lHOytHqgOyVg/0?wx_fmt=jpeg',
+                'Url'         => 'http://mmbiz.qpic.cn/mmbiz_jpg/dmL30YFS5KpEBtIT8TR5KTHXM6t8EiaQmEqgA0uibmFZyBmGENjVlTeugsaOT6GAxFFdcBuLVBia9lHOytHqgOyVg/0?wx_fmt=jpeg',
+            ],
+        ];
 
-        list($table, $field, $value) = explode('#', $keys . '##');
-
-        dump($table);
-        dump($field);
-        dump($value);
-
-        $info = Db::name($table)->where($field, $value)->find();
-        dump($info);
+        dump($data);
 
     }
 
@@ -187,187 +260,6 @@ class Api extends Controller
         }
     }
 
-    public function menu()
-    {
-        $menu = &load_wechat('menu');
-
-        // 执行接口操作
-        $access_token = $menu->getAccessToken();
-        // dump($result);
-        // die;
-        // $result = $menu->getMenu();die;
-        // $data = [
-        //     ["type" => "view", "name" => "官网", "url" => "http://www.kan.cn/"],
-        //     ["type" => "view", "name" => "测试", "url" => "http://www.baidu.com/"],
-        //     ["name" => "我", "sub_button" => [
-        //         ["type" => "click", "name" => "支付测试", "key" => "http://pay.kan.cn/wx/wxpay/index"],
-        //         ["type" => "view", "name" => "商务合作", "url" => "http://pay.kan.cn/wx/index/login"],
-        //     ],
-        //     ],
-        // ];
-        // $data = {"button":[ { "type":"click", "name":"今日歌曲", "key":"V1001_TODAY_MUSIC" }, { "type":"click", "name":"歌手简介", "key":"V1001_TODAY_SINGER" }, { "name":"菜单", "sub_button":[ { "type":"click", "name":"hello word", "key":"V1001_HELLO_WORLD" }, { "type":"click", "name":"赞一下我们", "key":"V1001_GOOD" }] }] };
-        $data = ['button' => [
-            ['type' => 'click', 'name' => '笑语', 'key' => 123],
-            ['type' => 'click', 'name' => '行程', 'key' => 5555],
-            ['name' => '菜单', 'sub_button' => [
-                ['type' => 'view', 'name' => '个人中心', 'url' => 'https://www.benweng.com/wechat/api/login'],
-                ['type' => 'view', 'name' => '视频', 'url' => 'http://v.qq.com/'],
-                ['type' => 'click', 'name' => '赞一下我们', 'key' => 66666],
-            ]],
-        ]];
-        // $data = json_encode($data, JSON_UNESCAPED_UNICODE);
-        // dump($data);
-        // $data = '{
-        //      "button":[
-        //      {
-        //           "type":"click",
-        //           "name":"今日歌曲",
-        //           "key":"111"
-        //       },
-        //       {
-        //            "type":"click",
-        //            "name":"歌手简介",
-        //            "key":"5555"
-        //       },
-        //       {
-        //            "name":"菜单",
-        //            "sub_button":[
-        //            {
-        //                "type":"view",
-        //                "name":"搜索",
-        //                "url":"http://www.soso.com/"
-        //             },
-        //             {
-        //                "type":"view",
-        //                "name":"视频",
-        //                "url":"http://v.qq.com/"
-        //             },
-        //             {
-        //                "type":"click",
-        //                "name":"赞一下我们",
-        //                "key":"333"
-        //             }]
-        //        }]
-        //  }';
-        // // dump($data);
-        // // die;
-
-        // $ch = curl_init();
-        // curl_setopt($ch, CURLOPT_URL, "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=" . $access_token);
-        // curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-        // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        // curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        // curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)');
-        // curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        // curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
-        // curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        // $tmpInfo = curl_exec($ch);
-        // if (curl_errno($ch)) {
-        //     echo curl_error($ch);
-        // }
-
-        // curl_close($ch);
-
-        // echo $tmpInfo;
-        // die;
-        dump($data);die;
-        // 创建微信菜单
-        $result = $menu->createMenu($data);
-
-        // 处理创建结果
-        if ($result === false) {
-            // 接口失败的处理
-            echo $menu->errMsg;
-        } else {
-            // 接口成功的处理
-            dump('成功');
-        }
-    }
-
-    public function ddd()
-    {
-        list($map, $fields) = [['status' => '1'], 'id,index,pindex,name,type,content'];
-
-        $result = (array) Db::name('WechatMenu')->field($fields)->where($map)->order('sort ASC,id ASC')->select();
-
-    }
-
-    public function menuok()
-    {
-        // dump(1);die;
-        $menu = &load_wechat('menu');
-        // dump($menu);
-        // 执行接口操作
-        $access_token = $menu->getAccessToken();
-        // dump($access_token);die;
-
-        $data = ['button' => [
-            ['type' => 'click', 'name' => '笑语', 'key' => 123],
-            ['type' => 'click', 'name' => '行程', 'key' => 5555],
-            ['name' => '菜单', 'sub_button' => [
-                ['type' => 'view', 'name' => '个人中心', 'url' => 'https://www.benweng.com/wechat/api/login'],
-                ['type' => 'view', 'name' => '视频', 'url' => 'http://v.qq.com/'],
-                ['type' => 'click', 'name' => '赞一下我们', 'key' => 66666],
-            ]],
-        ]];
-        // $data = json_encode($data, JSON_UNESCAPED_UNICODE);
-        // dump($data);
-        $data = '{
-             "button":[
-             {
-                  "type":"click",
-                  "name":"今日歌曲",
-                  "key":"111"
-              },
-              {
-                   "type":"click",
-                   "name":"歌手简介",
-                   "key":"5555"
-              },
-              {
-                   "name":"菜单",
-                   "sub_button":[
-                   {
-                       "type":"view",
-                       "name":"搜索",
-                       "url":"http://www.soso.com/"
-                    },
-                    {
-                       "type":"view",
-                       "name":"视频",
-                       "url":"http://v.qq.com/"
-                    },
-                    {
-                       "type":"click",
-                       "name":"赞一下我们",
-                       "key":"333"
-                    }]
-               }]
-         }';
-        // dump($data);
-        // die;
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=" . $access_token);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)');
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $tmpInfo = curl_exec($ch);
-        if (curl_errno($ch)) {
-            echo curl_error($ch);
-        }
-
-        curl_close($ch);
-
-        echo $tmpInfo;
-    }
-
     public function ucenter()
     {
         dump('ucenter');
@@ -384,165 +276,77 @@ class Api extends Controller
         // return $this->wechat->text($keys)->reply();
         // return $this->wechat->text($keys)->reply();
         list($table, $field, $value) = explode('#', $keys . '##');
-        $info                        = Db::name($table)->where($field, $value)->find();
+        if ($value == 'joke') {
+
+            $count    = Db::name('Joke')->count();
+            $id       = rand(1, $count);
+            $jokeData = Db::name('Joke')->find($id);
+            // $content  = strip_tags($jokeData['content']);
+            $content = htmlspecialchars(strip_tags($jokeData['content']));
+            return $this->wechat->text($content)->reply();
+        }
+        if ($value == 'news') {
+            $data = [
+                [
+                    'Title'       => '图文消息标题',
+                    'Description' => '图文消息描述',
+                    'PicUrl'      => 'http://mmbiz.qpic.cn/mmbiz_jpg/dmL30YFS5KpEBtIT8TR5KTHXM6t8EiaQmEqgA0uibmFZyBmGENjVlTeugsaOT6GAxFFdcBuLVBia9lHOytHqgOyVg/0?wx_fmt=jpeg',
+                    'Url'         => 'http://mmbiz.qpic.cn/mmbiz_jpg/dmL30YFS5KpEBtIT8TR5KTHXM6t8EiaQmEqgA0uibmFZyBmGENjVlTeugsaOT6GAxFFdcBuLVBia9lHOytHqgOyVg/0?wx_fmt=jpeg',
+                ],
+            ];
+            return $this->wechat->news($data)->reply();
+        }
+        $where = [
+            [$field, '=', $value],
+        ];
+        $info = Db::name($table)->where($where)->find();
 
         if (is_array($info) && isset($info['type'])) {
             if (array_key_exists('status', $info) && empty($info['status'])) {
                 return 'success';
             }
-            return $this->wechat->text($info['content'])->reply();
+            // cache('wechatdata', $info);
+            // return $this->wechat->text($info['type'])->reply();
             switch ($info['type']) {
                 case 'customservice': // 多客服
-                    # code...
-                    break;
+                # code...
+                // break;
                 case 'keys': // 关键字
                     if (empty($info['content']) && empty($info['name'])) {
-                        return 'success';
+                        return $this->_keys('WechatKeys#keys#default');
                     }
-                    return $this->_keys('wechat_keys#keys#' . (empty($info['content']) ? $info['name'] : $info['content']));
-                    break;
-                case 'customservice1':
-                    # code...
-                    break;
+                    return $this->_keys('WechatKeys#keys#' . (empty($info['content']) ? $info['name'] : $info['content']));
+                // break;
+                case 'text':
+                    if (empty($info['content'])) {
+                        return $this->_keys('WechatKeys#keys#default');
+                    } else {
+                        return $this->wechat->text($info['content'])->reply();
+                    }
+                // break;
                 case 'customservice2':
-                    # code...
-                    break;
+                # code...
+                // break;
                 case 'customservice4':
-                    # code...
-                    break;
+                # code...
+                // break;
                 case 'customservice5':
-                    # code...
-                    break;
+                # code...
+                // break;
                 case 'customservice6':
                     # code...
                     break;
                 default:
-                    # code...
-                    break;
+                    return $this->_keys('WechatKeys#keys#default');
+                    // break;
             }
+        } else {
+            return $this->_keys('WechatKeys#keys#default');
         }
 
         //$dd = $info['content'];
         // return $this->wechat->text($dd)->reply();
 
-        return $this->_keys('wechat_keys#keys#default', true);
-    }
-
-    private function _keys111($keys, $isForce = false)
-    {
-        // return $this->wechat->text($keys)->reply();
-        // return $this->wechat->text($keys)->reply();
-        list($table, $field, $value) = explode('#', $keys . '##');
-        $info                        = Db::name($table)->where($field, $value)->find();
-
-        if (is_array($info) && isset($info['type'])) {
-            if (array_key_exists('status', $info) && empty($info['status'])) {
-                return 'success';
-            }
-            return $this->wechat->text($info['content'])->reply();
-            switch ($info['type']) {
-                case 'customservice': // 多客服
-                    # code...
-                    break;
-                case 'keys': // 关键字
-                    if (empty($info['content']) && empty($info['name'])) {
-                        return 'success';
-                    }
-                    return $this->_keys('wechat_keys#keys#' . (empty($info['content']) ? $info['name'] : $info['content']));
-                    break;
-                case 'text': // 文本消息
-                    if (empty($info['content']) && empty($info['name'])) {
-                        return 'success';
-                    }
-                    return $this->wechat->text($info['content'])->reply(false, true);
-                case 'customservice':
-                    # code...
-                    break;
-                case 'customservice':
-                    # code...
-                    break;
-                case 'customservice':
-                    # code...
-                    break;
-                case 'customservice':
-                    # code...
-                    break;
-                case 'customservice':
-                    # code...
-                    break;
-                default:
-                    # code...
-                    break;
-            }
-        }
-
-        $dd = $info['content'];
-        return $this->wechat->text($dd)->reply();
-
-        die;
-        if (is_array($info = Db::name($table)->where($field, $value)->find()) && isset($info['type'])) {
-            // 数据状态检查
-            if (array_key_exists('status', $info) && empty($info['status'])) {
-                return 'success';
-            }
-            switch ($info['type']) {
-                case 'customservice': // 多客服
-                    $this->wechat->sendCustomMessage(['touser' => $this->openid, 'msgtype' => 'text', 'text' => ['content' => $info['content']]]);
-                    return $this->wechat->transfer_customer_service()->reply(false, true);
-                case 'keys': // 关键字
-                    if (empty($info['content']) && empty($info['name'])) {
-                        return 'success';
-                    }
-                    return $this->_keys('wechat_keys#keys#' . (empty($info['content']) ? $info['name'] : $info['content']));
-                case 'text': // 文本消息
-                    if (empty($info['content']) && empty($info['name'])) {
-                        return 'success';
-                    }
-                    return $this->wechat->text($info['content'])->reply(false, true);
-                case 'news': // 图文消息
-                    if (empty($info['news_id'])) {
-                        return 'success';
-                    }
-                    return $this->_news($info['news_id']);
-                case 'music': // 音频消息
-                    if (empty($info['music_url']) || empty($info['music_title']) || empty($info['music_desc'])) {
-                        return 'success';
-                    }
-                    $media_id = empty($info['music_image']) ? '' : WechatService::uploadForeverMedia($info['music_image'], 'image');
-                    if (empty($media_id)) {
-                        return 'success';
-                    }
-                    return $this->wechat->music($info['music_title'], $info['music_desc'], $info['music_url'], $info['music_url'], $media_id)->reply(false, true);
-                case 'voice': // 语音消息
-                    if (empty($info['voice_url'])) {
-                        return 'success';
-                    }
-                    $media_id = WechatService::uploadForeverMedia($info['voice_url'], 'voice');
-                    if (empty($media_id)) {
-                        return 'success';
-                    }
-                    return $this->wechat->voice($media_id)->reply(false, true);
-                case 'image': // 图文消息
-                    if (empty($info['image_url'])) {
-                        return 'success';
-                    }
-                    $media_id = WechatService::uploadForeverMedia($info['image_url'], 'image');
-                    if (empty($media_id)) {
-                        return 'success';
-                    }
-                    return $this->wechat->image($media_id)->reply(false, true);
-                case 'video': // 视频消息
-                    if (empty($info['video_url']) || empty($info['video_desc']) || empty($info['video_title'])) {
-                        return 'success';
-                    }
-                    $data     = ['title' => $info['video_title'], 'introduction' => $info['video_desc']];
-                    $media_id = WechatService::uploadForeverMedia($info['video_url'], 'video', true, $data);
-                    return $this->wechat->video($media_id, $info['video_title'], $info['video_desc'])->reply(false, true);
-            }
-        }
-        if ($isForce) {
-            return 'success';
-        }
         return $this->_keys('wechat_keys#keys#default', true);
     }
 
@@ -573,21 +377,38 @@ class Api extends Controller
      */
     protected function _event()
     {
-        return 22;
+        // array(6) {
+        //   ["ToUserName"] => string(15) "gh_4eb692efe6af"
+        //   ["FromUserName"] => string(28) "odL5Rwjo3wFc17EFiKVACH0DJCFY"
+        //   ["CreateTime"] => string(10) "1517934570"
+        //   ["MsgType"] => string(5) "event"
+        //   ["Event"] => string(5) "CLICK"
+        //   ["EventKey"] => string(18) "wechat_menu#id#664"
+        // }
+
+        // return $this->wechat->text(11)->reply();
+        // return 22;
         // $event = $this->wechat->getRevEvent();
-        $data  = $this->wechat->getReceive();
-        $event = $data['MsgType'];
+        // $data  = $this->wechat->getReceive();
+        $data  = $this->getReceive;
+        $event = $data['Event'];
+        // $event = $this->getReceive['Event'];
+        // return $this->wechat->text($event)->reply();
+        // $event = $data['MsgType'];
         switch (strtolower($event)) {
             case 'subscribe': // 粉丝关注事件
                 // $this->_updateFansInfo(true);
                 // $this->_spread($event['key']);
-                return $this->_keys('wechat_keys#keys#subscribe', true);
+                return $this->_keys('WechatKeys#keys#subscribe');
+            // return $this->_keys('wechat_keys#keys#subscribe', true);
             case 'unsubscribe': // 粉丝取消关注
                 $this->_updateFansInfo(false);
                 return 'success';
             case 'click': // 点击菜单事件
                 // return $this->_keys($event['key']);
-                return $this->_keys("WechatKeys#keys#" . $event['key']);
+                return $this->_keys($data['EventKey']);
+            // return $this->_keys("WechatKeys#keys#" . $data['EventKey']);
+            // return $this->_keys("WechatKeys#keys#" . $event['key']);
             case 'scancode_push':
             case 'scancode_waitmsg': // 扫码推事件
                 $scanInfo = $this->wechat->getRev()->getRevScanInfo();
@@ -629,7 +450,20 @@ class Api extends Controller
      */
     private function _location()
     {
-        return $this->wechat->text('success')->reply();
+        // array(9) {
+        //   ["ToUserName"] => string(15) "gh_4eb692efe6af"
+        //   ["FromUserName"] => string(28) "odL5Rwjo3wFc17EFiKVACH0DJCFY"
+        //   ["CreateTime"] => string(10) "1517934476"
+        //   ["MsgType"] => string(8) "location"
+        //   ["Location_X"] => string(9) "26.549728"
+        //   ["Location_Y"] => string(10) "106.680939"
+        //   ["Scale"] => string(2) "16"
+        //   ["Label"] => string(32) "水岸广场(贵阳市南明区)"
+        //   ["MsgId"] => string(19) "6519478932313619161"
+        // }
+        $data   = $this->getReceive;
+        $redata = $data['Label'];
+        return $this->wechat->text($redata)->reply();
         return 'success';
     }
 
@@ -638,8 +472,99 @@ class Api extends Controller
      */
     private function _image()
     {
-        return $this->wechat->text('success')->reply();
+        // array(7) {
+        //   ["ToUserName"] => string(15) "gh_4eb692efe6af"
+        //   ["FromUserName"] => string(28) "odL5Rwjo3wFc17EFiKVACH0DJCFY"
+        //   ["CreateTime"] => string(10) "1517934207"
+        //   ["MsgType"] => string(5) "image"
+        //   ["PicUrl"] => string(125) "http://mmbiz.qpic.cn/mmbiz_jpg/jmic0K2iblib5XHOnDYAGAal1CIfaBCNKvpFjoWFoZbrQA5wHGMaw2td2icqp87YYtdWDNjviaVRT7TNricpGgdBEl7w/0"
+        //   ["MsgId"] => string(19) "6519477776967416520"
+        //   ["MediaId"] => string(64) "A7gqeFIBHXulnw9wGYYxndpbprAEl4gcD3BrPIwoU5-nQK6jnQAP98cGcz3urfqy"
+        // }
+        $data   = $this->getReceive;
+        $redata = $data['MediaId'];
+        return $this->wechat->image($redata)->reply();
         return 'success';
+    }
+
+    // 语音处理
+    private function _voice()
+    {
+        // array(8) {
+        //   ["ToUserName"] => string(15) "gh_4eb692efe6af"
+        //   ["FromUserName"] => string(28) "odL5Rwjo3wFc17EFiKVACH0DJCFY"
+        //   ["CreateTime"] => string(10) "1517934523"
+        //   ["MsgType"] => string(5) "voice"
+        //   ["MediaId"] => string(64) "VdsAqZUAhjmk4o7l2cZI0ZxndESofJyMVmgRx9qs9UViXPucEyB-Bx2quvaI9_vb"
+        //   ["Format"] => string(3) "amr"
+        //   ["MsgId"] => string(19) "6519479134177082077"
+        //   ["Recognition"] => array(0) {
+        //   }
+        // }
+        $data     = $this->getReceive;
+        $media_id = $data['MediaId'];
+
+        return $this->wechat->voice($media_id)->reply();
+    }
+
+    // 语音处理
+    private function _file()
+    {
+        //  array(10) {
+        //   ["ToUserName"] => string(15) "gh_4eb692efe6af"
+        //   ["FromUserName"] => string(28) "odL5Rwjo3wFc17EFiKVACH0DJCFY"
+        //   ["CreateTime"] => string(10) "1517933995"
+        //   ["MsgType"] => string(4) "file"
+        //   ["Title"] => string(22) "新建文本文档.txt"
+        //   ["Description"] => string(5) "138 B"
+        //   ["FileKey"] => string(16) "AgAAAAAAAABQxwJs"
+        //   ["FileMd5"] => string(32) "171e2d10af9049b2da07dfbe7de581e9"
+        //   ["FileTotalLen"] => string(3) "138"
+        //   ["MsgId"] => string(19) "6519476866434349745"
+        // }
+        $data     = $this->getReceive;
+        $media_id = $data['Title'];
+
+        return $this->wechat->text($media_id)->reply();
+    }
+
+    // 处理视频
+    private function _video()
+    {
+        // array(7) {
+        //   ["ToUserName"] => string(15) "gh_4eb692efe6af"
+        //   ["FromUserName"] => string(28) "odL5Rwjo3wFc17EFiKVACH0DJCFY"
+        //   ["CreateTime"] => string(10) "1517933458"
+        //   ["MsgType"] => string(5) "video"
+        //   ["MediaId"] => string(64) "20nPGZOXfRVQWLzOrwFryQ2m4fkAiXx0KCvi0-dqVPW-bOaiQjPHBnilBXBklqgK"
+        //   ["ThumbMediaId"] => string(64) "LDrM3a2gRtkV10bHAubjWDgo_qtYjkOLdimAWw8_gUYXbXWoiLAXOZWVI4tA4y1B"
+        //   ["MsgId"] => string(19) "6519474560036911747"
+        // }
+
+        $data     = $this->getReceive;
+        $media_id = $data['MediaId'];
+
+        return $this->wechat->video($media_id, '这是视频标题', '这是视频描述')->reply();
+    }
+
+    // 处理 link
+    private function _link()
+    {
+        // array(8) {
+        //   ["ToUserName"] => string(15) "gh_4eb692efe6af"
+        //   ["FromUserName"] => string(28) "odL5Rwjo3wFc17EFiKVACH0DJCFY"
+        //   ["CreateTime"] => string(10) "1517939941"
+        //   ["MsgType"] => string(4) "link"
+        //   ["Title"] => string(66) "春节还打扫什么房间？用它擦一擦，邻居全来夸！"
+        //   ["Description"] => string(21) "一起来试试吧！"
+        //   ["Url"] => string(240) "http://mp.weixin.qq.com/s?__biz=MzI4Nzk0ODA4NQ==&mid=2247484203&idx=1&sn=919ef95fe6012a7d60cb212449d4ca18&chksm=ebc4af71dcb3266756cdc945ec9aa3800c6bf7c9e48e969a928eb420677102d7d86db1133905&mpshare=1&scene=1&srcid=0206ns4K3ir0UXJgxcMIzMJK#rd"
+        //   ["MsgId"] => string(19) "6519502404309892277"
+        // }
+
+        $data   = $this->getReceive;
+        $redata = $data['Title'] | $data['Url'];
+
+        return $this->wechat->text($redata)->reply();
     }
 
     /**

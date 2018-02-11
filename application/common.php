@@ -71,14 +71,14 @@ if (!function_exists('ip2int')) {
 
 // 微信粉丝操作接口
 // $user = & load_wechat('User');
-function &load_wechat($type = '', $mid = 1)
+function &load_wechat($type = '', $mpid = 1)
 {
     static $wechat = [];
     $index         = md5(strtolower($type));
 
     if (!isset($wechat[$index])) {
         // $config = Config::pull('wechat');
-        $config = Db::name('wechatConfig')->find($mid);
+        $config = Db::name('wechatConfig')->find($mpid);
         // dump($config);
         $runTimePath         = Env::get('runtime_path'); // 运行目录
         $config['cachepath'] = $runTimePath . 'data/';
