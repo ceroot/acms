@@ -1,0 +1,25 @@
+  - Installing topthink/think-installer (v1.0.12): Downloading (100%)
+  - Installing mobiledetect/mobiledetectlib (2.8.30): Downloading (100%)
+  - Installing jaybizzle/crawler-detect (v1.2.58): Loading from cache
+  - Installing jenssegers/agent (v2.6.0): Downloading (100%)
+  - Installing zoujingli/wechat-developer (dev-master e7fc0e1): Downloading (100%)
+  - Installing topthink/framework (v5.1.5): Downloading (100%)
+  - Installing topthink/think-captcha (v2.0.2): Downloading (100%)
+  - Installing guzzlehttp/promises (v1.3.1): Downloading (100%)
+  - Installing psr/http-message (1.0.1): Downloading (100%)
+  - Installing guzzlehttp/psr7 (1.4.2): Downloading (100%)
+  - Installing guzzlehttp/guzzle (6.3.0): Downloading (100%)
+  - Installing jaeger/g-http (V1.4.1): Downloading (100%)
+  - Installing symfony/polyfill-php72 (v1.7.0): Loading from cache
+  - Installing symfony/polyfill-mbstring (v1.7.0): Loading from cache
+  - Installing symfony/var-dumper (v4.0.4): Loading from cache
+  - Installing tightenco/collect (v5.6.0): Loading from cache
+  - Installing jaeger/phpquery-single (0.9.9): Downloading (100%)
+  - Installing jaeger/querylist (V4.0.3): Downloading (100%)
+  - Installing topthink/think-image (v1.0.7): Downloading (100%)
+  - Installing topthink/think-helper (v1.0.6): Downloading (100%)
+  - Installing zoujingli/wechat-php-sdk (v1.3.14): Loading from cache
+
+
+
+  composer require zoujingli/pay-php-sdk

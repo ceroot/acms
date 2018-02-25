@@ -21,6 +21,7 @@
 namespace app\console\controller;
 
 use app\console\controller\WechatBase;
+use think\Db;
 
 class WechatNews extends WechatBase
 {
@@ -35,8 +36,26 @@ class WechatNews extends WechatBase
 
     public function index()
     {
-
+        $list = Db::name('WechatNews')->select();
+        $this->assign('list', $list);
         return $this->menusView();
+    }
+
+    public function add()
+    {
+        if ($this->app->request->isGet()) {
+            return $this->menusView();
+        }
+        if ($this->app->request->isPost()) {
+            $data = $this->app->request->post();
+            if (($ids = $this->_apply_news_article($data['data'])) && !empty($ids)) {
+                $post = ['article_id' => $ids, 'create_by' => session('user.id')];
+                if (DataService::save($this->table, $post, 'id') !== false) {
+                    $this->success('图文添加成功！', '');
+                }
+            }
+            $this->error('图文添加失败，请稍候再试！');
+        }
     }
 
     public function addFile()
@@ -128,7 +147,7 @@ class WechatNews extends WechatBase
         }
     }
 
-    public function add()
+    public function add1111()
     {
         $data = [
             'articles' => [

@@ -1,0 +1,55 @@
+composer update topthink/framework
+
+第一步
+composer require topthink/framework
+composer require topthink/think-image
+composer require topthink/think-helper
+composer require topthink/think-captcha
+
+第二步
+composer require jenssegers/agent
+=======================
+jaybizzle/crawler-detect
+jenssegers/agent 
+mobiledetect/mobiledetectlib
+这三个互相依赖于
+安装一下其它的会自动安装
+=======================
+
+第三步
+composer require jaeger/querylist
+=======================
+querylist 依赖于
+jaeger/g-http
+symfony/polyfill-php72
+symfony/polyfill-mbstring
+psr/http-message
+tightenco/collect
+安装之后其它的会自动安装
+=======================
+
+第四步
+composer require zoujingli/wechat-developer
+composer require zoujingli/wechat-php-sdk
+
+
+  - Removing zoujingli/wechat-php-sdk (v1.3.14)
+  - Removing topthink/think-installer (v1.0.12)
+  - Removing topthink/think-image (v1.0.7)
+  - Removing topthink/think-helper (v1.0.6)
+  - Removing topthink/think-captcha (v2.0.2)
+  - Removing symfony/polyfill-php72 (v1.7.0)
+  - Removing symfony/polyfill-mbstring (v1.7.0)
+  - Removing psr/http-message (1.0.1)
+  - Removing mobiledetect/mobiledetectlib (2.8.30)
+  - Removing jenssegers/agent (v2.6.0)
+  - Removing jaybizzle/crawler-detect (v1.2.57)
+  - Removing jaeger/querylist (V4.0.3)
+  - Removing jaeger/phpquery-single (0.9.9)
+  - Removing jaeger/g-http (V1.4.1)
+  - Removing guzzlehttp/psr7 (1.4.2)
+  - Removing guzzlehttp/promises (v1.3.1)
+  - Removing guzzlehttp/guzzle (6.3.0)
+  - Removing zoujingli/wechat-developer (dev-master 976c824)
+  - Removing symfony/var-dumper (v4.0.4)
+  - Removing tightenco/collect (v5.6.0)
