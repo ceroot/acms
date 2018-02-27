@@ -47,8 +47,9 @@ class Document extends Base
             ['status', '=', 1],
         ];
 
-        if (Request::has('id')) {
-            $cid       = Request::param('id');
+        if (Request::has('id') && !empty(Request::param('id'))) {
+            $cid = Request::param('id');
+            // dump($cid);
             $whereTemp = [
                 ['cid', '=', $cid],
             ];
@@ -69,9 +70,9 @@ class Document extends Base
             ];
             array_push($where, $whereTemp);
         }
-
+        // dump($where);
         $data = Db::name('Document')->where($where)->order('id', 'desc')->select();
-
+        // dump($data);die;
         $list = [];
         foreach ($data as $value) {
             $coverId        = $value['cover_id'];

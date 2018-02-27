@@ -27,6 +27,8 @@ class WechatBase extends Base
     protected $mpid;
     protected $config = [];
 
+    protected $wechat;
+
     public function initialize()
     {
         parent::initialize();

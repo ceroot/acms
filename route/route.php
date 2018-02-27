@@ -19,10 +19,10 @@ Route::get('hello/[:name]', 'index/hello');
 route::rule('lives', 'index/Index/livesone');
 
 Route::rule('document$', 'index/Document/index');
-Route::rule('document/lists', 'index/Document/lists');
-Route::rule('document/lists/:id', 'index/Document/lists');
+// Route::rule('document/lists', 'index/Document/lists');
+Route::rule('document/lists/[:id]', 'index/Document/lists');
 Route::rule('document/reader/:id', 'index/Document/reader');
-// Route::rule('document/category/:time', 'index/Document/lists');
+Route::rule('document/category/:time', 'index/Document/lists');
 
 Route::rule('bing$', 'index/Bing/index');
 Route::rule('bing/details/:id', 'index/Bing/details');
