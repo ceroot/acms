@@ -58,7 +58,8 @@ class Document extends Base
 
             $title = Db::name('Category')->getFieldById($cid, 'title');
         }
-
+        dump($where);
+        die;
         if (Request::has('month')) {
             $month    = Request::param('month');
             $month    = $month . '01';
@@ -70,7 +71,8 @@ class Document extends Base
             ];
             array_push($where, $whereTemp);
         }
-        // dump($where);
+        dump($where);
+        die;
         $data = Db::name('Document')->where($where)->order('id', 'desc')->select();
         // dump($data);die;
         $list = [];
