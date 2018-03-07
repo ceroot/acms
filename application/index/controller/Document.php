@@ -46,8 +46,8 @@ class Document extends Base
         $where = [
             ['status', '=', 1],
         ];
-
-        if (Request::has('id') && !empty(Request::param('id'))) {
+        // dump(Request::param('month'));die;
+        if (Request::has('id') && !empty(Request::param('id')) && is_numeric(Request::param('id'))) {
             $cid = Request::param('id');
             // dump($cid);
             $whereTemp = [
@@ -58,8 +58,8 @@ class Document extends Base
 
             $title = Db::name('Category')->getFieldById($cid, 'title');
         }
-        dump($where);
-        die;
+        // dump($where);
+        // die;
         if (Request::has('month')) {
             $month    = Request::param('month');
             $month    = $month . '01';
@@ -71,8 +71,8 @@ class Document extends Base
             ];
             array_push($where, $whereTemp);
         }
-        dump($where);
-        die;
+        // dump($where);
+        // die;
         $data = Db::name('Document')->where($where)->order('id', 'desc')->select();
         // dump($data);die;
         $list = [];

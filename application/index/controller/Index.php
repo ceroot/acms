@@ -22,6 +22,8 @@ class Index
     }
     public function test()
     {
+        $dd = md5(microtime() . 'http://s4.cn.bing.net/th?id=OJ.0l400gMxLBSWLA&pid=MSNJVFeeds');
+        dump($dd);die;
         return view();
     }
     public function test1()
