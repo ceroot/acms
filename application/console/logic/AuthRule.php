@@ -22,10 +22,18 @@ use app\common\model\Extend;
 use app\facade\Auth;
 use think\facade\Cache;
 use think\facade\Config;
+use think\facade\Request;
 use think\facade\Session;
 
 class AuthRule extends Extend
 {
+
+    // 模型初始化
+    protected static function init()
+    {
+        parent::init();
+
+    }
 
     /**
      * { updateCache 更新缓存数据}
@@ -103,10 +111,15 @@ class AuthRule extends Extend
 
             }
         }
+        // dump($data);die;
+        // 处理浏览器里的 url
+        $browser_url = parse_url(Request::url());
+        $browser_url = str_replace('/' . strtolower(Request::module()) . '/', '', strtolower($browser_url['path']));
+        $browser_url = str_replace('.' . config::get('url_html_suffix'), '', $browser_url);
 
         $navdata = [];
         foreach ($data as $value) {
-            if ($value['status']) {
+            if ($value['status'] == '正常') {
                 // 激活当前处理
                 $value['active'] = 0;
                 $controller      = toCamel(request()->controller());
@@ -128,13 +141,21 @@ class AuthRule extends Extend
                     }
                 }
 
+                // 处理 name
+                $mysql_name = $value['name'];
+                $mysql_name = str_replace('?', '/', $mysql_name);
+                $mysql_name = str_replace('=', '/', $mysql_name);
+
                 // 取得当前控制器id与方法id
-                if (strtolower($value['name']) == strtolower($controller . '/' . $action)) {
+                // if (strtolower($mysql_name) == strtolower($controller . '/' . $action)) {
+                if (strtolower($mysql_name) == strtolower($browser_url)) {
                     $currentData = [
                         'action_id'     => $value['id'],
                         'controller_id' => $value['pid'],
                     ];
                 }
+
+                // die;
 
                 // 处理 url
                 switch ($value['name']) {
@@ -165,8 +186,10 @@ class AuthRule extends Extend
             }
         }
 
-        // dump($navdata);die;
+        // die;
 
+        // dump($navdata);die;
+        // dump($currentData);die;
         // 判断处理
         if (!isset($currentData)) {
             $this->error = '规则表里不存在此名称，请先进行规则添加';
@@ -176,7 +199,7 @@ class AuthRule extends Extend
         // 处理当前高亮标记
         // 子级返回父级数组
         $bread = get_parents($navdata, $currentData['action_id']);
-
+        // dump($bread);die;
         // 只取id组成数组
         $activeidarr = [];
         foreach ($bread as $value) {
