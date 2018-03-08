@@ -115,7 +115,7 @@ class AuthRule extends Extend
         // 处理浏览器里的 url
         $browser_url = parse_url(Request::url());
         $browser_url = str_replace('/' . strtolower(Request::module()) . '/', '', strtolower($browser_url['path']));
-        $browser_url = str_replace('.' . config::get('url_html_suffix'), '', $browser_url);
+        $browser_url = strtolower(str_replace('.' . config::get('url_html_suffix'), '', $browser_url));
 
         $navdata = [];
         foreach ($data as $value) {
@@ -143,12 +143,23 @@ class AuthRule extends Extend
 
                 // 处理 name
                 $mysql_name = $value['name'];
+                $mysql_name = toUnderline($mysql_name);
                 $mysql_name = str_replace('?', '/', $mysql_name);
-                $mysql_name = str_replace('=', '/', $mysql_name);
+                $mysql_name = strtolower(str_replace('=', '/', $mysql_name));
+
+                //dump($browser_url);
+                //dump($mysql_name);
 
                 // 取得当前控制器id与方法id
                 // if (strtolower($mysql_name) == strtolower($controller . '/' . $action)) {
-                if (strtolower($mysql_name) == strtolower($browser_url)) {
+                // if ($mysql_name == $browser_url) {
+                //     $currentData = [
+                //         'action_id'     => $value['id'],
+                //         'controller_id' => $value['pid'],
+                //     ];
+                // }
+
+                if (strpos($browser_url, $mysql_name) !== false) {
                     $currentData = [
                         'action_id'     => $value['id'],
                         'controller_id' => $value['pid'],
