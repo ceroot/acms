@@ -147,8 +147,8 @@ class AuthRule extends Extend
                 $mysql_name = str_replace('?', '/', $mysql_name);
                 $mysql_name = strtolower(str_replace('=', '/', $mysql_name));
 
-                //dump($browser_url);
-                //dump($mysql_name);
+                // dump($browser_url);
+                // dump($mysql_name);
 
                 // 取得当前控制器id与方法id
                 // if (strtolower($mysql_name) == strtolower($controller . '/' . $action)) {
@@ -160,6 +160,9 @@ class AuthRule extends Extend
                 // }
 
                 if (strpos($browser_url, $mysql_name) !== false) {
+                    // dump('m:' . $mysql_name);
+                    // dump('b:' . $browser_url);
+
                     $currentData = [
                         'action_id'     => $value['id'],
                         'controller_id' => $value['pid'],
