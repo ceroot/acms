@@ -117,6 +117,11 @@ class AuthRule extends Extend
         $browser_url = str_replace('/' . strtolower(Request::module()) . '/', '', strtolower($browser_url['path']));
         $browser_url = strtolower(str_replace('.' . config::get('url_html_suffix'), '', $browser_url));
 
+        if ($browser_url == '/' . strtolower(Request::module())) {
+            $browser_url = 'index/index';
+        }
+
+        // dump($browser_url);die;
         $navdata = [];
         foreach ($data as $value) {
             if ($value['status'] == '正常') {
@@ -203,7 +208,8 @@ class AuthRule extends Extend
         // die;
 
         // dump($navdata);die;
-        // dump($currentData);die;
+        // dump($currentData);
+        // die;
         // 判断处理
         if (!isset($currentData)) {
             $this->error = '规则表里不存在此名称，请先进行规则添加';
