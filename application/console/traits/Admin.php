@@ -58,6 +58,16 @@ trait Admin
                     $this->pk => 'asc',
                 ];
                 break;
+            case 'product':
+                if (Request::has('ptype')) {
+                    $ptype = Request::param('ptype'); // 获得 post 数据
+                    if ($ptype) {
+                        $model_data      = model('Model')->getModelInfoByName($ptype);
+                        $map['model_id'] = $model_data[0];
+                    }
+                }
+                # code...
+                break;
             case 'Config111':
                 $order = [
                     'group' => 'desc',
@@ -216,11 +226,30 @@ trait Admin
                         $one = $this->model->find($this->id); // 取得数据
                     }
 
-                    $model_id        = $this->model->getFieldById($this->id, 'model_id');
-                    $model_id        = $model_id ? $model_id : 2;
-                    $modelName       = Db::name('Model')->getFieldById($model_id, 'name');
-                    $tempData        = Db::name('document_' . $modelName)->find($this->id);
-                    $one['content']  = $tempData ? $tempData['content'] : '';
+                    $model_id = $this->model->getFieldById($this->id, 'model_id');
+                    $model_id = $model_id ? $model_id : 2;
+                    $tempData = model('Model')->getExtendDataById($this->id, $model_id);
+                    $one      = $one->toArray();
+                    if ($tempData && is_array($tempData) && is_array($one)) {
+                        $one = array_merge($tempData, $one);
+                    }
+                    $coverData       = Db::name('picture')->find($one['cover_id']);
+                    $one['cover_id'] = $coverData ? $coverData['path'] : '';
+                    break;
+                case 'product':
+                    if ($this->isWithTrashed()) {
+                        $one = $this->model->withTrashed()->find($this->id);
+                    } else {
+                        $one = $this->model->find($this->id); // 取得数据
+                    }
+
+                    $model_id = $this->model->getFieldById($this->id, 'model_id');
+                    $model_id = $model_id ? $model_id : 5;
+                    $tempData = model('Model')->getExtendDataById($this->id, $model_id);
+                    $one      = $one->toArray();
+                    if ($tempData && is_array($tempData) && is_array($one)) {
+                        $one = array_merge($tempData, $one);
+                    }
                     $coverData       = Db::name('picture')->find($one['cover_id']);
                     $one['cover_id'] = $coverData ? $coverData['path'] : '';
                     break;
@@ -274,25 +303,45 @@ trait Admin
             switch (strtolower($this->app->request->controller())) {
                 case 'document':
                     // 内容类型没有选时的处理
-                    $modelId  = $data['model_id'];
-                    $modelPid = Db::name('model')->getFieldById($modelId, 'extend'); // 取得继承模型 Id
+                    $model_data = model('model')->getModelInfoById($data['model_id']);
 
-                    $extendModelName = Db::name('model')->getFieldById($modelPid, 'name'); // 取得继承模型名称
-                    $extendModelName == 'document' || $this->error('文档类型错误'); // 验证
+                    $model_data['extend_name'] == 'document' || $this->error('文档类型错误'); // 验证
 
-                    $modelCount = Db::name('model')->where('extend', $modelPid)->count(); // 统计子模型数
+                    $modelCount = Db::name('model')->where('extend', $model_data['extend_id'])->count(); // 统计子模型数
 
                     $modelCount > 1 || $data['model_id'] = 2; // 如果没有默认为 2
 
                     // 封面图片处理
                     if ($data['cover_id']) {
-                        $data['cover_id'] = $this->documentCover($data['cover_id']);
+                        $data['cover_id'] = $this->saveCover($data['cover_id']);
                     } else {
                         unset($data['cover_id']);
                     }
 
                     $data['description'] || $data['description'] = get_description($data['content']);
                     $data['keywords'] || $data['keywords']       = get_keywords($data['content']);
+                    # code...
+                    break;
+                case 'product':
+                    // 内容类型没有选时的处理
+                    $model_data = model('model')->getModelInfoById($data['model_id']);
+
+                    $model_data['extend_name'] == 'product' || $this->error('产品类型错误'); // 验证
+
+                    $modelCount = Db::name('model')->where('extend', $model_data['extend_id'])->count(); // 统计子模型数
+
+                    $modelCount > 1 || $data['model_id'] = 5; // 如果没有默认为 2
+
+                    // 封面图片处理
+                    if ($data['cover_id']) {
+                        // $data['cover_id'] = $this->saveCover($data['cover_id']);
+                        $data['cover_id'] = model('Picture')->saveCover($data['cover_id']);
+                    } else {
+                        unset($data['cover_id']);
+                    }
+
+                    $data['description'] || $data['description'] = get_description($data['introduction']);
+                    $data['keywords'] || $data['keywords']       = get_keywords($data['introduction']);
                     # code...
                     break;
 
@@ -337,7 +386,7 @@ trait Admin
                 if (!$validate->scene('edit')->check($data)) {
                     switch (strtolower($this->app->request->controller())) {
                         case 'document':
-                            $this->documentCover($data['cover_id'], 3);
+                            model('Picture')->saveCover($data['cover_id'], 3);
                             break;
 
                         default:
@@ -360,7 +409,7 @@ trait Admin
                 if (!$validate->check($data)) {
                     switch (strtolower($this->app->request->controller())) {
                         case 'document':
-                            return $this->documentCover($data['cover_id'], 3);
+                            return model('Picture')->saveCover($data['cover_id'], 3);
                             break;
 
                         default:
@@ -414,8 +463,19 @@ trait Admin
 
                         // 文档类型处理
                         if ($this->app->request->has('content')) {
-                            $data['documentExtend'] = $this->documentExtend($data);
+                            $data['modeltExtend'] = model('Model')->modelExtend($data);
                         }
+
+                        break;
+                    case 'product': // 文档管理时的数据处理
+                        $data = $this->model;
+                        if (!is_array($data)) {
+                            $data = $data->toArray();
+                        }
+                        // 文档类型处理
+                        $data['modeltExtend'] = model('Model')->modelExtend($data);
+
+                        // return 123;
 
                         break;
                     default:
@@ -443,144 +503,6 @@ trait Admin
         } else {
             return $this->error('数据有误');
         }
-    }
-
-    /**
-     * [ documentCover 内容管理对封面图片的处理 ]
-     * @author SpringYang
-     * @email    ceroot@163.com
-     * @dateTime 2017-11-30T09:46:32+0800
-     * @param    string                   $coverData  [封面图像数据，type为1时是base64数据，type为2时是文件路径]
-     * @param    int                      $type       [状态，1为开始（默认），2为成功之后，3为不成功时删除数据]
-     * @return   string                               []
-     */
-    private function documentCover($coverData = null, $type = 1)
-    {
-        $pathTemp   = '../data/temp/'; // 临时文件夹路径
-        $pathImages = './data/images/'; // 图像文件文件夹路径
-
-        if ($type == 1) {
-            //匹配出图片的格式
-            if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $coverData, $result)) {
-                $type     = $result[2]; // 图像格式
-                $dateFile = date('Ymd', time()) . '/'; // 日期目录
-
-                $allPathTemp   = $pathTemp . $dateFile; // 全部路径
-                $allPathImages = $pathImages . $dateFile;
-
-                //检查是否有该文件夹，如果没有就创建，并给予最高权限
-                file_exists($allPathTemp) || make_dir($allPathTemp);
-                file_exists($allPathImages) || make_dir($allPathImages);
-
-                $filename     = md5(time()) . '.' . $type; // md5加密后的文件名（带后缀）
-                $filePathTemp = $allPathTemp . $filename; // 文件的位置
-                if (file_put_contents($filePathTemp, base64_decode(str_replace($result[1], '', $coverData)))) {
-                    if (file_exists($filePathTemp)) {
-                        $image = \think\Image::open($filePathTemp);
-                        if ($image) {
-                            $filePath = $allPathImages . $filename;
-                            // 按照原图的比例生成一个最大为150*150的缩略图并保存为封面图像，最后删除临时文件
-                            $image->thumb(400, 400)->save($filePath) && unlink($filePathTemp);
-                        }
-
-                        $data['path']        = $dateFile . $filename;
-                        $data['create_time'] = time();
-                        $data['md5']         = md5_file($filePath);
-                        $data['sha1']        = sha1($filePath);
-
-                        return Db::name('picture')->insertGetId($data);
-                    }
-                } else {
-                    return 0;
-                }
-            }
-        } elseif ($type == 2) {
-            $tempArr  = explode('/', $coverData); // 以/拆分数据
-            $dateFile = $tempArr[0] . '/'; // 日期目录
-            $filename = $tempArr[1]; // 文件名（带后缀）
-            $allPath  = $pathImages . $dateFile; // 全部路径
-            //检查是否有该文件夹，如果没有就创建，并给予最高权限
-            file_exists($allPath) || make_dir($allPath);
-
-            $tempFilePath = $pathTemp . $coverData; // 临时文件位置
-
-            // 检查文件是否存在
-            if (file_exists($tempFilePath)) {
-                $image = \think\Image::open($tempFilePath);
-                if ($image) {
-                    $filePath = $allPath . $filename;
-                    // 按照原图的比例生成一个最大为150*150的缩略图并保存为封面图像，最后删除临时文件
-                    $image->thumb(400, 400)->save($filePath) && unlink($tempFilePath);
-                }
-            }
-        } elseif ($type == 3) {
-            Db::name('picture')->delete($coverData);
-        }
-
-    }
-
-    /**
-     * [ documentExtend 文档类型处理 ]
-     * @author SpringYang
-     * @email    ceroot@163.com
-     * @dateTime 2018-01-03T12:18:42+0800
-     * @param    [type]                   $data [description]
-     * @return   [type]                         [description]
-     */
-    private function documentExtend($data = null)
-    {
-        // return 123;
-
-        $name   = Db::name('Model')->getFieldById($data['model_id'], 'name');
-        $db     = Db::name('document_' . $name);
-        $dbtemp = Db::name('document_' . $name); // 之因为这样做，是因为要得到更新前的内容时实例化了
-        $id     = $data['id'];
-
-        $tempData['id'] = $id;
-        // return 12;
-        switch ($name) {
-            case 'article':
-                // $tempData['content'] = $data['content'];
-                // 对 ueditor 内容数据的处理
-                $tempData['content'] = ueditor_handle($data['content'], $data['title']);
-                // return $tempData;
-                break;
-            default:
-                # code...
-                break;
-        }
-
-        if ($this->app->request->has($this->pk)) {
-
-            // 执行更新
-            if ($db->find($id)) {
-                $contentSqlTemp = $dbtemp->getFieldById($id, 'content');
-
-                $status = $db->update($tempData);
-                // return $tempData;
-                if ($status) {
-                    switch ($name) {
-                        case 'article':
-                            $contentForm = $data['content'];
-                            if ($contentForm && $contentSqlTemp) {
-                                // 对比判断并删除操作
-                                $del_file = del_file($contentForm, $contentSqlTemp);
-                            }
-                            break;
-                        default:
-                            # code...
-                            break;
-                    }
-                }
-            } else {
-                $status = $db->insertGetId($tempData);
-            }
-        } else {
-            // return $tempData;
-            $status = $db->insertGetId($tempData);
-        }
-
-        return $status;
     }
 
     /**
