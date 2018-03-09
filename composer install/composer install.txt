@@ -31,6 +31,7 @@ tightenco/collect
 µÚËÄ²½
 composer require zoujingli/wechat-developer
 composer require zoujingli/wechat-php-sdk
+composer require overtrue/wechat:~4.0 -vvv
 
 
   - Removing zoujingli/wechat-php-sdk (v1.3.14)
