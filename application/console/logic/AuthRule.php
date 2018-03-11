@@ -114,12 +114,12 @@ class AuthRule extends Extend
         // dump($data);die;
         // 处理浏览器里的 url
         $browser_url = parse_url(Request::url());
-        $browser_url = str_replace('/' . strtolower(Request::module()) . '/', '', strtolower($browser_url['path']));
-        $browser_url = strtolower(str_replace('.' . config::get('url_html_suffix'), '', $browser_url));
+        $browser_url = rtrim($browser_url['path'], '/');
+        $browser_url = rtrim($browser_url, '.' . config::get('url_html_suffix'));
+        $browser_url = strtolower($browser_url);
+        $browser_url = str_replace('/' . strtolower(Request::module()) . '/', '', $browser_url);
 
-        if ($browser_url == '/' . strtolower(Request::module())) {
-            $browser_url = 'index/index';
-        }
+        $browser_url = ($browser_url == '/' . strtolower(Request::module())) ? 'index/index' : $browser_url;
 
         // dump($browser_url);die;
         $navdata = [];
