@@ -27,7 +27,6 @@ use service\WechatService;
 use think\Controller;
 use think\Db;
 use think\facade\Request;
-use think\facade\Session;
 use Wechat\WechatReceive;
 
 class Api extends Controller
@@ -44,8 +43,6 @@ class Api extends Controller
      */
     protected $wechat;
 
-    protected $config;
-
     protected $mpid;
 
     protected $getReceive; // 获取当前推送的所有数据
@@ -53,13 +50,66 @@ class Api extends Controller
     public function initialize()
     {
         parent::initialize();
-        $this->config = [
-            /**
-             * Debug 模式，bool 值：true/false
-             *
-             * 当值为 false 时，所有的日志都不会记录
-             */
-            'debug'         => false,
+        // $data = [
+        //     [
+        //         'Title'       => '图文消息标题',
+        //         'Description' => '图文消息描述',
+        //         'PicUrl'      => 'http://mmbiz.qpic.cn/mmbiz_jpg/dmL30YFS5KpEBtIT8TR5KTHXM6t8EiaQmEqgA0uibmFZyBmGENjVlTeugsaOT6GAxFFdcBuLVBia9lHOytHqgOyVg/0?wx_fmt=jpeg',
+        //         'Url'         => 'http://mmbiz.qpic.cn/mmbiz_jpg/dmL30YFS5KpEBtIT8TR5KTHXM6t8EiaQmEqgA0uibmFZyBmGENjVlTeugsaOT6GAxFFdcBuLVBia9lHOytHqgOyVg/0?wx_fmt=jpeg',
+        //     ],
+        // ];
+
+        // dump($data);
+        // dump(count($data));
+        // die;
+        // $this->mpid = input('spm');
+        $config = Db::name('wechatConfig')->find(1);
+        // $data   = cache('wechatdata');
+        // dump($data);die;
+        $this->wechat = new \WeChat\Receive($config); // 微信菜单实例化
+
+        $this->getReceive = $this->wechat->getReceive(); // 获取当前推送的所有数据
+
+        // $data = $this->wechat->getReceive();
+        // cache('wechatdata', $this->getReceive);
+    }
+
+    // 实例接口，同时实现接口配置验证与解密处理
+    // $api = new \WeChat\Receive($config);
+
+    // 获取当前推送接口类型 ( text,image,loction,event... )
+    // $msgType = $api->getMsgType();
+
+    // 获取当前推送来源用户的openid
+    // $openid = $api->getOpenid();
+
+    // 获取当前推送的所有数据
+    // $data = $api->getReceive();
+
+    // 回复文本消息
+    // $api->text($content)->reply();
+
+    // 回复图文消息（高级图文或普通图文，数组）
+    // $api->news($news)->reply();
+
+    // 回复图片消息（需先上传到微信服务器生成 media_id）
+    // $api->image($media_id)->reply();
+
+    // 回复语音消息（需先上传到微信服务器生成 media_id）
+    // $api->voice($media_id)->reply();
+
+    // 回复视频消息（需先上传到微信服务器生成 media_id）
+    // $api->video($media_id,$title,$desc)->reply();
+
+    // 回复音乐消息
+    // $api->music($title,$desc,$musicUrl,$hgMusicUrl,$thumbe)->reply();
+
+    // 将消息转发给多客服务
+    // $api->transferCustomerService($account)->reply();
+
+    public function index()
+    {
+        $config = [
             /**
              * 账号基本信息，请从微信公众平台/开放平台获取
              */
@@ -111,18 +161,12 @@ class Api extends Controller
              */
             'oauth'         => [
                 'scopes'   => ['snsapi_userinfo'],
-                // 'callback' => '/examples/oauth_callback.php',
-                'callback' => url('oauth_callback'),
+                'callback' => '/examples/oauth_callback.php',
             ],
         ];
 
-        $this->wechat = Factory::officialAccount($this->config);
-    }
-
-    public function index()
-    {
-
-        $server  = $this->wechat->server;
+        $app     = Factory::officialAccount($config);
+        $server  = $app->server;
         $message = $server->getMessage();
         cache('wechatdata', $message);
         // $msgType = $this->wechat->getMsgType();
@@ -130,7 +174,7 @@ class Api extends Controller
         // $app->server->push(TextMessageHandler::class, Message::TEXT); // 文本消息
         // $app->server->push(MediaMessageHandler::class, Message::TEXT | Message::VOICE | Message::VIDEO | Message::SHORT_VIDEO);
         // die;
-        $this->wechat->server->push(function ($message) {
+        $app->server->push(function ($message) {
             switch ($message['MsgType']) {
                 case 'event':
                     $items = [
@@ -180,7 +224,7 @@ class Api extends Controller
             // ...
         });
 
-        $response = $this->wechat->server->serve();
+        $response = $app->server->serve();
 
         return $response;
     }
@@ -237,47 +281,6 @@ class Api extends Controller
             // 处理异常
             echo $e->getMessage();
         }
-
-    }
-
-    public function profile()
-    {
-
-        $oauth = $this->wechat->oauth;
-
-        if (!Session::has('wechat_user')) {
-            Session::set('target_url', url('profile'));
-            return $oauth->redirect();
-        }
-
-        $user = Session::get('wechat_user');
-
-        dump($user);
-
-    }
-
-    public function delss()
-    {
-        // session('wechat_user', null);
-        if (Session::delete('wechat_user')) {
-            dump('OK');
-        } else {
-            dump('ERR');
-        };
-    }
-
-    public function oauth_callback()
-    {
-        $oauth = $this->wechat->oauth;
-
-        // 获取 OAuth 授权结果用户信息
-        $user = $oauth->user();
-
-        Session::set('wechat_user', $user->toArray());
-
-        $target_url = Session::has('target_url') ? Session::pull('target_url') : '/';
-
-        header('location:' . $target_url);
 
     }
 
@@ -351,6 +354,56 @@ class Api extends Controller
     public function ucenter()
     {
         dump('ucenter');
+    }
+
+    public function profile()
+    {
+        $config = [
+            // ...
+            'oauth' => [
+                'scopes'   => ['snsapi_userinfo'],
+                // 'callback' => '/oauth_callback',
+                'callback' => url('oauth_callback'),
+            ],
+            // ..
+        ];
+
+        $app   = Factory::officialAccount($config);
+        $oauth = $app->oauth;
+
+// 未登录
+        if (empty($_SESSION['wechat_user'])) {
+
+            $_SESSION['target_url'] = url('user/profile');
+
+            return $oauth->redirect();
+            // 这里不一定是return，如果你的框架action不是返回内容的话你就得使用
+            // $oauth->redirect()->send();
+        }
+
+// 已经登录过
+        $user = $_SESSION['wechat_user'];
+
+        dump($user);
+    }
+
+    public function oauth_callback()
+    {
+        $config = [
+            // ...
+        ];
+
+        $app   = Factory::officialAccount($config);
+        $oauth = $app->oauth;
+
+// 获取 OAuth 授权结果用户信息
+        $user = $oauth->user();
+
+        $_SESSION['wechat_user'] = $user->toArray();
+
+        $targetUrl = empty($_SESSION['target_url']) ? '/' : $_SESSION['target_url'];
+
+        header('location:' . $targetUrl); // 跳转到 user/profile
     }
 
     /**

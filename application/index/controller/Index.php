@@ -13,7 +13,7 @@ class Index
     }
     public function getdata()
     {
-        $data = cache('wechatdata');
+        $data = session('wechat_user');
         dump($data);
     }
     public function hello($name = 'ThinkPHP5')
