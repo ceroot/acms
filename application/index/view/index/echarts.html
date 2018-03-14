@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			body{ margin: 0 auto;}
+			.area{ width: 800px; margin: 0 auto;}
+        	table,table tr th, table tr td { border:1px solid #0094ff; }
+        	table {width: 800px; min-height: 25px; line-height: 25px; text-align: center; border-collapse: collapse; padding:2px;}   
+    	</style>
+    	<script type="text/javascript" src="http://www.benweng.com/static/libs/echarts/4.0/echarts.min.js"></script>
+	</head>
+	<body>
+		<div class="area">
+			<div id="main" style="width: 1200px;height:400px;"></div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		
+			// 基于准备好的dom，初始化echarts实例
+        	var myChart = echarts.init(document.getElementById('main'));
+        	var data = {"pv":["188","177","108","117","162","163","68"],"uv":["122","134","95","97","155","161","65"],"week":["\u661f\u671f\u4e00","\u661f\u671f\u4e8c","\u661f\u671f\u4e09","\u661f\u671f\u56db","\u661f\u671f\u4e94","\u661f\u671f\u516d","\u661f\u671f\u65e5"]};
+        	var lastData = {"pv":["338","116","196","125","122","62","97"],"uv":["212","91","106","115","111","61","95"]};
+        	var colors = ['#5793f3', '#d14a61', '#675bba','#00000'];
+
+			option = {
+			    color: colors,
+			    title: {
+			        text: '一周页面访问统计曲线图'
+			    },
+
+			    tooltip: {
+			        trigger: 'axis',
+			        axisPointer: {
+			            type: 'cross'
+			        }
+			    },
+			    legend: {
+			        // data:['2015 降水量', '2016 降水量', '2017 降水量', '2018 降水量']
+			        data:['本周PV','本周UV','上周PV','上周UV']
+			    },
+			    grid: {
+			        top: 70,
+			        bottom: 50
+			    },
+			    
+			    xAxis: [
+			        {
+			            type: 'category',
+			            axisTick: {
+			                alignWithLabel: true
+			            },
+			            axisLine: {
+			                onZero: false,
+			                lineStyle: {
+			                    color: colors[1]
+			                }
+			            },
+			            data: data.week
+			        },
+			        {
+			            type: 'category',
+			            axisTick: {
+			                alignWithLabel: true
+			            },
+			            axisLine: {
+			                onZero: false,
+			                lineStyle: {
+			                    color: colors[0]
+			                }
+			            },
+			            data: data.week
+			        },
+			    ],
+			    yAxis: [
+			        {
+			            type: 'value'
+			        }
+			    ],
+			    series: [
+			        {
+			            name:'本周PV',
+			            type:'line',
+			            xAxisIndex: 1,
+			            smooth: true,
+			            data: data.pv,
+			            lineStyle:{
+			            	normal:{
+			            		width:3
+			            	}
+			            }
+			        },
+			        {
+			            name:'本周UV',
+			            type:'line',
+			            xAxisIndex: 1,
+			            smooth: true,
+			            data: data.uv,
+			            lineStyle:{
+			            	normal:{
+			            		width:3
+			            	}
+			            }
+			        },
+			        {
+			            name:'上周PV',
+			            type:'line',
+			            smooth: true,
+			            data: lastData.pv
+			        },
+			        {
+			            name:'上周UV',
+			            type:'line',
+			            smooth: true,
+			            data: lastData.uv
+			        }
+			    ]
+			};
+			
+			myChart.setOption(option);
+		
+	</script>
+</html>

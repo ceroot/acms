@@ -20,6 +20,11 @@ class Index
     {
         return 'hello,' . $name;
     }
+
+    public function echarts()
+    {
+        return view();
+    }
     public function test()
     {
         $dd = md5(microtime() . 'http://s4.cn.bing.net/th?id=OJ.0l400gMxLBSWLA&pid=MSNJVFeeds');
