@@ -247,7 +247,8 @@ class Api extends Controller
 
         if (!Session::has('wechat_user')) {
             Session::set('target_url', url('profile'));
-            return $oauth->redirect();
+            dump($oauth->redirect());
+            // return $oauth->redirect();
         }
 
         $user = Session::get('wechat_user');
@@ -259,7 +260,10 @@ class Api extends Controller
     public function delss()
     {
         // session('wechat_user', null);
-        if (Session::delete('wechat_user')) {
+        dump(Session::get('wechat_user'));
+        dump(Session::delete('wechat_user'));
+        dump(Session::get('wechat_user'));
+        if (!Session::delete('wechat_user')) {
             dump('OK');
         } else {
             dump('ERR');
@@ -278,6 +282,27 @@ class Api extends Controller
         $target_url = Session::has('target_url') ? Session::pull('target_url') : '/';
 
         header('location:' . $target_url);
+
+    }
+
+    public function profile1()
+    {
+
+        $config = Db::name('wechatConfig')->find(1);
+        // $data   = cache('wechatdata');
+        // dump($data);die;
+        $wechat = new \WeChat\Receive($config); // 微信菜单实例化
+        $result = $wechat->getOauthRedirect(url('oauth_callback2'), 'state', 'snsapi_userinfo');
+
+    }
+
+    public function oauth_callback2()
+    {
+        $config = Db::name('wechatConfig')->find(1);
+        // $data   = cache('wechatdata');
+        // dump($data);die;
+        $wechat = new \WeChat\Receive($config); // 微信菜单实例化
+        $result = $wechat->getOauthAccessToken();
 
     }
 

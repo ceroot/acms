@@ -78,7 +78,7 @@ class WebLog
         }
 
         // 不需要记录的请求方式 string
-        $not_log_method_default = [];
+        $not_log_method_default = ['head'];
         $not_log_method_config  = Config::get('weblog.not_log_method') ?: [];
         $not_log_method         = array_merge($not_log_method_default, $not_log_method_config);
 
