@@ -247,7 +247,9 @@ class Api extends Controller
 
         if (!Session::has('wechat_user')) {
             Session::set('target_url', url('profile'));
-            dump($oauth->redirect());
+            return $oauth->redirect()->send();
+			exit;
+			// dump($oauth->redirect());
             // return $oauth->redirect();
         }
 
