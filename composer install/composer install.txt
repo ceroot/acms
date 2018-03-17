@@ -1,3 +1,7 @@
+D:\www\thinkphp>composer create-project topthink/framework=5.1.*-dev 5.1.0  --prefer-dist
+
+D:\www\thinkphp>5.1.0>composer update topthink/framework
+
 composer update topthink/framework
 
 µÚÒ»²½
