@@ -242,20 +242,35 @@ class Api extends Controller
 
     public function profile()
     {
-
         $oauth = $this->wechat->oauth;
 
         if (!Session::has('wechat_user')) {
             Session::set('target_url', url('profile'));
             return $oauth->redirect()->send();
-			exit;
-			// dump($oauth->redirect());
-            // return $oauth->redirect();
+            exit;
         }
-
-        $user = Session::get('wechat_user');
-
+        $user = Session::pull('wechat_user');
         dump($user);
+    }
+
+    public function oauth_callback()
+    {
+        $oauth = $this->wechat->oauth;
+
+        // 获取 OAuth 授权结果用户信息
+        $user = $oauth->user();
+
+        Session::set('wechat_user', $user->toArray());
+
+        $target_url = Session::has('target_url') ? Session::pull('target_url') : '/';
+        // Session::delete('target_url');
+        dump($target_url);
+        // dump(Session::has('target_url'));
+        // // dump(Session::pull('target_url'));
+        // dump(Session::get('target_url'));
+        // dump($target_url);
+        // die;
+        // header('location:' . $target_url);
 
     }
 
@@ -270,21 +285,6 @@ class Api extends Controller
         } else {
             dump('ERR');
         };
-    }
-
-    public function oauth_callback()
-    {
-        $oauth = $this->wechat->oauth;
-
-        // 获取 OAuth 授权结果用户信息
-        $user = $oauth->user();
-
-        Session::set('wechat_user', $user->toArray());
-
-        $target_url = Session::has('target_url') ? Session::pull('target_url') : '/';
-
-        header('location:' . $target_url);
-
     }
 
     public function profile1()
@@ -342,6 +342,15 @@ class Api extends Controller
 
     public function test()
     {
+        Session::set('name', '这是name');
+        $name = Session::has('name') ? Session::pull('name') : '默认';
+        //这样之后取得session值为null
+        dump($name);
+
+        // Session::set('name','这是name');
+        $name = Session::has('name') ? Session::get('name') : '默认';
+        dump($name);
+        die;
         $data = [
             [
                 'Title'       => '图文消息标题',

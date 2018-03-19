@@ -1,0 +1,37 @@
+@thinkphp 
+版本为5.1.5
+我是在微信手机 app 上出现的问题，但是在微信 pc 端和微信开发工具上是正常的。在微信手机上第一次打开好像是正常的，第二次进去才出现获取不正确
+http://www.benweng.com/wechat/api/profile
+public function profile()
+{
+    $oauth = $this->wechat->oauth;
+
+    if (!Session::has('wechat_user')) {
+        Session::set('target_url', url('profile'));
+        return $oauth->redirect()->send();
+        exit;
+    }
+    $user = Session::get('wechat_user');
+    dump($user);
+}
+
+profile 方法判断没有 session 时要跳转到 oauth_callback 方法
+
+public function oauth_callback()
+{
+    $oauth = $this->wechat->oauth;
+
+    // 获取 OAuth 授权结果用户信息
+    $user = $oauth->user();
+
+    Session::set('wechat_user', $user->toArray());
+
+    $target_url = Session::has('target_url') ? Session::pull('target_url') : '/';
+    // Session::delete('target_url');
+    dump($target_url);
+
+    // header('location:' . $target_url);
+}
+
+// 下面的这个地址是用来删除 session 再次测试的。
+http://www.benweng.com/wechat/api/delss
